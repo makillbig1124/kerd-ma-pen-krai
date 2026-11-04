@@ -2,311 +2,354 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>เกิดมาเป็นใคร</title>
+<meta name="description" content="เกมจำลองชีวิตคนไทยตั้งแต่เกิดจนตาย สุ่มชาติกำเนิด เลือกทางชีวิต แล้วดูว่าคุณเป็นคนประเภทไหน">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&family=Sarabun:wght@400;600;700&family=Silkscreen&family=Trirong:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&family=Sarabun:wght@400;600;700&family=Silkscreen&family=Trirong:wght@400;700&display=swap" rel="stylesheet">
 <style>
+/* Layout: desktop = full-viewport 3 columns (you | world | decision); phone = sticky scene over a scrolling story.
+   One accent (coral) for action; green / amber / red only carry meaning (good / caution / danger). */
 :root{
   color-scheme:dark;
-  --bg:#120e22; --bg2:#1a1431; --panel:#211a3e; --panel2:#2a2150; --line:#3a2f6a; --line2:#56469c;
-  --ink:#f4f0ff; --mute:#aaa0d0; --dim:#776da3;
-  --coral:#ff7b5c; --mint:#53e0ae; --sun:#ffd166; --sky:#6cc6ff; --rose:#ff5f8f; --lilac:#b18cff;
-  --hp:#ff5f7a; --joy:#ffd166; --iq:#6cc6ff; --soc:#53e0ae;
-  --stage:#2a1f55;
+  --bg:#110d20;--bg2:#171230;--panel:#1e1838;--panel2:#272050;--raise:#30275f;
+  --line:#3a2f6a;--line2:#5a4ca0;--ink:#f4f0ff;--mute:#c0b8e0;--dim:#a097cb;
+  --accent:#ff7b5c;--accent-d:#b4472d;--good:#53e0ae;--warn:#ffd166;--bad:#ff6b85;
+  --fs-xs:12px;--fs-sm:13.5px;--fs-md:15px;--fs-lg:18px;--fs-xl:22px;--fs-2xl:30px;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;
+  --r:4px;--sh:0 4px 0 #090614;
+  --f-d:Mitr,Sarabun,system-ui,sans-serif;--f-b:Sarabun,system-ui,sans-serif;--f-px:Silkscreen,ui-monospace,monospace;
+  --stage:#251c52;
 }
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Sarabun,system-ui,sans-serif;font-size:15px}
-body{min-height:100vh;background:radial-gradient(1100px 620px at 75% -10%,var(--stage) 0%,transparent 62%),radial-gradient(800px 500px at -10% 110%,#1d1640 0%,transparent 60%),var(--bg);transition:background 1.2s}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-b);font-size:var(--fs-md);line-height:1.55}
+body{min-height:100vh;background:radial-gradient(1100px 620px at 75% -10%,var(--stage) 0%,transparent 62%),var(--bg);transition:background 1.2s}
 body.st-child{--stage:#173f4f} body.st-teen{--stage:#3b1f5c} body.st-adult{--stage:#22265e} body.st-elder{--stage:#4a2f22}
-button{font:inherit;color:inherit;cursor:pointer}
-h1,h2,h3,.mitr{font-family:Mitr,Sarabun,sans-serif;font-weight:500}
-.px{font-family:Silkscreen,monospace;letter-spacing:.5px}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--warn);outline-offset:2px}
+h1,h2,h3,h4{font-family:var(--f-d);font-weight:500;margin:0;text-wrap:balance;line-height:1.3}
 .hidden,[hidden]{display:none!important}
-.wrap{max-width:1200px;margin:0 auto;padding:16px}
-.small{font-size:12.5px;color:var(--dim)}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.wrap{max-width:1200px;margin:0 auto;padding-block:var(--s4);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.small{font-size:var(--fs-xs);color:var(--dim)}
+.row{display:flex;gap:var(--s2);flex-wrap:wrap;align-items:center}
+.num{font-variant-numeric:tabular-nums}
+.pi{image-rendering:pixelated;height:1.15em;width:auto;vertical-align:-.18em;flex:none}
+.pi.lg{height:2.2em}.pi.xl{height:64px}
 
-/* ---------- Title ---------- */
+/* pixel panel */
+.pnl{background:var(--panel);border:2px solid var(--line);border-radius:var(--r);box-shadow:var(--sh),inset 0 2px 0 #ffffff0c}
+.pnl h4{font-size:var(--fs-sm);color:var(--mute);display:flex;gap:var(--s2);align-items:center;margin-bottom:var(--s2)}
+
+/* buttons */
+.big{display:flex;gap:var(--s2);align-items:center;justify-content:center;width:100%;padding:var(--s3) var(--s4);border:2px solid #0006;border-radius:var(--r);background:var(--accent);color:#22101a;font-family:var(--f-d);font-size:var(--fs-lg);box-shadow:0 5px 0 var(--accent-d);transition:transform .08s,filter .15s}
+.big:hover{filter:brightness(1.07)} .big:active{transform:translateY(3px);box-shadow:0 2px 0 var(--accent-d)}
+.big.sec{background:var(--panel2);color:var(--ink);border-color:var(--line2);box-shadow:0 5px 0 #090614}
+.big.good{background:var(--good);box-shadow:0 5px 0 #2a8a68}
+.ghost{display:inline-flex;gap:6px;align-items:center;padding:6px 12px;border-radius:var(--r);border:2px solid var(--line);background:var(--bg2);font-size:var(--fs-sm)}
+.ghost:hover{border-color:var(--line2);background:var(--panel2)}
+
+/* ---------- pixel frame ---------- */
+.frame{position:relative;display:grid;place-items:center;width:100%;aspect-ratio:16/9;background:#0b0818;border:3px solid var(--line2);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.frame canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;max-width:100%;max-height:100%}
+.frame::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,#0000 0 2px,#0000000d 2px 3px),radial-gradient(ellipse at center,#0000 62%,#0005 100%)}
+.cap{position:absolute;left:var(--s2);top:var(--s2);background:#000b;padding:2px 8px;border-radius:var(--r);font-size:var(--fs-xs);font-family:var(--f-d);z-index:2;display:flex;gap:6px;align-items:center}
+.capR{left:auto;right:var(--s2)}
+
+/* ---------- title ---------- */
 #title{min-height:100vh;display:flex;align-items:center;justify-content:center}
-.titleBox{width:100%;max-width:640px;text-align:center}
-.logo{font-family:Mitr;font-size:clamp(42px,9.5vw,78px);line-height:1.05;margin:8px 0 6px;
-  background:linear-gradient(180deg,#fff 0%,#ffe08a 50%,#ff7b5c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 5px 0 #3b1f4a)}
-.tag{color:var(--mute);font-size:17px;margin:0 0 22px;line-height:1.55}
-.frame{position:relative;border:3px solid var(--line2);border-radius:10px;overflow:hidden;background:#000;box-shadow:0 10px 0 #0a0716,0 20px 50px #0008}
-.frame::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,#0000 0 2px,#0000000d 2px 3px),radial-gradient(ellipse at center,#0000 60%,#0006 100%)}
-.frame canvas{display:block;width:100%;image-rendering:pixelated;aspect-ratio:16/9}
-.form{display:grid;gap:10px;margin:22px auto 0;max-width:440px;text-align:left}
-.form label{font-size:13px;color:var(--mute)}
-.form input{width:100%;padding:11px 12px;border-radius:9px;border:2px solid var(--line);background:var(--bg2);color:var(--ink);font:inherit}
-.form input:focus{outline:none;border-color:var(--sun)}
-.big{display:block;width:100%;padding:14px 18px;border:0;border-radius:11px;background:var(--coral);color:#22101a;font-family:Mitr;font-size:19px;box-shadow:0 5px 0 #a8432d;transition:transform .08s,filter .15s}
-.big:hover{filter:brightness(1.07)} .big:active{transform:translateY(3px);box-shadow:0 2px 0 #a8432d}
-.ghost{padding:8px 13px;border-radius:9px;border:2px solid var(--line);background:#0002;color:var(--ink)}
-.ghost:hover{border-color:var(--line2);background:var(--panel)}
-.features{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px;text-align:left}
+.titleBox{width:100%;max-width:640px;display:grid;gap:var(--s5);text-align:center}
+.eyebrow{font-family:var(--f-px);font-size:var(--fs-xs);letter-spacing:2px;color:var(--dim)}
+.logo{font-family:var(--f-d);font-size:clamp(42px,9vw,78px);line-height:1.05;margin:var(--s2) 0;background:linear-gradient(180deg,#fff 0%,#ffe08a 50%,var(--accent) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 5px 0 #3b1f4a)}
+.tag{color:var(--mute);font-size:var(--fs-lg);margin:0;line-height:1.6}
+.form{display:grid;gap:var(--s3);text-align:left;padding:var(--s4)}
+.form label{font-size:var(--fs-sm);color:var(--mute);display:block;margin-bottom:var(--s1)}
+.form input{width:100%;padding:10px 12px;border-radius:var(--r);border:2px solid var(--line);background:var(--bg2)}
+.form input:focus{border-color:var(--warn);outline:none}
+.features{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s2);text-align:left}
 @media (max-width:560px){.features{grid-template-columns:1fr 1fr}}
-.feat{background:#0003;border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:12.5px;color:var(--mute)}
-.feat b{display:block;color:var(--ink);font-family:Mitr;font-weight:500;font-size:13.5px}
-.pastLives{margin-top:18px;text-align:left}
-.pastLives .pl{display:flex;justify-content:space-between;gap:8px;padding:7px 10px;border-bottom:1px dashed var(--line);font-size:13.5px}
+.feat{padding:var(--s2) var(--s3);font-size:var(--fs-xs);color:var(--mute);display:grid;grid-template-columns:auto 1fr;gap:2px var(--s2);align-items:start}
+.feat b{color:var(--ink);font-family:var(--f-d);font-weight:500;font-size:var(--fs-sm)}
+.feat .pi{grid-row:span 2;height:22px;margin-top:2px}
+.pastLives{text-align:left}
+.pl{display:flex;justify-content:space-between;gap:var(--s2);padding:6px 0;border-bottom:1px dashed var(--line);font-size:var(--fs-sm)}
+.kbd{font-family:var(--f-px);font-size:10px;border:1px solid var(--line2);padding:0 4px;border-radius:3px}
 
-/* ---------- Game ---------- */
-.topbar{background:linear-gradient(180deg,var(--panel2),var(--panel));border:2px solid var(--line);border-radius:14px;padding:10px 14px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between}
-.who{display:flex;flex-direction:column;gap:3px;min-width:0}
-.who .nm{font-family:Mitr;font-size:21px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.ageChip{font-family:Silkscreen;font-size:13px;background:var(--sun);color:#2a1a00;padding:1px 8px;border-radius:6px}
-.stageChip{font-size:12px;font-family:Mitr;padding:1px 8px;border-radius:6px;background:#ffffff18;color:var(--mute)}
-.who .sub{font-size:12.5px;color:var(--mute)}
-.goalChip{font-size:12px;color:var(--sun);margin-top:1px}
-.stats{display:grid;grid-template-columns:repeat(2,auto);gap:6px 16px;align-items:center}
-.stat{display:flex;align-items:center;gap:6px;font-size:13px;position:relative}
-.stat .ic{width:20px;text-align:center}
-.stat .lb{font-size:11px;color:var(--dim);width:52px}
-@media (max-width:520px){.stat .lb{display:none}.bar{width:64px!important}}
-.bar{width:80px;height:9px;background:#0d0a1c;border-radius:5px;overflow:hidden;border:1px solid var(--line)}
-.bar i{display:block;height:100%;transition:width .6s;border-radius:4px}
-.stat b{font-family:Silkscreen;font-weight:400;font-size:12px;min-width:20px}
-.moneyBox{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
-.money{font-family:Silkscreen;font-size:15px;color:var(--sun)}
-.float{position:absolute;left:24px;top:-8px;font-family:Silkscreen;font-size:12px;pointer-events:none;animation:up 1.5s ease-out forwards;text-shadow:0 1px 0 #000}
-@keyframes up{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-22px)}}
-.grid{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);grid-template-areas:'scene card' 'side card';grid-template-rows:auto 1fr;gap:0 16px;margin-top:14px;align-items:start}
-.gScene{grid-area:scene}.gCard{grid-area:card}.gSide{grid-area:side}
-@media (max-width:880px){.grid{grid-template-columns:1fr;grid-template-areas:'scene' 'card' 'side';gap:12px}}
-.cap{position:absolute;left:8px;top:8px;background:#000a;padding:3px 9px;border-radius:6px;font-size:12px;font-family:Mitr;z-index:2}
-.capR{left:auto;right:8px}
-.timeline{position:relative;height:32px;margin:14px 2px 4px}
-.timeline .track{position:absolute;left:0;right:0;top:9px;height:7px;background:#0d0a1c;border:1px solid var(--line);border-radius:4px}
-.timeline .fill{position:absolute;left:0;top:9px;height:7px;background:linear-gradient(90deg,#53e0ae,#6cc6ff 30%,#b18cff 55%,#ffd166 75%,#ff7b5c);border-radius:4px;transition:width .7s}
-.timeline .dot{position:absolute;top:6px;width:4px;height:13px;background:#fff;opacity:.55;border-radius:1px;transform:translateX(-2px)}
-.timeline .me{position:absolute;top:0;width:14px;height:20px;transform:translateX(-7px);transition:left .7s}
-.timeline .ticks{position:absolute;left:0;right:0;top:21px;display:flex;justify-content:space-between;font-family:Silkscreen;font-size:9.5px;color:var(--dim)}
-.panelS{background:var(--panel);border:2px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:12px}
-.panelS h4{margin:0 0 8px;font-family:Mitr;font-weight:500;font-size:14px;color:var(--mute)}
-.assets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-@media (max-width:520px){.assets{grid-template-columns:repeat(2,1fr)}}
-.asset{background:var(--bg2);border-radius:8px;padding:7px 9px}
-.asset .k{font-size:11.5px;color:var(--mute)}
-.asset .v{font-family:Silkscreen;font-size:13px;margin-top:2px}
-.flow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
-.fam{display:grid;gap:6px}
-.fm{display:flex;justify-content:space-between;gap:8px;font-size:13.5px;padding:5px 0;border-bottom:1px dashed var(--line)}
+/* ---------- game HUD ---------- */
+.topbar{padding:var(--s2) var(--s4);display:flex;flex-wrap:wrap;gap:var(--s2) var(--s5);align-items:center;justify-content:space-between}
+.who{display:grid;gap:2px;min-width:0}
+.nm{font-family:var(--f-d);font-size:var(--fs-xl);display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
+.ageChip{font-family:var(--f-d);font-size:var(--fs-sm);background:var(--warn);color:#2a1a00;padding:0 8px;border-radius:var(--r);font-variant-numeric:tabular-nums}
+.ageChip.tick{animation:bump .25s}
+@keyframes bump{50%{transform:scale(1.15)}}
+.stageChip{font-size:var(--fs-xs);font-family:var(--f-d);padding:1px 8px;border-radius:var(--r);background:#ffffff14;color:var(--mute)}
+.sub{font-size:var(--fs-sm);color:var(--mute)}
+.stats{display:grid;grid-template-columns:repeat(2,auto);gap:6px var(--s5)}
+.stat{display:flex;align-items:center;gap:var(--s2);background:none;border:0;padding:0;position:relative;font-size:var(--fs-sm);text-align:left}
+.stat .lb{width:54px;color:var(--mute);font-size:var(--fs-xs)}
+.bar{position:relative;width:92px;height:12px;background:#0b0818;border:2px solid #0b0818;outline:1px solid var(--line);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;transition:width .6s}
+.bar::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 8px,#0b0818 8px 9px)}
+.hi .bar i{background:var(--good)} .mid .bar i{background:var(--warn)} .lo .bar i{background:var(--bad)}
+.stat b{font-family:var(--f-px);font-weight:400;font-size:var(--fs-xs);min-width:22px}
+.float{position:absolute;right:-6px;top:-12px;font-family:var(--f-d);font-size:var(--fs-xs);pointer-events:none;animation:up 1.6s ease-out forwards;text-shadow:0 1px 0 #000}
+@keyframes up{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-18px)}}
+.moneyBox{display:grid;justify-items:end}
+.moneyBox .lbl{font-size:var(--fs-xs);color:var(--dim)}
+.money{font-family:var(--f-d);font-size:var(--fs-lg);font-variant-numeric:tabular-nums}
+@media (max-width:560px){.stat .lb{display:none}.bar{width:70px}.stats{gap:6px var(--s3)}}
+
+.grid{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);grid-template-areas:'scene card' 'side card';gap:var(--s3) var(--s4);margin-top:var(--s3);align-items:start}
+.gScene{grid-area:scene;display:grid;gap:var(--s2);min-width:0}
+.gCard{grid-area:card;min-width:0}
+.gSide{grid-area:side;display:grid;gap:var(--s3);min-width:0}
+.timeline{position:relative;height:32px;margin:var(--s1) 2px 0}
+.timeline .track{position:absolute;left:0;right:0;top:9px;height:8px;background:#0b0818;border:1px solid var(--line)}
+.timeline .fill{position:absolute;left:0;top:9px;height:8px;background:var(--accent);transition:width .7s}
+.timeline .dot{position:absolute;top:6px;width:3px;height:14px;background:var(--ink);opacity:.6;transform:translateX(-1px)}
+.timeline .me{position:absolute;top:0;width:14px;height:20px;transform:translateX(-7px);transition:left .7s;image-rendering:pixelated}
+.timeline .ticks{position:absolute;left:0;right:0;top:21px;display:flex;justify-content:space-between;font-family:var(--f-px);font-size:10px;color:var(--dim)}
+.toolbar{display:flex;flex-wrap:wrap;gap:var(--s2);align-items:center}
+.toolbar .sp{flex:1}
+.storyP{padding:var(--s3);min-height:0;overflow:auto}
+.story .mo,.moments .mo{display:grid;grid-template-columns:54px 1fr;gap:var(--s2);padding:5px 0;border-bottom:1px dashed var(--line);font-size:var(--fs-sm)}
+.mo .a{font-family:var(--f-d);font-size:var(--fs-xs);color:var(--warn);padding-top:1px;font-variant-numeric:tabular-nums}
+
+.meP{padding:var(--s3)}
+.me{display:flex;gap:var(--s3);align-items:center}
+.me canvas{width:80px;height:72px;flex:none;image-rendering:pixelated;border:2px solid var(--line2);border-radius:var(--r);background:#000}
+.me .mood{font-size:var(--fs-sm);color:var(--mute);display:grid;gap:2px}
+.goalLine{margin-top:var(--s2);font-size:var(--fs-sm);display:flex;gap:6px;align-items:center;color:var(--mute)}
+.goalLine.ok{color:var(--good)}
+.tabsP{padding:var(--s3)}
+.tabs{display:flex;gap:var(--s1);margin-bottom:var(--s3);border-bottom:2px solid var(--line)}
+.tab{flex:1;display:flex;gap:6px;justify-content:center;align-items:center;padding:6px 4px;border:0;background:none;color:var(--dim);font-size:var(--fs-sm);font-family:var(--f-d);border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab[aria-selected="true"]{color:var(--ink);border-color:var(--accent)}
+.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.kv .c{background:var(--bg2);border-radius:var(--r);padding:6px 10px}
+.kv .k{font-size:var(--fs-xs);color:var(--mute)}
+.kv .v{font-family:var(--f-d);font-variant-numeric:tabular-nums}
+.kv .full{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center}
+.neg{color:var(--bad)} .pos{color:var(--good)}
+.fm{display:flex;justify-content:space-between;gap:var(--s2);font-size:var(--fs-sm);padding:6px 0;border-bottom:1px dashed var(--line)}
 .fm:last-child{border-bottom:0}
-.fm .r{color:var(--mute);font-size:12.5px;text-align:right}
-.tagx{display:inline-block;font-size:11.5px;padding:1px 7px;border-radius:5px;background:#ff5f8f22;color:#ff9db8;margin:2px 3px 0 0}
-.tagx.ok{background:#53e0ae22;color:var(--mint)}
+.fm .r{color:var(--mute);text-align:right}
+.tagx{display:inline-block;font-size:var(--fs-xs);padding:1px 7px;border-radius:var(--r);background:#ff6b8522;color:#ffb3c1;margin:2px 3px 0 0}
+.tagx.ok{background:#53e0ae22;color:var(--good)}
 
-.card{position:relative;background:var(--panel);border:2px solid var(--line);border-radius:16px;padding:16px;min-height:320px;overflow:hidden}
-.card::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--cardc,var(--coral))}
-.kicker{font-size:12.5px;color:var(--mute);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.kicker .tg{color:var(--cardc,var(--coral));font-family:Mitr}
-.evIcon{font-size:30px;line-height:1;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:#0004;border:2px solid var(--line);border-radius:12px;flex:none}
-.evHead{display:flex;gap:12px;align-items:center;margin:12px 0 6px}
-.evHead h2{font-size:22px;margin:0;line-height:1.3}
-.outcome{margin:10px 0 4px;background:#140f2a;border-left:4px solid var(--mint);border-radius:9px;padding:9px 12px;font-size:14px;line-height:1.55;animation:fadeIn .4s}
-.feed{margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);display:grid;gap:2px}
-.feed div{font-size:12.5px;color:var(--mute);animation:fadeIn .5s both}
-.feed .a{font-family:Silkscreen;font-size:10px;color:var(--sun);margin-right:6px}
-.skip{display:block;color:var(--dim);font-size:12px;margin-top:4px}
-.banner{margin:10px 0 0;background:linear-gradient(90deg,#4a1d2e,#2b1a3d);border:2px solid var(--rose);border-radius:9px;padding:8px 12px;font-family:Mitr;font-size:14px;animation:pulse 1.6s ease-in-out 2}
-@keyframes pulse{50%{box-shadow:0 0 0 4px #ff5f8f33}}
-.desc{color:#dcd4f7;line-height:1.6;margin:4px 0 12px}
-.choices{display:grid;gap:8px}
-.ch{display:flex;gap:10px;align-items:flex-start;text-align:left;width:100%;background:var(--panel2);border:2px solid var(--line);border-radius:11px;padding:10px 12px;transition:transform .08s,border-color .15s,background .15s;animation:fadeIn .35s both}
-.ch:hover:not(:disabled){border-color:var(--sun);transform:translateX(3px);background:#31275e}
-.ch:disabled{opacity:.42;cursor:not-allowed}
-.ch .n{font-family:Silkscreen;font-size:11px;color:var(--dim);margin-top:3px;min-width:12px}
-.ch .body{flex:1;min-width:0}
-.ch .t{font-family:Mitr;font-size:16px}
-.ch .d{font-size:12.5px;color:var(--mute);margin-top:2px;line-height:1.45}
-.chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
-.chip{font-size:11.5px;padding:1px 6px;border-radius:4px;background:#00000040;white-space:nowrap}
-.chip.p{color:var(--mint)} .chip.m{color:var(--rose)} .chip.c{color:var(--sun)} .chip.l{color:var(--lilac)} .chip.x{color:#ff9d9d}
-.ch .cost{font-family:Silkscreen;font-size:12px;color:var(--sun);white-space:nowrap;margin-top:3px}
-.lockedBox{margin-top:10px}.lockedBox summary{cursor:pointer;color:var(--mute);font-size:13.5px;padding:8px 2px}.lockedBox .choices{margin-top:6px}
+/* ---------- card ---------- */
+.card{position:relative;padding:var(--s4);min-height:320px;overflow:hidden}
+.card::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:var(--cardc,var(--accent))}
+.kicker{font-size:var(--fs-sm);color:var(--mute);display:flex;gap:var(--s2);align-items:center;flex-wrap:wrap}
+.kicker .tg{color:var(--ink);font-family:var(--f-d)}
+.banner{margin-top:var(--s3);background:#3a1726;border:2px solid var(--bad);border-radius:var(--r);padding:6px 12px;font-family:var(--f-d);font-size:var(--fs-sm);display:flex;gap:var(--s2);align-items:center}
+.evT{font-size:var(--fs-xl);margin:var(--s3) 0 var(--s2)}
+.desc{color:var(--mute);margin:0 0 var(--s3)}
+.choices{display:grid;gap:var(--s2)}
+.ch{display:grid;grid-template-columns:28px 1fr auto;gap:var(--s3);align-items:start;text-align:left;width:100%;background:var(--panel2);border:2px solid var(--line);border-radius:var(--r);padding:10px 12px;box-shadow:0 3px 0 #090614;transition:transform .08s,border-color .15s,background .15s;animation:fadeIn .3s both}
+.ch:hover:not(:disabled){border-color:var(--warn);background:var(--raise);transform:translateY(-1px)}
+.ch:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 #090614}
+.ch:disabled{opacity:.45;cursor:not-allowed}
+.ch .n{font-family:var(--f-px);font-size:var(--fs-xs);color:var(--ink);background:var(--bg2);border:2px solid var(--line2);height:24px;display:grid;place-items:center;border-radius:2px}
+.ch .t{font-family:var(--f-d);font-size:var(--fs-md)}
+.ch .d{font-size:var(--fs-xs);color:var(--mute);margin-top:2px}
+.chips{display:flex;flex-wrap:wrap;gap:var(--s1);margin-top:6px}
+.chip{display:inline-flex;gap:3px;align-items:center;font-size:var(--fs-xs);padding:1px 6px;border-radius:2px;background:#0006;white-space:nowrap}
+.chip.p{color:var(--good)} .chip.m{color:var(--bad)} .chip.c{color:var(--warn)} .chip.l{color:var(--mute)} .chip.x{color:#ffb3c1}
+.ch .cost{font-family:var(--f-d);font-size:var(--fs-sm);color:var(--warn);white-space:nowrap;font-variant-numeric:tabular-nums}
+.lockedBox summary{cursor:pointer;color:var(--mute);font-size:var(--fs-sm);padding:var(--s2) 2px}
+.lockedBox .choices{margin-top:var(--s1)}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-/* birth */
-.birthBig{font-family:Mitr;font-size:26px;margin:6px 0 12px}
-.bgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-@media (max-width:520px){.bgrid{grid-template-columns:1fr 1fr}}
-.bcell{background:var(--bg2);border:2px solid var(--line);border-radius:10px;padding:8px 10px;animation:pop .5s both}
-.bcell .k{font-size:11.5px;color:var(--mute)} .bcell .v{font-family:Mitr;font-size:16px;margin-top:2px}
-.bcell .s{font-size:11px;color:var(--dim)}
-@keyframes pop{0%{opacity:0;transform:scale(.85)}70%{transform:scale(1.04)}100%{opacity:1;transform:none}}
-.classBars{display:flex;gap:6px;align-items:flex-end;height:122px;background:var(--bg2);border:2px solid var(--line);border-radius:10px;padding:10px 10px 6px;margin-top:8px}
-.cb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end}
-.cb .pct{font-family:Silkscreen;font-size:9.5px;color:var(--dim)}
-.cb .col{width:100%;max-width:34px;background:#3a3170;border-radius:3px 3px 0 0;animation:grow .8s both;transform-origin:bottom}
-@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
-.cb.on .col{background:var(--sun);box-shadow:0 0 14px #ffd16688}
-.cb.on .pct{color:var(--sun)}
-.cb .lb{font-size:10.5px;color:var(--mute);text-align:center;line-height:1.1;height:24px}
-.cb.on .lb{color:var(--ink);font-weight:600}
-.fund{display:flex;align-items:center;gap:12px;background:#2a2148;border:2px solid #5b4a1e;border-radius:10px;padding:10px 12px;margin:10px 0}
-.fund .v{font-family:Silkscreen;font-size:22px;color:var(--sun)}
-.odds{font-size:13px;color:var(--mute);margin:6px 0 12px;line-height:1.55}
-.odds b{color:var(--sun)}
+/* result moment */
+.result{display:grid;gap:var(--s3);animation:fadeIn .35s both}
+.result .picked{font-size:var(--fs-sm);color:var(--dim)}
+.result .rt{font-size:var(--fs-xl);font-family:var(--f-d);line-height:1.4}
+.deltas{display:flex;flex-wrap:wrap;gap:var(--s2)}
+.dl{display:inline-flex;gap:6px;align-items:center;padding:4px 10px;border-radius:var(--r);background:var(--bg2);border:2px solid var(--line);font-family:var(--f-d);font-size:var(--fs-sm);animation:pop .4s both}
+.dl.p{border-color:#53e0ae66;color:var(--good)} .dl.m{border-color:#ff6b8566;color:var(--bad)}
+@keyframes pop{0%{opacity:0;transform:scale(.8)}70%{transform:scale(1.06)}100%{opacity:1;transform:none}}
+.years{background:var(--bg2);border-radius:var(--r);padding:var(--s3)}
+.years .yh{font-family:var(--f-d);font-size:var(--fs-sm);color:var(--mute);margin-bottom:var(--s1);display:flex;gap:6px;align-items:center}
+.years .yl{display:grid;grid-template-columns:54px 1fr;gap:var(--s2);font-size:var(--fs-sm);padding:3px 0;animation:fadeIn .4s both}
+.years .yl .a{font-family:var(--f-d);font-size:var(--fs-xs);color:var(--warn)}
 
-/* summary */
-.sumHead{text-align:center;padding:22px 0 6px}
-.sumHead h1{font-size:clamp(26px,5vw,38px);margin:0}
-.epi{font-family:Mitr;color:var(--sun);font-size:17px;margin-top:8px}
-.arch{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;background:linear-gradient(135deg,#2d2160,#221a40);border:3px solid var(--sun);border-radius:18px;padding:18px;margin:16px 0;box-shadow:0 0 40px #ffd16622}
-@media (max-width:560px){.arch{grid-template-columns:1fr;text-align:center}}
-.arch .em{font-size:64px;width:112px;height:112px;display:flex;align-items:center;justify-content:center;background:#120e22;border-radius:16px;border:3px solid var(--line2);margin:0 auto;animation:pop .7s both}
-.arch .lbl{font-size:13px;color:var(--mute)}
-.arch h2{font-size:30px;margin:2px 0 6px;color:var(--sun)}
-.arch p{margin:0;line-height:1.6;color:#e2dafb}
-.rare{display:inline-block;margin-top:8px;font-size:12.5px;background:#0006;padding:3px 8px;border-radius:5px;color:var(--lilac)}
-.paper{background:#f3ead7;color:#2b2418;border-radius:6px;padding:18px 22px;font-family:Trirong,serif;box-shadow:0 8px 0 #0a0716,0 18px 40px #0008;margin-top:16px}
-.paper .mast{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px double #2b2418;padding-bottom:6px;margin-bottom:10px;gap:8px;flex-wrap:wrap}
-.paper .mast b{font-size:24px;font-weight:700;letter-spacing:.5px}
-.paper .mast span{font-size:12.5px}
+/* birth */
+.bgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s2)}
+@media (max-width:520px){.bgrid{grid-template-columns:1fr 1fr}}
+.bcell{background:var(--bg2);border:2px solid var(--line);border-radius:var(--r);padding:var(--s2) var(--s3);animation:pop .5s both}
+.bcell .k{font-size:var(--fs-xs);color:var(--mute);display:flex;gap:6px;align-items:center}
+.bcell .v{font-family:var(--f-d);font-size:var(--fs-md)}
+.bcell .s{font-size:var(--fs-xs);color:var(--dim)}
+.classBars{display:flex;gap:6px;align-items:flex-end;height:124px;background:var(--bg2);border:2px solid var(--line);border-radius:var(--r);padding:10px 10px 6px;margin-top:var(--s2)}
+.cb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end}
+.cb .pct{font-family:var(--f-px);font-size:10px;color:var(--dim)}
+.cb .col{width:100%;max-width:34px;background:#3a3170;animation:grow .8s both;transform-origin:bottom}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.cb.on .col{background:var(--warn)} .cb.on .pct,.cb.on .lb{color:var(--ink);font-weight:600}
+.cb .lb{font-size:11px;color:var(--mute);text-align:center;line-height:1.15;height:26px}
+.fund{display:flex;align-items:center;gap:var(--s3);background:var(--bg2);border:2px solid #5b4a1e;border-radius:var(--r);padding:var(--s2) var(--s3);margin:var(--s3) 0}
+.fund .v{font-family:var(--f-d);font-size:var(--fs-xl);color:var(--warn);font-variant-numeric:tabular-nums}
+
+/* dialogs */
+dialog{background:var(--panel);color:var(--ink);border:2px solid var(--line2);border-radius:var(--r);box-shadow:var(--sh);max-width:560px;width:calc(100% - 32px);padding:var(--s4)}
+dialog::backdrop{background:#000b}
+dialog h3{font-size:var(--fs-lg);margin-bottom:var(--s3);display:flex;gap:var(--s2);align-items:center}
+.dlgFoot{display:flex;justify-content:flex-end;gap:var(--s2);margin-top:var(--s4)}
+.dots{display:flex;gap:6px;margin-right:auto;align-items:center}
+.dots i{width:8px;height:8px;background:var(--line2)} .dots i.on{background:var(--accent)}
+.tut p{margin:0 0 var(--s2);color:var(--mute)}
+.tutList{display:grid;gap:var(--s2)}
+.tutList div{display:grid;grid-template-columns:auto 1fr;gap:var(--s2);align-items:start;font-size:var(--fs-sm)}
+.tutList b{font-family:var(--f-d);font-weight:500;color:var(--ink)}
+.setRow{display:flex;justify-content:space-between;align-items:center;gap:var(--s3);padding:var(--s2) 0;border-bottom:1px dashed var(--line)}
+.setRow small{display:block;color:var(--dim);font-size:var(--fs-xs)}
+.setRow input[type=checkbox]{width:20px;height:20px;accent-color:var(--accent)}
+.setRow input[type=range]{accent-color:var(--accent)}
+.setRow select{background:var(--bg2);border:2px solid var(--line);border-radius:var(--r);padding:4px 8px}
+
+/* ---------- summary ---------- */
+.rv{animation:fadeIn .6s both}
+.sumHead{text-align:center;display:grid;gap:var(--s2);justify-items:center;padding-top:var(--s4)}
+.sumHead .frame{max-width:460px}
+.sumHead h1{font-size:clamp(26px,5vw,38px)}
+.epi{font-family:var(--f-d);color:var(--warn);font-size:var(--fs-lg)}
+.arch{display:grid;grid-template-columns:auto 1fr;gap:var(--s5);align-items:center;padding:var(--s5);margin-top:var(--s5);border-color:var(--warn)}
+@media (max-width:560px){.arch{grid-template-columns:1fr;text-align:center;justify-items:center}}
+.arch .em{width:112px;height:112px;display:grid;place-items:center;background:var(--bg);border:2px solid var(--line2);border-radius:var(--r)}
+.arch .lbl{font-size:var(--fs-sm);color:var(--mute)}
+.arch h2{font-size:var(--fs-2xl);color:var(--warn);margin:2px 0 var(--s2)}
+.arch p{margin:0;color:var(--mute);max-width:62ch}
+.rare{display:inline-block;margin-top:var(--s2);font-size:var(--fs-xs);background:#0006;padding:3px 8px;border-radius:var(--r);color:var(--mute)}
+.paper{background:#f3ead7;color:#2b2418;border-radius:var(--r);padding:var(--s4) var(--s5);font-family:Trirong,serif;box-shadow:var(--sh);margin-top:var(--s4)}
+.paper .mast{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px double #2b2418;padding-bottom:6px;margin-bottom:var(--s3);gap:var(--s2);flex-wrap:wrap}
+.paper .mast b{font-size:24px}
 .paper h3{font-family:Trirong,serif;font-size:21px;margin:0 0 6px;font-weight:700}
-.paper p{margin:0;line-height:1.75;font-size:15.5px}
-.paper .q{margin-top:10px;font-style:italic;color:#6a5638}
-.goalRes{display:flex;align-items:center;gap:12px;border-radius:12px;padding:12px 14px;margin-top:14px;font-family:Mitr}
-.goalRes.ok{background:#173a30;border:2px solid var(--mint)} .goalRes.no{background:#3a1726;border:2px solid var(--rose)}
-.goalRes .e{font-size:30px}
-.sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
-@media (max-width:720px){.sgrid{grid-template-columns:repeat(2,1fr)}}
-.sbox{background:var(--panel);border:2px solid var(--line);border-radius:11px;padding:10px 12px}
-.sbox .k{font-size:12px;color:var(--mute)} .sbox .v{font-family:Mitr;font-size:18px;margin-top:3px}
-.sec{margin-top:20px}
-.sec h3{font-size:18px;margin:0 0 10px}
-.badges{display:flex;flex-wrap:wrap;gap:8px}
-.badge{background:var(--panel);border:2px solid var(--line);border-radius:999px;padding:5px 12px 5px 8px;font-size:13px;display:flex;gap:6px;align-items:center;animation:pop .5s both}
-.cmp{display:grid;gap:9px}
-.cmpRow{display:grid;grid-template-columns:150px 1fr 70px;gap:10px;align-items:center;font-size:13.5px}
-@media (max-width:520px){.cmpRow{grid-template-columns:100px 1fr 54px}}
-.cmpBar{height:12px;background:#0d0a1c;border:1px solid var(--line);border-radius:6px;overflow:hidden}
-.cmpBar i{display:block;height:100%;background:linear-gradient(90deg,var(--lilac),var(--sun));width:0;transition:width 1.1s}
-.cmpRow .pc{font-family:Silkscreen;font-size:12px;text-align:right}
-.insight{background:#140f2a;border-radius:11px;padding:12px 14px;line-height:1.65;font-size:14px;margin-top:10px}
-.insight b{color:var(--sun)}
+.paper p{margin:0;line-height:1.75;font-size:15.5px;max-width:75ch}
+.paper .q{margin-top:var(--s3);font-style:italic;color:#6a5638}
+.goalRes{display:flex;align-items:center;gap:var(--s3);padding:var(--s3) var(--s4);margin-top:var(--s4);font-family:var(--f-d)}
+.goalRes.ok{border-color:var(--good)} .goalRes.no{border-color:var(--bad)}
+.sgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s3);margin-top:var(--s4)}
+@media (max-width:720px){.sgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.sbox{padding:var(--s2) var(--s3)}
+.sbox .k{font-size:var(--fs-xs);color:var(--mute)} .sbox .v{font-family:var(--f-d);font-size:var(--fs-lg);font-variant-numeric:tabular-nums}
+.sec{margin-top:var(--s5)}
+.sec h3{font-size:var(--fs-lg);margin-bottom:var(--s3);display:flex;gap:var(--s2);align-items:center}
+.badges{display:flex;flex-wrap:wrap;gap:var(--s2)}
+.badge{padding:4px 12px 4px 8px;font-size:var(--fs-sm);display:flex;gap:6px;align-items:center;animation:pop .5s both}
+.cmp{display:grid;gap:var(--s2)}
+.cmpRow{display:grid;grid-template-columns:150px 1fr 54px;gap:var(--s3);align-items:center;font-size:var(--fs-sm)}
+@media (max-width:520px){.cmpRow{grid-template-columns:100px 1fr 44px}}
+.cmpBar{height:12px;background:#0b0818;border:1px solid var(--line);overflow:hidden}
+.cmpBar i{display:block;height:100%;background:var(--accent);width:0;transition:width 1.1s}
+.cmpRow .pc{font-family:var(--f-d);text-align:right;font-variant-numeric:tabular-nums}
+.insight{background:var(--bg2);border-radius:var(--r);padding:var(--s3) var(--s4);font-size:var(--fs-sm);margin-top:var(--s3)}
+.insight b{color:var(--warn)}
 .tblWrap{overflow-x:auto}
-.clsTable{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px;min-width:420px}
+.clsTable{width:100%;border-collapse:collapse;font-size:var(--fs-sm);margin-top:var(--s2);min-width:420px;font-variant-numeric:tabular-nums}
 .clsTable td,.clsTable th{padding:6px 8px;border-bottom:1px dashed var(--line);text-align:left}
 .clsTable th{color:var(--mute);font-weight:600}
-.clsTable tr.me td{color:var(--sun)}
-#lifeChart{width:100%;height:230px;display:block;background:var(--panel);border:2px solid var(--line);border-radius:11px}
-.moments{max-height:340px;overflow:auto;background:var(--panel);border:2px solid var(--line);border-radius:11px;padding:6px 12px}
-.mo{display:grid;grid-template-columns:58px 1fr;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
-.mo .a{font-family:Silkscreen;font-size:11px;color:var(--sun);padding-top:2px}
-.coll{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px}
-.ci{background:var(--panel);border:2px solid var(--line);border-radius:11px;padding:10px;text-align:center;font-size:12.5px}
-.ci .e{font-size:28px}
-.ci.lock{opacity:.42;filter:grayscale(1)}
-.ci.now{border-color:var(--sun)}
-.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:24px 0 40px}
+.clsTable tr.me td{color:var(--warn)}
+#lifeChart{width:100%;height:230px;display:block}
+.moments{max-height:340px;overflow:auto;padding:var(--s2) var(--s3)}
+.coll{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:var(--s2)}
+.ci{padding:var(--s3) var(--s2);text-align:center;font-size:var(--fs-xs);display:grid;gap:var(--s1);justify-items:center}
+.ci.lock{opacity:.4;filter:grayscale(1)}
+.ci.now{border-color:var(--warn)}
+.actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s3);margin:var(--s5) 0 var(--s2)}
 @media (max-width:620px){.actions{grid-template-columns:1fr}}
-.actions .big.alt{background:var(--mint);box-shadow:0 5px 0 #2a8a68}
-.actions .big.alt2{background:var(--lilac);box-shadow:0 5px 0 #6a4cb0}
-.loading{color:var(--mute);font-size:13.5px}
-dialog{background:var(--panel);color:var(--ink);border:2px solid var(--line2);border-radius:14px;max-width:580px;width:calc(100% - 32px);padding:16px}
-dialog::backdrop{background:#000b}
-dialog h3{margin:0 0 10px}
-.kbd{font-family:Silkscreen;font-size:10px;border:1px solid var(--line2);padding:0 4px;border-radius:3px;color:var(--dim)}
 
-/* ---------- full-screen layout ---------- */
-.meP .me{display:flex;gap:12px;align-items:center}
-.me canvas{width:84px;height:76px;flex:none;image-rendering:pixelated;border-radius:12px;border:2px solid var(--line2);background:#000}
-.me .mitr{font-size:16px}
-.me .small{color:var(--mute);margin-top:2px;line-height:1.45}
-.story{display:grid;gap:0}
-.story .mo{grid-template-columns:52px 1fr;font-size:13px}
-.storyP{max-height:260px;overflow:auto}
-@media (max-width:1023px){.storyP{display:none}}
-.storyP h4,.panelS h4{position:sticky;top:-12px;background:var(--panel);padding:2px 0 6px;margin:0 0 4px;z-index:1}
+/* ---------- full-screen desktop ---------- */
 @media (min-width:1024px){
-  #game.wrap{max-width:none;height:100vh;height:100dvh;display:flex;flex-direction:column;gap:12px;padding-block:12px;overflow:hidden}
-  #game .grid{flex:1;min-height:0;margin-top:0;grid-template-columns:clamp(260px,21vw,320px) minmax(0,1fr) clamp(360px,30vw,480px);grid-template-areas:'side scene card';grid-template-rows:minmax(0,1fr);gap:12px;align-items:stretch}
-  #game .gSide,#game .gCard{min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
-  #game .gSide .panelS:first-child{margin-top:0}
-  #game .gScene{display:flex;flex-direction:column;min-height:0}
-  #game .gScene .frame{flex:none;max-height:calc(100dvh - 300px);aspect-ratio:16/9;width:100%}
-  #game .gScene .frame canvas{height:100%;width:100%;object-fit:contain;aspect-ratio:auto}
-  #game .storyP{flex:1;min-height:90px;max-height:none}
+  #game.wrap{max-width:none;height:100vh;height:100dvh;display:flex;flex-direction:column;gap:var(--s3);padding-block:var(--s3);overflow:hidden}
+  #game .grid{flex:1;min-height:0;margin-top:0;grid-template-columns:clamp(270px,21vw,330px) minmax(0,1fr) clamp(370px,30vw,480px);grid-template-areas:'side scene card';grid-template-rows:minmax(0,1fr);gap:var(--s3);align-items:stretch}
+  #game .gSide,#game .gCard{min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--line2) transparent;align-content:start}
+  #game .gScene{grid-template-rows:auto auto auto minmax(0,1fr);min-height:0}
+  #game .gScene .frame{max-height:calc(100dvh - 330px)}
   #game .card{min-height:100%}
-  #game .assets{grid-template-columns:1fr 1fr}
-  #game .flow{grid-template-columns:1fr}
-  #game .flow .asset{display:flex;justify-content:space-between;align-items:center}
-  #title.wrap{max-width:none;padding-block:28px}
-  .titleBox{max-width:1320px;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(360px,1fr);grid-template-areas:'hero hero' 'frame form' 'feat past';gap:22px 40px;text-align:left;align-items:start}
+  #title.wrap{max-width:none}
+  .titleBox{max-width:1320px;grid-template-columns:minmax(0,1.4fr) minmax(360px,1fr);grid-template-areas:'hero hero' 'frame form' 'feat past';gap:var(--s5) 40px;text-align:left;align-items:start}
   .tHero{grid-area:hero;text-align:center}
   .tFrame{grid-area:frame}
-  .titleBox .form{grid-area:form;margin:0;max-width:none;align-self:center}
-  .titleBox .features{grid-area:feat;margin:0}
-  .titleBox .pastLives{grid-area:past;margin:0}
-  #summary.wrap{max-width:1320px}
+  .titleBox .form{grid-area:form;align-self:center}
+  .titleBox .features{grid-area:feat}
+  .titleBox .pastLives{grid-area:past}
+  #summary.wrap{max-width:1240px}
 }
+/* ---------- phone / tablet: sticky scene ---------- */
+@media (max-width:1023px){
+  .grid{grid-template-columns:1fr;grid-template-areas:'scene' 'tl' 'tb' 'card' 'side'}
+  .gScene{display:contents}
+  .gScene .frame{grid-area:scene;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+  .gScene .timeline{grid-area:tl}
+  .gScene .toolbar{grid-area:tb}
+  .storyP{display:none}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+body.rm *,body.rm *::before,body.rm *::after{animation:none!important;transition:none!important}
 </style>
 </head>
 <body>
 
-<!-- ===================== TITLE ===================== -->
 <section id="title" class="wrap">
   <div class="titleBox">
-    <div class="tHero"><div class="small px">THAI · LIFE · SIMULATOR</div>
-    <div class="logo">เกิดมาเป็นใคร?</div>
-    <p class="tag">คุณคือ 1 ใน 65.9 ล้านคน — เกิดที่ไหน ฐานะแบบไหน คุณเลือกไม่ได้<br>แต่ทางที่เดินต่อจากนั้น คุณเลือกเองทั้งหมด</p></div>
-    <div class="frame tFrame"><canvas id="titleCanvas" width="192" height="108"></canvas></div>
-    <div class="form">
-      <div><label for="inName">ชื่อเล่น (เว้นว่างไว้ให้สุ่ม)</label><input id="inName" maxlength="14" placeholder="เช่น โอ๊ต, มิ้นท์, บอส"></div>
-      <div><label for="inSeed">รหัสชาติกำเนิด (ใส่รหัสของเพื่อนเพื่อเกิดแบบเดียวกัน)</label><input id="inSeed" inputmode="numeric" maxlength="9" placeholder="เว้นว่างไว้ = สุ่มใหม่"></div>
-      <button class="big alt" id="btnResume" style="background:var(--mint);box-shadow:0 5px 0 #2a8a68" hidden></button>
-      <button class="big" id="btnStart">🎲 สุ่มเกิด!</button>
-      <div class="row" style="justify-content:center"><button class="ghost" id="btnColl">🗂 คอลเลกชันประเภทคน</button></div>
-      <div class="small" style="text-align:center">กดเลข <span class="kbd">1</span>–<span class="kbd">9</span> เพื่อเลือกตัวเลือกได้</div>
+    <div class="tHero">
+      <div class="eyebrow">THAI · LIFE · SIMULATOR</div>
+      <h1 class="logo">เกิดมาเป็นใคร?</h1>
+      <p class="tag">คุณคือ 1 ใน 65.9 ล้านคน เกิดที่ไหน ฐานะแบบไหน คุณเลือกไม่ได้<br>แต่ทางที่เดินต่อจากนั้น คุณเลือกเองทั้งหมด</p>
     </div>
-    <div class="features">
-      <div class="feat"><b>💸 เงินแบบของจริง</b>ภาษี ประกันสังคม กองทุน หนี้บัตร ดอกเบี้ย</div>
-      <div class="feat"><b>👨‍👩‍👧 ครอบครัวมีชีวิต</b>พ่อแม่แก่ลง คู่ชีวิตมีงาน ลูกโตขึ้น มรดก</div>
-      <div class="feat"><b>🩺 สุขภาพสะสม</b>นิสัยวันนี้ กลายเป็นโรคในวันหน้า</div>
-      <div class="feat"><b>🪖 ชีวิตแบบไทยๆ</b>เกณฑ์ทหาร ซองงานแต่ง ค้ำประกัน หวย</div>
-      <div class="feat"><b>🎯 ความฝัน</b>ตั้งเป้าตอนวัยรุ่น แล้วดูว่าทำได้ไหม</div>
-      <div class="feat"><b>📊 เทียบ 400 ชีวิต</b>ดูว่าชาติกำเนิดหรือทางเลือกที่สำคัญกว่า</div>
+    <div class="frame tFrame" id="titleFrame"><canvas id="titleCanvas" width="192" height="108" role="img" aria-label="ภาพตัวอย่างชีวิตตั้งแต่เกิดจนแก่"></canvas></div>
+    <div class="form pnl">
+      <div><label for="inName">ชื่อเล่น (เว้นว่างไว้ให้สุ่ม)</label><input id="inName" maxlength="14" placeholder="เช่น โอ๊ต, มิ้นท์, บอส" autocomplete="off"></div>
+      <div><label for="inSeed">รหัสชาติกำเนิด (ใส่รหัสของเพื่อนเพื่อเกิดแบบเดียวกัน)</label><input id="inSeed" inputmode="numeric" maxlength="9" placeholder="เว้นว่าง = สุ่มใหม่" autocomplete="off"></div>
+      <button class="big good" id="btnResume" hidden></button>
+      <button class="big" id="btnStart" data-ic="dice">สุ่มเกิด!</button>
+      <div class="row" style="justify-content:center">
+        <button class="ghost" id="btnColl" data-ic="medal">คอลเลกชันประเภทคน</button>
+        <button class="ghost" id="btnHelp0" data-ic="help">วิธีเล่น</button>
+        <button class="ghost" id="btnSet0" data-ic="gear">ตั้งค่า</button>
+      </div>
+      <div class="small" style="text-align:center">กดเลข <span class="kbd">1</span>–<span class="kbd">9</span> เพื่อเลือก · <span class="kbd">Enter</span> เพื่อไปต่อ</div>
     </div>
+    <div class="features" id="features"></div>
     <div id="pastLives" class="pastLives"></div>
   </div>
 </section>
 
-<!-- ===================== GAME ===================== -->
 <section id="game" class="wrap hidden">
-  <header class="topbar">
+  <header class="topbar pnl">
     <div class="who">
       <div class="nm"><span id="gName"></span><span class="ageChip" id="gAge"></span><span class="stageChip" id="gStage"></span></div>
       <div class="sub" id="gSub"></div>
-      <div class="goalChip" id="gGoal"></div>
     </div>
     <div class="stats" id="gStats"></div>
-    <div class="moneyBox"><span class="small">เงินสด</span><span class="money" id="gMoney"></span></div>
+    <div class="moneyBox"><span class="lbl">ทรัพย์สินสุทธิ</span><span class="money" id="gNW"></span></div>
   </header>
   <main class="grid">
     <div class="gScene">
-      <div class="frame"><canvas id="scene" width="192" height="108"></canvas><div class="cap" id="gCap"></div><div class="cap capR" id="gTod"></div></div>
-      <div class="timeline" id="gTl"></div>
-      <div class="row" style="justify-content:space-between;margin-top:8px">
-        <div class="row"><button class="ghost" id="btnSound">🔊 เสียง</button><button class="ghost" id="btnLog">📜 บันทึกชีวิต</button></div>
-        <span class="small"><span id="gSeed"></span> · 💾 บันทึกอัตโนมัติ · <a href="#" id="btnHome" style="color:var(--mute)">กลับหน้าแรก</a></span>
+      <div class="frame" id="sceneFrame"><canvas id="scene" width="192" height="108" role="img" aria-label=""></canvas><div class="cap" id="gCap"></div><div class="cap capR" id="gTod"></div></div>
+      <div class="timeline" id="gTl" aria-hidden="true"></div>
+      <div class="toolbar">
+        <button class="ghost" id="btnLog" data-ic="scroll">บันทึกชีวิต</button>
+        <button class="ghost" id="btnHelp" data-ic="help">วิธีเล่น</button>
+        <button class="ghost" id="btnSet" data-ic="gear">ตั้งค่า</button>
+        <span class="sp"></span>
+        <span class="small" id="gSeed"></span>
+        <button class="ghost" id="btnHome" data-ic="homeA">หน้าแรก</button>
       </div>
-      <div class="panelS storyP"><h4>📖 เรื่องราวที่ผ่านมา</h4><div id="gStory" class="story"></div></div>
+      <div class="pnl storyP"><h4 id="storyH">เรื่องราวที่ผ่านมา</h4><div id="gStory" class="story"></div></div>
     </div>
-    <div class="gSide">
-      <div class="panelS meP"><div class="me"><canvas id="gAvatar" width="20" height="18" aria-label="รูปตัวละคร"></canvas><div><div class="mitr" id="gMeName"></div><div class="small" id="gMood"></div><div class="small" id="gTraits"></div></div></div></div>
-      <div class="panelS"><h4>💰 ทรัพย์สิน</h4><div class="assets" id="gAssets"></div><div class="flow" id="gFlow"></div></div>
-      <div class="panelS"><h4>👨‍👩‍👧 ครอบครัว & สุขภาพ</h4><div class="fam" id="gFam"></div></div>
-    </div>
-    <div class="gCard"><div class="card" id="card"></div></div>
+    <aside class="gSide" aria-label="ข้อมูลตัวละคร">
+      <div class="pnl meP"><div class="me"><canvas id="gAvatar" width="20" height="18" role="img" aria-label="รูปตัวละคร"></canvas><div class="mood" id="gMood"></div></div><div class="goalLine" id="gGoal"></div></div>
+      <div class="pnl tabsP"><div class="tabs" role="tablist" id="tabs"></div><div id="tabBody" role="tabpanel"></div></div>
+    </aside>
+    <div class="gCard"><div class="card pnl" id="card" aria-live="polite"></div></div>
   </main>
 </section>
 
-<!-- ===================== SUMMARY ===================== -->
 <section id="summary" class="wrap hidden"></section>
-<dialog id="dlg"><div id="dlgBody"></div><div class="row" style="justify-content:flex-end;margin-top:12px"><button class="ghost" onclick="dlg.close()">ปิด</button></div></dialog>
+<dialog id="dlg" aria-labelledby="dlgTitle"><div id="dlgBody"></div><div class="dlgFoot" id="dlgFoot"><button class="ghost" id="dlgClose">ปิด</button></div></dialog>
 
 <script>
 "use strict";
@@ -320,7 +363,7 @@ function gauss(r){let u=0,v=0;while(!u)u=r();while(!v)v=r();return Math.sqrt(-2*
 function wpick(r,arr,wf){const ws=arr.map(wf);const tot=ws.reduce((a,b)=>a+b,0);if(tot<=0)return null;let x=r()*tot;for(let i=0;i<arr.length;i++){x-=ws[i];if(x<=0)return arr[i]}return arr[arr.length-1]}
 function pick(r,arr){return arr[Math.floor(r()*arr.length)]}
 function fmt(n){return Math.round(n).toLocaleString('th-TH')}
-function fk(n){const a=Math.abs(n),sg=n<0?'-':'';if(a>=1e6)return sg+(a/1e6).toFixed(a>=1e7?0:1).replace(/\.0$/,'')+' ล้าน';if(a>=1e3)return sg+Math.round(a/1e3)+'K';return sg+Math.round(a)}
+function fk(n){const a=Math.abs(n),sg=n<0?'-':'';if(a>=1e9)return sg+(a/1e9).toFixed(1).replace(/\.0$/,'')+' พันล้าน';if(a>=1e6)return sg+(a/1e6).toFixed(a>=1e7?0:1).replace(/\.0$/,'')+' ล้าน';if(a>=1e5)return sg+(a/1e5).toFixed(1).replace(/\.0$/,'')+' แสน';return sg+Math.round(a).toLocaleString('th-TH')}
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 
 /* =========================================================
@@ -1588,139 +1631,312 @@ const Scene={canvas:null,name:'home',s:null,px:-20,target:90,t:0,fade:0,
 };
 
 /* =========================================================
-   SOUND
+   PIXEL ICONS (replace emoji everywhere)
    ========================================================= */
-let AC=null,soundOn=store.get('blk_sound',true);
-function beep(f=520,d=.07,type='square',v=.04){if(!soundOn)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.value=v;g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}}
-function jingle(good){if(good){beep(523,.08);setTimeout(()=>beep(659,.08),80);setTimeout(()=>beep(784,.12),160)}else{beep(330,.1,'triangle');setTimeout(()=>beep(247,.18,'triangle'),110)}}
+const IPAL={r:'#ff5f7a',w:'#ffffff',y:'#ffd166',o:'#e09a2a',k:'#1d1a2e',b:'#5a8ad0',g:'#53e0ae',d:'#2a8a64',p:'#c38bff',n:'#8a5a30',s:'#b8b8c8',c:'#6cd8ff',e:'#7a7a90',q:'#ff9fbe'};
+function defIc(n,rows,pal){defSpr('i_'+n,Object.assign({},IPAL,pal||{}),rows)}
+defIc('heart',['.rr.rr.','rwrrrrr','rrrrrrr','rrrrrrr','.rrrrr.','..rrr..','...r...']);
+defIc('smile',['..yyyy..','.yyyyyy.','yykyykyy','yyyyyyyy','ykyyyyky','yykkkkyy','.yyyyyy.','..yyyy..']);
+defIc('book',['bbbb.bbbb','bwwwbwwwb','bwkkbkkwb','bwwwbwwwb','bwkkbkkwb','bwwwbwwwb','bbbbbbbbb']);
+defIc('people',['..g...g..','.ggg.ggg.','..g...g..','.........','.ggg.ggg.','ggggggggg','ggggggggg'],{g:'#53e0ae'});
+defIc('coin',['..oooo..','.oyyyyo.','oyywyyyo','oyyoyyyo','oyyoyyyo','oyyyyyyo','.oyyyyo.','..oooo..']);
+defIc('compass',['..bbbb..','.bwwwwb.','bwwwrwwb','bwwrrwwb','bwwkkwwb','bwwkwwwb','.bwwwwb.','..bbbb..']);
+defIc('ball',['..rrrr..','.rwwrrr.','rwwrrrrr','rrrrrrww','rrrrrwwr','.rrrrrr.','..rrrr..']);
+defIc('phones',['..pppp..','.p....p.','p......p','pp....pp','ppp..ppp','ppp..ppp','.p....p.']);
+defIc('cap',['....k....','..kkkkk..','kkkkkkkkk','..kkkkky.','..kkkkk.y','...kkk..y'],{k:'#2a2a3a'});
+defIc('case',['...nnn...','...n.n...','nnnnnnnnn','nnnnynnnn','kkkkkkkkk','nnnnnnnnn','nnnnnnnnn']);
+defIc('house',['....r....','...rrr...','..rrrrr..','.rrrrrrr.','rrrrrrrrr','.wwwwwww.','.wwnwwbw.','.wwnwwww.']);
+defIc('cross',['...rrr...','...rrr...','rrrrrrrrr','rrrrrrrrr','rrrrrrrrr','...rrr...','...rrr...']);
+defIc('news',['wwwwwwwww','wrrrrrrrw','wwwwwwwww','wkkkwkkkw','wwwwwwwww','wkkkwkkkw','wwwwwwwww']);
+defIc('star',['....y....','...yyy...','yyyyyyyyy','.yyyyyyy.','..yyyyy..','.yyy.yyy.','.yy...yy.']);
+defIc('devil',['y.......y','yy.rrr.yy','.rrrrrrr.','rrkrrrkrr','rrrrrrrrr','rrkkkkkrr','.rrrrrrr.']);
+defIc('clover',['.gg.gg.','ggggggg','.ggggg.','ggggggg','.gg.gg.','...d...','...d...']);
+defIc('sun',['o...o...o','.o.yyy.o.','..yyyyy..','oyyyyyyyo','..yyyyy..','.o.yyy.o.','o...o...o']);
+defIc('warn',['....y....','...yyy...','...yky...','..yykyy..','..yykyy..','.yyyyyyy.','.yyykyyy.','yyyyyyyyy']);
+defIc('lotus',['....q....','...qqq...','.q.qqq.q.','qqqqqqqqq','.qqqqqqq.','..ggggg..']);
+defIc('bottle',['...kk...','...ww...','..wwww..','.wbbbbw.','.wbwwbw.','.wbbbbw.','.wwwwww.']);
+defIc('bolt',['....yyy','...yyy.','..yyy..','.yyyyyy','...yyy.','..yy...','.y.....']);
+defIc('medal',['.bb.rr.','..brr..','...y...','..yyy..','.yyoyy.','.yyyyy.','..yyy..']);
+defIc('cup',['.s..s...','..s..s..','wwwwww..','wnnnnwww','wwwwww.w','wwwwwww.','.wwwww..']);
+defIc('helmet',['..ggggg..','.ggggggg.','ggggggggg','ggggggggg','ddddddddd','d.......d'],{g:'#6b8a3a',d:'#4a6a2a'});
+defIc('candle',['...y...','..yoy..','...y...','..www..','..www..','..www..','..www..','.ooooo.']);
+defIc('target',['..rrrr..','.rwwwwr.','rwrrrrwr','rwrwwrwr','rwrwwrwr','rwrrrrwr','.rwwwwr.','..rrrr..']);
+defIc('scroll',['nnnnnnnn','.wwwwww.','.wkkkkw.','.wwwwww.','.wkkkkw.','.wwwwww.','nnnnnnnn']);
+defIc('gear',['...ss...','.ssssss.','.ss..ss.','sss..sss','sss..sss','.ss..ss.','.ssssss.','...ss...']);
+defIc('help',['..wwww..','.ww..ww.','.....ww.','....ww..','...ww...','...ww...','........','...ww...']);
+defIc('homeA',['....w....','...www...','..wwwww..','.wwwwwww.','..ww.ww..','..ww.ww..','..wwwww..']);
+defIc('gem',['.ccccc.','cwcccwc','ccccccc','.ccccc.','..ccc..','...c...']);
+defIc('rain',['..ssss...','.ssssss..','ssssssss.','.........','.c..c..c.','c..c..c..']);
+defIc('plane',['....w....','....ww...','wwwwwwwww','.....ww..','....w....']);
+defIc('dice',['wwwwwww','wkwwwkw','wwwwwww','wwwkwww','wwwwwww','wkwwwkw','wwwwwww']);
+defIc('chart',['.......y.','.....b.y.','.g...b.y.','.g.g.b.y.','.g.g.b.y.','kkkkkkkkk'],{k:'#8a80b8'});
+defIc('hourglass',['yyyyyyy','.wwwww.','..www..','...w...','..wyw..','.wyyyw.','yyyyyyy']);
+defIc('palette',['..nnnnn..','.nnrnnnn.','nnnnnnbnn','nynnnnnnn','nnnn..nnn','.nnnnnnn.'],{n:'#d8b07a'});
+defIc('pin',['.rrr.','rrwrr','rrrrr','.rrr.','..r..']);
+defIc('fist',['.ww..','wwww.','wwwww','wwwww','.www.']);
+const ic=(()=>{const cache={};return (n,o={})=>{const key=n+'|'+JSON.stringify(o.pal||{});let u=cache[key];
+  if(!u){const S=SPR['i_'+n];if(!S)return '';const c=document.createElement('canvas');c.width=S.w;c.height=S.h;const prev=cx;cx=c.getContext('2d');spr('i_'+n,0,0,{pal:o.pal});cx=prev;u=cache[key]={url:c.toDataURL(),w:S.w,h:S.h,c}}
+  if(o.canvas)return u.c;
+  return `<img class="pi${o.cls?' '+o.cls:''}" src="${u.url}" alt="${o.alt||''}"${o.alt?'':' aria-hidden="true"'} style="aspect-ratio:${u.w}/${u.h}">`}})();
+const noEmo=t=>String(t==null?'':t).replace(/[\p{Extended_Pictographic}\u{1F1E6}-\u{1F1FF}️‍]/gu,'').replace(/\s{2,}/g,' ').trim();
+const baht=n=>(n<0?'-':'')+'฿'+fk(Math.abs(n));
+const STAT_UI=[['hp','heart','สุขภาพ'],['joy','smile','ความสุข'],['iq','book','สติปัญญา'],['soc','people','สังคม']];
+const TAG_IC={'ตัดสินใจหลัก':'compass','วัยเด็ก':'ball','วัยเตาะแตะ':'bottle','วัยรุ่น':'phones','มหาวิทยาลัย':'cap','การงาน':'case','ความรัก':['heart',{r:'#ff9fbe'}],'ครอบครัว':'house','การเงิน':'coin','สุขภาพ':'cross','ข่าวใหญ่':'news','สังคม':'people','ไลฟ์สไตล์':'star','สิ่งยั่วใจ':'devil','ดวง':'clover','วัยเกษียณ':'sun','ไม่คาดฝัน':'warn','ศรัทธา':'lotus','แรกเกิด':'bottle','ทางแยกบังคับ':'bolt','ความสำเร็จ':'medal','ที่อยู่อาศัย':'house','การศึกษา':'book','ชีวิตประจำวัน':'cup','หน้าที่':'helmet','ความสูญเสีย':'candle','ความฝัน':'target'};
+const TAG_TONE={'ทางแยกบังคับ':'var(--bad)','ไม่คาดฝัน':'var(--bad)','ความสูญเสีย':'var(--dim)','ความสำเร็จ':'var(--good)','สิ่งยั่วใจ':'var(--bad)'};
+const tagIc=(tag,o={})=>{const v=TAG_IC[tag]||'star';return Array.isArray(v)?ic(v[0],Object.assign({pal:v[1]},o)):ic(v,o)};
+const ARCH_IC={tycoon:['gem'],selfmade:['medal'],heir:['star',{y:'#ffe08a'}],centenarian:['hourglass'],shortbright:['bolt'],tragic:['rain'],debtking:['coin',{y:'#ff6b85',o:'#a83232'}],grey:['devil',{r:'#e0a030'}],saint:['lotus'],adventurer:['compass'],family:['house'],scholar:['book'],artist:['palette'],party:['star',{y:'#ff9fbe'}],gambler:['dice'],grinder:['case'],stable:['chart'],ordinary:['clover']};
+const archIc=(a,o={})=>{const v=ARCH_IC[a.id]||['clover'];return ic(v[0],Object.assign({pal:v[1]},o))};
+const GOAL_IC={rich:'coin',home:'house',family:'people',travel:'plane',long:'hourglass',free:'sun',boss:'case',kind:'lotus'};
+const BADGE_IC={'🧘':'lotus','🎟':'clover','🥇':'medal','✈️':'plane','🪖':'helmet','🙏':'lotus','🏖':'sun','📉':'chart','🏠':'house','👨‍👩‍👧‍👦':'people','🎂':'hourglass','💔':'heart','🎓':'cap','💌':'heart','💪':'fist','👔':'case'};
 
 /* =========================================================
-   UI
+   SETTINGS · SOUND · MUSIC
+   ========================================================= */
+const SET=Object.assign({sfx:true,music:false,vol:.6,nums:false,motion:'auto'},store.get('blk_set',{}));
+const saveSet=()=>store.set('blk_set',SET);
+const reduced=()=>SET.motion==='off'||(SET.motion==='auto'&&window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+let AC=null,MG=null;
+function ac(){try{if(!AC){AC=new (window.AudioContext||window.webkitAudioContext)();MG=AC.createGain();MG.gain.value=SET.vol;MG.connect(AC.destination)}if(AC.state==='suspended')AC.resume()}catch(e){}return AC}
+function tone(f,d,{type='triangle',v=.12,when=0,slide=0}={}){try{const a=ac();if(!a)return;const t=a.currentTime+when,o=a.createOscillator(),g=a.createGain(),lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2200;o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(f*slide,t+d);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(lp);lp.connect(g);g.connect(MG);o.start(t);o.stop(t+d+.05)}catch(e){}}
+const sfx={click(){SET.sfx&&tone(880,.06,{v:.05})},
+  good(){if(SET.sfx)[523,659,784].forEach((f,i)=>tone(f,.2,{when:i*.07,v:.07}))},
+  bad(){if(SET.sfx){tone(392,.24,{v:.07,slide:.75});tone(294,.32,{when:.12,v:.06})}},
+  tick(){SET.sfx&&tone(1320,.03,{v:.025,type:'sine'})},
+  end(){if(SET.sfx)[392,330,262,196].forEach((f,i)=>tone(f,.6,{when:i*.28,v:.06,type:'sine'}))}};
+const Music={timer:null,i:0,start(){if(this.timer||!SET.music)return;ac();this.timer=setInterval(()=>this.beat(),430)},stop(){clearInterval(this.timer);this.timer=null},
+  beat(){const st=(S&&!$('game').classList.contains('hidden'))?stageOf(S.age)[0]:'adult';const sc={child:[523,587,659,784,880],teen:[440,523,587,659,784],adult:[392,440,523,587,659],elder:[330,392,440,494,587]}[st];const i=this.i++;
+    if(i%8===0)tone(sc[0]/4,1.8,{type:'sine',v:.045});if(i%8===4)tone(sc[2]/4,1.4,{type:'sine',v:.03});
+    if(Math.random()<(st==='elder'?.4:.6))tone(sc[Math.floor(Math.random()*sc.length)]/(i%16<8?1:2),.55,{type:'sine',v:.03})}};
+
+/* =========================================================
+   UI CORE
    ========================================================= */
 const $=id=>document.getElementById(id);
-let S=null,NODE=null,LAST=null,PREV={};
-function show(id){for(const x of ['title','game','summary'])$(x).classList.toggle('hidden',x!==id);window.scrollTo({top:0})}
+let S=null,NODE=null,PREV={},PHASE='card',PENDING=null,LASTRES=null,TAB=store.get('blk_tab','money');
+function show(id){for(const x of ['title','game','summary'])$(x).classList.toggle('hidden',x!==id);window.scrollTo({top:0});document.body.classList.toggle('rm',reduced())}
 function stageOf(a){return a<13?['child','วัยเด็ก']:a<18?['teen','วัยรุ่น']:a<60?['adult','วัยทำงาน']:['elder','วัยเกษียณ']}
-function startLife(seed,name){
-  S=newLife(seed,{name});S._picks=[];PREV={};LAST=null;NODE=nextNode(S);
-  Scene.canvas=$('scene');Scene.ctx=Scene.canvas.getContext('2d');
-  saveGame();show('game');render();jingle(true);
-}
+function fitPixel(cv,box){if(!cv||!box)return;const dpr=window.devicePixelRatio||1;const W=box.clientWidth-6,H=box.clientHeight-6;if(W<=0||H<=0)return;const k=Math.max(1,Math.floor(Math.min(W*dpr/cv.width,H*dpr/cv.height)));cv.style.width=(cv.width*k/dpr)+'px';cv.style.height=(cv.height*k/dpr)+'px'}
+const RO=new ResizeObserver(es=>{for(const e of es)fitPixel(e.target.querySelector('canvas'),e.target)});
+function hydrateIcons(root=document){root.querySelectorAll('[data-ic]').forEach(el=>{if(el.dataset.done)return;el.dataset.done=1;el.insertAdjacentHTML('afterbegin',ic(el.dataset.ic)+' ')})}
+
 const SAVE_KEY='blk_save_v1';
 function saveGame(){if(S&&!S.dead)store.set(SAVE_KEY,{seed:S.seed,name:S.name,picks:S._picks,age:S.age})}
 function clearSave(){try{localStorage.removeItem(SAVE_KEY)}catch(e){}}
+function enterGame(){Scene.canvas=$('scene');Scene.ctx=Scene.canvas.getContext('2d');PHASE='card';show('game');renderAll();Music.start();fitPixel($('scene'),$('sceneFrame'))}
+function startLife(seed,name){S=newLife(seed,{name});S._picks=[];PREV={};NODE=nextNode(S);saveGame();enterGame();sfx.good();if(!store.get('blk_tut',false))openTut(0)}
 function resumeLife(sv){
-  try{
-    S=newLife(sv.seed,{name:sv.name});S._picks=[];PREV={};LAST=null;NODE=nextNode(S);
-    for(const i of sv.picks){const c=val(NODE.e.choices,S)[i];if(!c)throw 0;S._picks.push(i);const txt=choose(S,NODE,c);const nn=nextNode(S);if(!nn)throw 0;LAST={txt,skip:nn.skip,feed:[...S.feed]};NODE=nn}
-    if(S.age!==sv.age)throw 0;
-  }catch(e){clearSave();goTitle();return false}
-  Scene.canvas=$('scene');Scene.ctx=Scene.canvas.getContext('2d');
-  show('game');render();jingle(true);return true;
-}
-function pickTod(s,sn){if(['news','funeral','birth','bedroom','cafe','office','airport'].includes(sn))return hash(s.age*13+s.log.length*7)<.3?'night':'day';const h=hash(s.age*13+s.log.length*7);if(sn==='city'||sn==='market')return h<.4?'night':h<.6?'sunset':'day';return h<.62?'day':h<.8?'sunset':h<.92?'night':'dawn'}
-function render(){
-  const s=S,e=NODE.e;
-  const [stk,stn]=stageOf(s.age);document.body.className='st-'+stk;
+  try{S=newLife(sv.seed,{name:sv.name});S._picks=[];PREV={};NODE=nextNode(S);
+    for(const i of sv.picks){const c=val(NODE.e.choices,S)[i];if(!c)throw 0;S._picks.push(i);choose(S,NODE,c);const nn=nextNode(S);if(!nn)throw 0;NODE=nn}
+    if(S.age!==sv.age)throw 0}catch(e){clearSave();goTitle();return}
+  enterGame();sfx.good()}
+
+/* ---------- HUD ---------- */
+function moodTxt(v){return v>75?'มีความสุขมาก':v>58?'ชีวิตกำลังดี':v>40?'เรื่อยๆ':v>22?'เหนื่อยใจ':'ทุกข์หนัก'}
+function hpTxt(v){return v>75?'แข็งแรงมาก':v>55?'ปกติดี':v>35?'เริ่มป่วยบ่อย':'ร่างกายทรุด'}
+function renderHUD(){
+  const s=S;const [stk,stn]=stageOf(s.age);document.body.className='st-'+stk+(reduced()?' rm':'');
   $('gName').textContent=s.name;$('gAge').textContent=`อายุ ${s.age}`;$('gStage').textContent=stn;
   const jobTxt=s.studying?(s.age>=18?`นักศึกษา${s.uni?' · '+s.uni:''}`:'นักเรียน'):s.job?JOBS[s.job].n:s.retired?'เกษียณแล้ว':s.age<18?'เด็กน้อย':'ว่างงาน';
-  const inc=s.job?`฿${fmt(s.salary)}/เดือน`:s.retired?`บำนาญ ฿${fmt(s.pension+s.side)}/เดือน`:null;
-  $('gSub').textContent=`📍 ${s.prov[0]} · ฐานะ${CLASSES[s.cls].n} · ${jobTxt}${inc?' · '+inc:''}`;
-  $('gGoal').textContent=s.goal?`🎯 ความฝัน: ${GOALS[s.goal].n} ${s.flags.goalDone?'✓ สำเร็จแล้ว':''}`:'';
+  const inc=s.job?`${baht(s.salary)}/เดือน`:s.retired?`บำนาญ ${baht(s.pension+s.side)}/เดือน`:'';
+  $('gSub').innerHTML=`${ic('pin')} ${s.prov[0]} · ฐานะ${CLASSES[s.cls].n} · ${jobTxt}${inc?' · '+inc:''}`;
   const st=$('gStats');st.innerHTML='';
-  for(const [k,ic,lb,col] of STATS){const v=Math.round(s[k]);const d=document.createElement('div');d.className='stat';d.title=lb;
-    d.innerHTML=`<span class="ic">${ic}</span><span class="lb">${lb}</span><span class="bar"><i style="width:${v}%;background:var(${col})"></i></span><b>${v}</b>`;
-    if(PREV[k]!=null&&Math.round(PREV[k])!==v){const f=document.createElement('span');f.className='float';const dv=v-Math.round(PREV[k]);f.textContent=(dv>0?'+':'')+dv;f.style.color=dv>0?'var(--mint)':'var(--rose)';d.appendChild(f)}
-    st.appendChild(d);PREV[k]=s[k]}
-  $('gMoney').textContent='฿'+fk(s.money);
-  $('gMeName').textContent=`${s.name} · ${s.g==='f'?'หญิง':'ชาย'} อายุ ${s.age} ปี`;
-  const mood=s.joy>75?'มีความสุขมาก':s.joy>58?'ชีวิตกำลังดี':s.joy>40?'เรื่อยๆ':s.joy>22?'เหนื่อยใจ':'ทุกข์หนัก';
-  const hpT=s.hp>75?'แข็งแรงมาก':s.hp>55?'ปกติดี':s.hp>35?'เริ่มป่วยบ่อย':'ร่างกายทรุด';
-  $('gMood').textContent=`อารมณ์: ${mood} · ร่างกาย: ${hpT}`;
-  $('gTraits').textContent='นิสัย: '+topTraits(s);
-  const st2=s.log.filter(l=>l.imp).slice(-12).reverse();
-  $('gStory').innerHTML=st2.length?st2.map(l=>`<div class="mo"><span class="a">อายุ ${l.age}</span><span>${l.t}</span></div>`).join(''):'<div class="small">เรื่องราวชีวิตของคุณจะถูกบันทึกที่นี่</div>';
-  const nw=netWorth(s);
-  $('gAssets').innerHTML=[['เงินสด',s.money],['ลงทุน+กองทุน',s.inv.stock+s.inv.gold+s.inv.crypto+s.pvd],['บ้าน/อสังหา',s.home],['หนี้สิน',-s.debt]].map(([k,v])=>`<div class="asset"><div class="k">${k}</div><div class="v" style="color:${v<0?'var(--rose)':'var(--ink)'}">฿${fk(v)}</div></div>`).join('')+
-    `<div class="asset" style="grid-column:1/-1;display:flex;justify-content:space-between;align-items:center"><div class="k">ทรัพย์สินสุทธิ</div><div class="v" style="color:var(--sun);font-size:15px">฿${fmt(nw)}</div></div>`;
-  $('gFlow').innerHTML=s.age>=18&&s.cash.inc+s.cash.lv>0?[['รายได้ครัวเรือน/ปี',s.cash.inc,'var(--mint)'],['ใช้จ่าย/ปี',s.cash.lv,'var(--rose)'],['ภาษี/ปี',s.cash.tx,'var(--lilac)']].map(([k,v,c])=>`<div class="asset"><div class="k">${k}</div><div class="v" style="color:${c}">฿${fk(v)}</div></div>`).join(''):'';
-  const fam=[];
-  for(const p of s.parents){if(p.gone)continue;fam.push(`<div class="fm"><span>${p.rel==='พ่อ'?'👨':'👩'} ${p.rel}</span><span class="r">${p.alive?`อายุ ${p.age+s.age} ปี`:`เสียชีวิตเมื่อคุณอายุ ${p.died}`}</span></div>`)}
-  if(s.sibs)fam.push(`<div class="fm"><span>🧑‍🤝‍🧑 พี่น้อง</span><span class="r">${s.sibs} คน</span></div>`);
-  if(s.partner)fam.push(`<div class="fm"><span>${s.married?'💍':'💕'} ${s.partner.name}</span><span class="r">${s.married?'คู่สมรส':'แฟน'} · ${s.partner.job} · ฿${fk(s.partner.inc)}/ด.</span></div>`);
-  else if(s.widowed)fam.push(`<div class="fm"><span>🕯 คู่ชีวิต</span><span class="r">จากไปแล้ว</span></div>`);
-  s.kids.forEach(k=>fam.push(`<div class="fm"><span>${k.g==='f'?'👧':'👦'} ${k.name}</span><span class="r">อายุ ${s.age-k.born} ปี</span></div>`));
-  if(s.pet)fam.push(`<div class="fm"><span>${s.pet==='cat'?'🐈':'🐕'} สัตว์เลี้ยง</span><span class="r">${s.pet==='cat'?'แมว':'หมา'}</span></div>`);
-  const cn=Object.keys(s.conds);
-  fam.push(`<div class="fm"><span>🩺 สุขภาพ</span><span class="r">${cn.length?cn.map(n=>`<span class="tagx">${n}</span>`).join(''):'<span class="tagx ok">ไม่มีโรคประจำตัว</span>'}${s.insur?'<span class="tagx ok">มีประกัน</span>':''}${s.flags.smoke?'<span class="tagx">สูบบุหรี่</span>':''}${s.flags.drink?'<span class="tagx">ดื่มหนัก</span>':''}</span></div>`);
-  $('gFam').innerHTML=fam.join('');
-  const marks=s.log.filter(l=>l.imp).map(l=>`<span class="dot" style="left:${Math.min(l.age,100)}%" title="อายุ ${l.age}: ${String(l.t).replace(/"/g,'')}"></span>`).join('');
-  $('gTl').innerHTML=`<div class="track"></div><div class="fill" style="width:${Math.min(s.age,100)}%"></div>${marks}<svg class="me" style="left:${Math.min(s.age,100)}%" viewBox="0 0 7 10"><rect x="1" y="0" width="5" height="1" fill="#2b1a12"/><rect x="1" y="1" width="5" height="3" fill="#efc29b"/><rect x="1" y="4" width="5" height="3" fill="#ff7b5c"/><rect x="1" y="7" width="2" height="3" fill="#2c3e66"/><rect x="4" y="7" width="2" height="3" fill="#2c3e66"/></svg><div class="ticks"><span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span></div>`;
-  $('gSeed').textContent=`รหัสชาติกำเนิด #${s.seed}`;
-  let sn=val(e.scene,s)||'home';if(e.id==='quiet'&&s.job)sn=JOBS[s.job].scene;
+  for(const [k,icn,lb] of STAT_UI){const v=Math.round(s[k]);const b=document.createElement('button');b.className='stat '+(v>=60?'hi':v>=35?'mid':'lo');b.type='button';b.title=`${lb} ${v}/100 · กดเพื่อดูคำอธิบาย`;b.setAttribute('aria-label',`${lb} ${v} จาก 100`);
+    b.innerHTML=`${ic(icn)}<span class="lb">${lb}</span><span class="bar"><i style="width:${v}%"></i></span><b>${v}</b>`;
+    if(PREV[k]!=null&&Math.round(PREV[k])!==v){const f=document.createElement('span');f.className='float';const dv=v-Math.round(PREV[k]);f.textContent=(dv>0?'▲ +':'▼ ')+dv;f.style.color=dv>0?'var(--good)':'var(--bad)';b.appendChild(f)}
+    b.onclick=()=>openTut(1);st.appendChild(b);PREV[k]=s[k]}
+  const nw=netWorth(s);$('gNW').textContent=baht(nw);$('gNW').className='money'+(nw<0?' neg':'');
+  const C=Object.keys(s.conds);
+  $('gMood').innerHTML=`<div><b class="mitr" style="font-family:var(--f-d);font-weight:500;color:var(--ink)">ตอนนี้คุณ${moodTxt(s.joy)}</b></div><div>ร่างกาย: ${hpTxt(s.hp)}${C.length?` · ${C.join(', ')}`:''}</div><div>นิสัย: ${topTraits(s)}</div>`;
+  const g=s.goal?GOALS[s.goal]:null;$('gGoal').className='goalLine'+(s.flags.goalDone?' ok':'');
+  $('gGoal').innerHTML=g?`${ic('target')} ความฝัน: ${g.n}${s.flags.goalDone?' · สำเร็จแล้ว':''}`:`${ic('target')} ยังไม่ได้ตั้งความฝัน (ตั้งตอนอายุ 16)`;
+  renderTabs();
+  const marks=s.log.filter(l=>l.imp).map(l=>`<span class="dot" style="left:${Math.min(l.age,100)}%"></span>`).join('');
+  $('gTl').innerHTML=`<div class="track"></div><div class="fill" style="width:${Math.min(s.age,100)}%"></div>${marks}<svg class="me" style="left:${Math.min(s.age,100)}%" viewBox="0 0 7 10" shape-rendering="crispEdges"><rect x="1" y="0" width="5" height="1" fill="${s.hairCol}"/><rect x="1" y="1" width="5" height="3" fill="${s.skin}"/><rect x="1" y="4" width="5" height="3" fill="#ff7b5c"/><rect x="1" y="7" width="2" height="3" fill="#2c3e66"/><rect x="4" y="7" width="2" height="3" fill="#2c3e66"/></svg><div class="ticks"><span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span></div>`;
+  $('gSeed').textContent=`รหัสชาติกำเนิด #${s.seed} · บันทึกอัตโนมัติ`;
+  const st2=s.log.filter(l=>l.imp).slice(-14).reverse();
+  $('storyH').innerHTML=`${ic('scroll')} เรื่องราวที่ผ่านมา`;
+  $('gStory').innerHTML=st2.length?st2.map(l=>`<div class="mo"><span class="a">อายุ ${l.age}</span><span>${noEmo(l.t)}</span></div>`).join(''):'<div class="small">เรื่องราวชีวิตของคุณจะถูกบันทึกที่นี่</div>';
+}
+const TABS=[['money','coin','ทรัพย์สิน'],['family','house','ครอบครัว'],['health','cross','สุขภาพ']];
+function renderTabs(){
+  const s=S;$('tabs').innerHTML=TABS.map(([k,icn,lb])=>`<button class="tab" role="tab" id="tab-${k}" aria-selected="${TAB===k}" data-k="${k}">${ic(icn)}${lb}</button>`).join('');
+  $('tabs').querySelectorAll('.tab').forEach(b=>b.onclick=()=>{TAB=b.dataset.k;store.set('blk_tab',TAB);renderTabs()});
+  let h='';
+  if(TAB==='money'){
+    const cell=(k,v,cls='')=>`<div class="c"><div class="k">${k}</div><div class="v ${cls}">${baht(v)}</div></div>`;
+    h=`<div class="kv">${cell('เงินสด',s.money)}${cell('ลงทุน + กองทุน',s.inv.stock+s.inv.gold+s.inv.crypto+s.pvd)}${cell('บ้าน / อสังหา',s.home)}${cell('หนี้สิน',-s.debt,s.debt>0?'neg':'')}
+      ${s.age>=18&&s.cash.inc+s.cash.lv>0?`<div class="c full"><span class="k">รายได้ครัวเรือนต่อปี</span><span class="v pos">${baht(s.cash.inc)}</span></div><div class="c full"><span class="k">ค่าใช้จ่ายต่อปี</span><span class="v neg">${baht(s.cash.lv)}</span></div><div class="c full"><span class="k">ภาษีต่อปี</span><span class="v">${baht(s.cash.tx)}</span></div>`:''}
+      ${s.debt>0?`<div class="c full"><span class="k">ดอกเบี้ยหนี้เฉลี่ย</span><span class="v">${(s.debtRate*100).toFixed(1)}% ต่อปี</span></div>`:''}</div>`;
+  }else if(TAB==='family'){
+    const f=[];
+    for(const p of s.parents){if(p.gone)continue;f.push(`<div class="fm"><span>${p.rel}</span><span class="r">${p.alive?`อายุ ${p.age+s.age} ปี`:`เสียชีวิตเมื่อคุณอายุ ${p.died}`}</span></div>`)}
+    if(s.care!=='พ่อแม่')f.push(`<div class="fm"><span>ผู้เลี้ยงดู</span><span class="r">${s.care}</span></div>`);
+    f.push(`<div class="fm"><span>พี่น้อง</span><span class="r">${s.sibs?s.sibs+' คน':'ลูกคนเดียว'}</span></div>`);
+    if(s.partner)f.push(`<div class="fm"><span>${s.married?'คู่สมรส':'แฟน'}: ${s.partner.name}</span><span class="r">${s.partner.job} · ${baht(s.partner.inc)}/เดือน</span></div>`);
+    else f.push(`<div class="fm"><span>คู่ชีวิต</span><span class="r">${s.widowed?'จากไปแล้ว':s.divorces?'หย่าร้างแล้ว':'ยังโสด'}</span></div>`);
+    s.kids.forEach(k=>f.push(`<div class="fm"><span>ลูก${k.g==='f'?'สาว':'ชาย'}: ${k.name}</span><span class="r">อายุ ${s.age-k.born} ปี</span></div>`));
+    if(s.pet)f.push(`<div class="fm"><span>สัตว์เลี้ยง</span><span class="r">${s.pet==='cat'?'แมว':'หมา'}</span></div>`);
+    h=f.join('');
+  }else{
+    const C=Object.keys(s.conds);
+    h=`<div class="fm"><span>สุขภาพโดยรวม</span><span class="r">${Math.round(s.hp)}/100 · ${hpTxt(s.hp)}</span></div>
+      <div class="fm"><span>โรคประจำตัว</span><span class="r">${C.length?C.map(n=>`<span class="tagx">${n}${s.conds[n]<=CONDS[n].sev[1]+.01?' (คุมได้)':''}</span>`).join(''):'<span class="tagx ok">ไม่มี</span>'}</span></div>
+      <div class="fm"><span>ประกันสุขภาพ</span><span class="r">${s.insur?'<span class="tagx ok">มี · จ่ายเอง 20%</span>':'ไม่มี · ใช้สิทธิ์รัฐ'}</span></div>
+      <div class="fm"><span>นิสัยเสี่ยง</span><span class="r">${[s.flags.smoke&&'สูบบุหรี่',s.flags.drink&&'ดื่มหนัก',(s.tr.fun||0)>=4&&'ปาร์ตี้บ่อย'].filter(Boolean).map(x=>`<span class="tagx">${x}</span>`).join('')||'<span class="tagx ok">ไม่มี</span>'}</span></div>
+      <p class="small" style="margin:8px 0 0">โรคที่ไม่รักษาจะกัดกินสุขภาพทุกปี ตรวจสุขภาพเป็นประจำช่วยคุมอาการได้</p>`;
+  }
+  $('tabBody').innerHTML=h;$('tabBody').setAttribute('aria-labelledby','tab-'+TAB);
+}
+function renderScene(){
+  const s=S,e=NODE.e;let sn=val(e.scene,s)||'home';if(e.id==='quiet'&&s.job)sn=JOBS[s.job].scene;
   s.tod=pickTod(s,sn);s.rain=OUTDOOR.has(sn)&&hash(s.age*31+s.log.length)<.13;
-  Scene.set(sn,s);
-  $('gCap').textContent=({birth:'ห้องคลอด',home:'บ้าน',school:'โรงเรียน',uni:'มหาวิทยาลัย',office:'ที่ทำงาน',city:'ในเมือง',market:'ตลาด',hospital:'โรงพยาบาล',airport:'สนามบิน',farm:'ท้องนา',park:'สวนสาธารณะ',bedroom:'ห้องนอน',cafe:'ร้านกาแฟ',factory:'โรงงาน',temple:'วัด',wedding:'งานแต่ง',news:'ข่าวด่วน',beach:'ทะเล',funeral:'งานศพ',army:'ค่ายทหาร'})[sn]||'';
-  $('gTod').textContent=s.rain?'🌧 ฝนตก':({day:'☀️ กลางวัน',sunset:'🌇 เย็น',night:'🌙 กลางคืน',dawn:'🌅 เช้าตรู่'})[s.tod];
-  const card=$('card');const [ic,col]=TAGICON[e.tag]||['✨','#ff7b5c'];card.style.setProperty('--cardc',col);
-  if(e.id==='birth'){card.innerHTML=birthHTML(s);bindChoices(card);return}
+  Scene.set(sn,s);if(reduced())Scene.px=Scene.target,Scene.fade=0;
+  const cap=({birth:'ห้องคลอด',home:'บ้าน',school:'โรงเรียน',uni:'มหาวิทยาลัย',office:'ที่ทำงาน',city:'ในเมือง',market:'ตลาด',hospital:'โรงพยาบาล',airport:'สนามบิน',farm:'ท้องนา',park:'สวนสาธารณะ',bedroom:'ห้องนอน',cafe:'ร้านกาแฟ',factory:'โรงงาน',temple:'วัด',wedding:'งานแต่ง',news:'ข่าวด่วน',beach:'ทะเล',funeral:'งานศพ',army:'ค่ายทหาร'})[sn]||'';
+  $('gCap').innerHTML=`${ic('pin')} ${cap}`;
+  $('gTod').innerHTML=s.rain?`${ic('rain')} ฝนตก`:({day:`${ic('sun')} กลางวัน`,sunset:`${ic('sun',{pal:{y:'#ff9a5a',o:'#c85a3a'}})} เย็น`,night:`${ic('star',{pal:{y:'#e8e0ff'}})} กลางคืน`,dawn:`${ic('sun',{pal:{y:'#ffd6a8'}})} เช้าตรู่`})[s.tod];
+  const who=[s.partner&&'คู่ชีวิต',s.kids.length&&`ลูก ${s.kids.length} คน`,s.pet&&(s.pet==='cat'?'แมว':'หมา')].filter(Boolean).join(' ');
+  $('scene').setAttribute('aria-label',`ฉาก${cap}: ${s.name} อายุ ${s.age} ปี${who&&FAMSCENE.has(sn)?' กับ'+who:''}`);
+}
+function pickTod(s,sn){if(['news','funeral','birth','bedroom','cafe','office','airport'].includes(sn))return hash(s.age*13+s.log.length*7)<.3?'night':'day';const h=hash(s.age*13+s.log.length*7);if(sn==='city'||sn==='market')return h<.4?'night':h<.6?'sunset':'day';return h<.62?'day':h<.8?'sunset':h<.92?'night':'dawn'}
+function renderAll(){renderHUD();renderScene();renderCard()}
+
+/* ---------- card ---------- */
+function effChips(s,c){
+  const chips=[];const N={hp:['heart','สุขภาพ'],joy:['smile','ความสุข'],iq:['book','สติปัญญา'],soc:['people','สังคม']};
+  if(c.eff)for(const k in c.eff){const v=val(c.eff[k],s);if(!v)continue;
+    if(k==='money'){chips.push(`<span class="chip ${v>0?'p':'m'}">${ic('coin')} ${v>0?'+':''}${baht(v)}</span>`);continue}
+    if(!N[k])continue;const [icn,lb]=N[k];const strong=Math.abs(v)>=8;
+    const txt=SET.nums?`${v>0?'+':''}${v}`:(v>0?(strong?'▲▲':'▲'):(strong?'▼▼':'▼'));
+    chips.push(`<span class="chip ${v>0?'p':'m'}" title="${lb}${v>0?'ดีขึ้น':'แย่ลง'}${strong?'มาก':''}">${ic(icn)} <span aria-label="${lb}${v>0?'เพิ่ม':'ลด'}${strong?'มาก':''}">${txt}</span></span>`)}
+  if(c.chance!=null&&!/%/.test(val(c.d,s)||''))chips.push(`<span class="chip l">${ic('dice')} ลุ้นผล</span>`);
+  if(c.med&&s.insur)chips.push(`<span class="chip p">${ic('cross')} ประกันจ่าย 80%</span>`);
+  const cost=costOf(s,c);if(cost>0&&c.loan!=null&&s.money<cost)chips.push(`<span class="chip c">${ic('coin')} กู้ได้ ${(c.loan*100).toFixed(c.loan<.02?1:0)}% ต่อปี</span>`);
+  const lock=lockReason(s,c);if(lock)chips.push(`<span class="chip x">ล็อก · ${noEmo(lock)}</span>`);
+  return chips.join('');
+}
+function renderCard(){
+  const s=S,e=NODE.e,card=$('card');card.style.setProperty('--cardc',TAG_TONE[e.tag]||'var(--accent)');
+  if(e.id==='birth'){card.innerHTML=birthHTML(s);bindChoices();return}
   const chs=val(e.choices,s);
-  let h=`<div class="kicker"><span class="tg">${e.tag||''}</span><span>· อายุ ${s.age} ปี</span></div>`;
-  if(LAST){h+=`<div class="outcome">▸ ${LAST.txt}`;
-    if(LAST.feed&&LAST.feed.length)h+=`<div class="feed">${LAST.feed.map((f,i)=>`<div style="animation-delay:${.15+i*.12}s"><span class="a">อายุ ${f.age}</span>${f.t}</div>`).join('')}</div>`;
-    if(LAST.skip>0)h+=`<span class="skip">⏩ เวลาผ่านไป ${LAST.skip} ปี</span>`;h+=`</div>`}
-  const bn=val(e.banner,s);if(bn)h+=`<div class="banner">${bn}</div>`;
-  h+=`<div class="evHead"><div class="evIcon">${ic}</div><h2>${val(e.title,s)}</h2></div>`;
-  const tx=val(e.text,s);if(tx)h+=`<p class="desc">${tx}</p>`;
-  h+=`<div class="choices">`;
-  const fold=chs.length>8;let locked='',nLocked=0;
-  chs.forEach((c,i)=>{if(c.cond&&!c.cond(s))return;const lock=lockReason(s,c);const cost=costOf(s,c);const chips=[];
-    if(c.eff)for(const k in c.eff){const v=val(c.eff[k],s);if(!v)continue;const ic2={hp:'❤️',joy:'😊',iq:'📘',soc:'🤝',money:'💰'}[k];if(!ic2)continue;chips.push(`<span class="chip ${v>0?'p':'m'}">${ic2} ${v>0?'+':''}${k==='money'?fk(v):v}</span>`)}
-    if(c.chance!=null&&!/%/.test(val(c.d,s)||''))chips.push(`<span class="chip l">🎲 ลุ้นผลลัพธ์</span>`);
-    if(c.med&&s.insur)chips.push(`<span class="chip p">ประกันจ่าย 80%</span>`);
-    if(cost>0&&c.loan!=null&&s.money<cost)chips.push(`<span class="chip c">กู้ได้ ${(c.loan*100).toFixed(c.loan<.02?1:0)}%/ปี</span>`);
-    if(lock)chips.push(`<span class="chip x">🔒 ${lock}</span>`);
-    const btn=`<button class="ch" data-i="${i}" ${lock?'disabled':''} style="animation-delay:${Math.min(i,8)*45}ms"><span class="n">${i+1}</span><span class="body"><div class="t">${c.t}</div>${c.d?`<div class="d">${val(c.d,s)}</div>`:''}${chips.length?`<div class="chips">${chips.join('')}</div>`:''}</span>${cost>0?`<span class="cost">-฿${fk(cost)}</span>`:''}</button>`;
-    if(fold&&lock){locked+=btn;nLocked++}else h+=btn});
-  h+=`</div>`;
-  if(nLocked)h+=`<details class="lockedBox"><summary>🔒 ทางที่ยังไม่ผ่านเงื่อนไข (${nLocked})</summary><div class="choices">${locked}</div></details>`;
-  card.innerHTML=h;bindChoices(card);
+  let h=`<div class="kicker">${tagIc(e.tag)}<span class="tg">${e.tag||''}</span><span>· อายุ ${s.age} ปี</span></div>`;
+  const bn=val(e.banner,s);if(bn)h+=`<div class="banner">${ic('warn')} ${noEmo(bn)}</div>`;
+  h+=`<h2 class="evT">${noEmo(val(e.title,s))}</h2>`;
+  const tx=val(e.text,s);if(tx)h+=`<p class="desc">${noEmo(tx)}</p>`;
+  h+=`<div class="choices">`;const fold=chs.length>8;let locked='',nL=0,shown=0;
+  chs.forEach((c,i)=>{if(c.cond&&!c.cond(s))return;const lock=lockReason(s,c);const cost=costOf(s,c);
+    const btn=`<button class="ch" data-i="${i}" ${lock?'disabled':''} style="animation-delay:${Math.min(shown,8)*40}ms"><span class="n">${i+1}</span><span><div class="t">${noEmo(c.t)}</div>${c.d?`<div class="d">${noEmo(val(c.d,s))}</div>`:''}<div class="chips">${effChips(s,c)}</div></span>${cost>0?`<span class="cost">${baht(cost)}</span>`:'<span></span>'}</button>`;
+    shown++;if(fold&&lock){locked+=btn;nL++}else h+=btn});
+  h+=`</div>`;if(nL)h+=`<details class="lockedBox"><summary>ทางที่ยังไม่ผ่านเงื่อนไข (${nL})</summary><div class="choices">${locked}</div></details>`;
+  card.innerHTML=h;bindChoices();
 }
 function birthHTML(s){
-  const oddsN=Math.round(1/s.chance);const cd=s.classDist;const mx=Math.max(...cd);
+  const oddsN=Math.round(1/s.chance),cd=s.classDist,mx=Math.max(...cd);
   const bars=CLASSES.map((c,i)=>`<div class="cb ${i===s.cls?'on':''}"><span class="pct">${(cd[i]*100).toFixed(1)}%</span><span class="col" style="height:${Math.max(4,cd[i]/mx*70)}px;animation-delay:${i*.08}s"></span><span class="lb">${c.n}</span></div>`).join('');
   const par=s.parents.filter(p=>!p.gone).map(p=>`${p.rel} ${p.age}`).join(' · ')||'ไม่มี';
-  return `<div class="kicker"><span class="tg">แรกเกิด</span><span>· อายุ 0</span></div>
-  <div class="birthBig">คุณคือ 1 ใน ${fmt(THAI_POP)} คน</div>
+  return `<div class="kicker">${ic('bottle')}<span class="tg">แรกเกิด</span><span>· อายุ 0</span></div>
+  <h2 class="evT">คุณคือ 1 ใน ${fmt(THAI_POP)} คน</h2>
   <div class="bgrid">
-    <div class="bcell" style="animation-delay:.05s"><div class="k">📍 จังหวัดที่เกิด</div><div class="v">${s.prov[0]}</div><div class="s">ภาค${s.prov[3]} · โอกาส ${(s.prov[1]/PROV_TOT*100).toFixed(2)}%</div></div>
-    <div class="bcell" style="animation-delay:.2s"><div class="k">${s.g==='f'?'♀ เด็กหญิง':'♂ เด็กชาย'}</div><div class="v">${s.name}</div><div class="s">ศาสนา${s.rel}</div></div>
-    <div class="bcell" style="animation-delay:.35s"><div class="k">👪 ผู้เลี้ยงดู</div><div class="v">${s.care}</div><div class="s">อายุ ${par}${s.sibs?` · พี่น้อง ${s.sibs}`:' · ลูกคนเดียว'}</div></div>
+    <div class="bcell"><div class="k">${ic('pin')} จังหวัดที่เกิด</div><div class="v">${s.prov[0]}</div><div class="s">ภาค${s.prov[3]} · โอกาส ${(s.prov[1]/PROV_TOT*100).toFixed(2)}%</div></div>
+    <div class="bcell" style="animation-delay:.15s"><div class="k">${ic('bottle')} ${s.g==='f'?'เด็กหญิง':'เด็กชาย'}</div><div class="v">${s.name}</div><div class="s">ศาสนา${s.rel}</div></div>
+    <div class="bcell" style="animation-delay:.3s"><div class="k">${ic('house')} ผู้เลี้ยงดู</div><div class="v">${s.care}</div><div class="s">อายุ ${par}${s.sibs?` · พี่น้อง ${s.sibs}`:' · ลูกคนเดียว'}</div></div>
   </div>
-  <div class="small" style="margin-top:10px">ฐานะครอบครัว (โอกาสของเด็กที่เกิดใน${s.prov[0]}) · รายได้บ้าน ฿${fk(CLASSES[s.cls].inc)}/เดือน</div>
+  <div class="small" style="margin-top:12px">ฐานะครอบครัว (โอกาสของเด็กที่เกิดใน${s.prov[0]}) · รายได้บ้าน ${baht(CLASSES[s.cls].inc)}/เดือน</div>
   <div class="classBars">${bars}</div>
-  <div class="fund"><span style="font-size:26px">💰</span><div><div class="v">฿${fmt(s.money)}</div><div class="small">เงินที่ครอบครัวเตรียมไว้ให้คุณตลอดวัยเรียน</div></div></div>
-  <div class="odds">มีเพียง <b>1 ใน ${fmt(oddsN)}</b> คนที่เกิดมาแบบเดียวกับคุณ (จังหวัด + ฐานะ + เพศ)<br>ค่าเริ่มต้น: ❤️ ${s.hp} · 😊 ${s.joy} · 📘 ${s.iq} · 🤝 ${s.soc}</div>
-  <div class="choices"><button class="ch" data-i="0"><span class="n">1</span><span class="body"><div class="t">เริ่มต้นชีวิต →</div><div class="d">ทุกการเลือกมีผลต่อเนื่อง บางอย่างจะย้อนกลับมาหาคุณในอีกหลายสิบปี</div></span></button></div>`;
+  <div class="fund">${ic('coin',{cls:'lg'})}<div><div class="v">฿${fmt(s.money)}</div><div class="small">เงินที่ครอบครัวเตรียมไว้ให้คุณตลอดวัยเรียน</div></div></div>
+  <p class="desc">มีเพียง <b style="color:var(--warn)">1 ใน ${fmt(oddsN)}</b> คนที่เกิดมาแบบเดียวกับคุณ (จังหวัด + ฐานะ + เพศ)</p>
+  <div class="choices"><button class="ch" data-i="0"><span class="n">1</span><span><div class="t">เริ่มต้นชีวิต</div><div class="d">ทุกการเลือกมีผลต่อเนื่อง บางอย่างย้อนกลับมาหาคุณในอีกหลายสิบปี</div></span><span></span></button></div>`;
 }
-function bindChoices(card){card.querySelectorAll('.ch').forEach(b=>b.addEventListener('click',()=>pickChoice(+b.dataset.i)))}
+function bindChoices(){$('card').querySelectorAll('.ch').forEach(b=>b.addEventListener('click',()=>pickChoice(+b.dataset.i)))}
+
+/* ---------- the decision moment ---------- */
+const snapStats=s=>({hp:s.hp,joy:s.joy,iq:s.iq,soc:s.soc,nw:netWorth(s),age:s.age});
 function pickChoice(i){
-  const e=NODE.e;const chs=val(e.choices,S);const c=chs[i];if(!c||lockReason(S,c)||(c.cond&&!c.cond(S)))return;
-  beep(660,.05);
-  const before=S.joy+S.hp;
-  S._picks.push(i);
-  const txt=choose(S,NODE,c);
-  if(e.id!=='birth')setTimeout(()=>jingle(S.joy+S.hp>=before),60);
+  if(PHASE!=='card')return;
+  const e=NODE.e,chs=val(e.choices,S),c=chs[i];if(!c||lockReason(S,c)||(c.cond&&!c.cond(S)))return;
+  sfx.click();const b=snapStats(S);S._picks.push(i);
+  const txt=choose(S,NODE,c);const a=snapStats(S);
   const nn=nextNode(S);
-  if(!nn){clearSave();finish(txt);return}
-  LAST={txt,skip:nn.skip,feed:[...S.feed]};NODE=nn;saveGame();render();
-  if(innerWidth<880)$('card').scrollIntoView({behavior:'smooth',block:'nearest'});
+  if(e.id==='birth'&&nn){NODE=nn;saveGame();renderAll();return}
+  if(!nn)clearSave();else saveGame();
+  PENDING=nn;showResult(c,txt,b,a,nn);
 }
-document.addEventListener('keydown',ev=>{if($('game').classList.contains('hidden')||dlg.open)return;const n=parseInt(ev.key,10);if(n>=1&&n<=9)pickChoice(n-1)});
-$('btnSound').onclick=()=>{soundOn=!soundOn;store.set('blk_sound',soundOn);$('btnSound').textContent=soundOn?'🔊 เสียง':'🔇 ปิดเสียง'};
-$('btnSound').textContent=soundOn?'🔊 เสียง':'🔇 ปิดเสียง';
-$('btnHome').onclick=ev=>{ev.preventDefault();saveGame();goTitle()};
-$('btnLog').onclick=()=>{$('dlgBody').innerHTML=`<h3>📜 บันทึกชีวิตของ ${S.name}</h3><div class="moments">${S.log.map(l=>`<div class="mo"><span class="a">อายุ ${l.age}</span><span>${l.imp?'<b>':''}${l.t}${l.imp?'</b>':''}</span></div>`).join('')}</div>`;dlg.showModal()};
+function showResult(c,txt,b,a,nn){
+  PHASE='result';const s=S,good=(a.joy+a.hp)-(b.joy+b.hp)+(a.nw>b.nw?2:0)>=0;
+  setTimeout(()=>good?sfx.good():sfx.bad(),40);
+  const D=[];for(const [k,icn,lb] of STAT_UI){const d=Math.round(a[k])-Math.round(b[k]);if(d)D.push(`<span class="dl ${d>0?'p':'m'}">${ic(icn)} ${lb} ${d>0?'▲ +':'▼ '}${d}</span>`)}
+  const dn=Math.round(a.nw-b.nw);if(Math.abs(dn)>=1)D.push(`<span class="dl ${dn>0?'p':'m'}">${ic('coin')} ${dn>0?'+':'-'}${baht(Math.abs(dn))}</span>`);
+  const feed=s.feed||[],rm=reduced();
+  let h=`<div class="result"><div class="kicker">${ic('compass')}<span class="tg">ผลของการตัดสินใจ</span><span>· อายุ ${b.age} ปี</span></div>
+    <div class="picked">คุณเลือก: ${noEmo(c.t)}</div>
+    <div class="rt">${noEmo(txt)}</div>
+    ${D.length?`<div class="deltas">${D.map((x,j)=>x.replace('class="dl','style="animation-delay:'+(rm?0:.15+j*.08)+'s" class="dl')).join('')}</div>`:''}`;
+  if(nn&&(nn.skip>0||feed.length)){
+    h+=`<div class="years"><div class="yh">${ic('hourglass')} ${nn.skip>0?`เวลาผ่านไป ${nn.skip} ปี`:'ระหว่างนั้น'}</div>${feed.map((f,j)=>`<div class="yl" style="animation-delay:${rm?0:.5+j*.35}s"><span class="a">อายุ ${f.age}</span><span>${noEmo(f.t)}</span></div>`).join('')||'<div class="small">ชีวิตเดินไปอย่างเรียบง่าย</div>'}</div>`}
+  if(!nn)h+=`<div class="years"><div class="yh">${ic('candle')} ชีวิตของ ${s.name} จบลงแล้วที่อายุ ${s.age} ปี</div><div class="small">${s.cause}</div></div>`;
+  h+=`<button class="big" id="btnNext">${nn?`ไปต่อ · อายุ ${s.age} ปี`:'ดูบทสรุปชีวิต'}</button></div>`;
+  $('card').innerHTML=h;$('card').style.setProperty('--cardc',good?'var(--good)':'var(--bad)');
+  renderHUD();$('gAge').textContent=`อายุ ${b.age}`;
+  if(nn&&s.age>b.age){if(rm){$('gAge').textContent=`อายุ ${s.age}`}else{let ag=b.age;const step=Math.max(120,Math.min(400,1400/(s.age-b.age)));const tm=setInterval(()=>{ag++;$('gAge').textContent=`อายุ ${ag}`;$('gAge').classList.remove('tick');void $('gAge').offsetWidth;$('gAge').classList.add('tick');sfx.tick();if(ag>=s.age)clearInterval(tm)},step);window._agetm=tm}}
+  else $('gAge').textContent=`อายุ ${s.age}`;
+  $('btnNext').onclick=continueNext;$('btnNext').focus({preventScroll:true});
+  if(innerWidth<1024)$('card').scrollIntoView({behavior:rm?'auto':'smooth',block:'nearest'});
+  LASTRES={txt};
+}
+function continueNext(){
+  if(PHASE!=='result')return;clearInterval(window._agetm);sfx.click();
+  if(!PENDING){PHASE='end';finish(LASTRES&&LASTRES.txt);return}
+  NODE=PENDING;PENDING=null;PHASE='card';renderAll();
+  const f=$('card').querySelector('.ch:not([disabled])');if(f)f.focus({preventScroll:true});
+}
+document.addEventListener('keydown',ev=>{
+  if($('game').classList.contains('hidden')||$('dlg').open)return;
+  if(PHASE==='result'&&(ev.key==='Enter'||ev.key===' ')){ev.preventDefault();continueNext();return}
+  const n=parseInt(ev.key,10);if(n>=1&&n<=9){if(PHASE==='result'){continueNext();return}pickChoice(n-1)}
+});
+
+/* ---------- dialogs: tutorial, settings, log, collection ---------- */
+const dlg=$('dlg');
+function openDlg(html,foot){$('dlgBody').innerHTML=html;$('dlgFoot').innerHTML=foot||'<button class="ghost" id="dlgClose">ปิด</button>';const c=$('dlgClose');if(c)c.onclick=()=>dlg.close();if(!dlg.open)dlg.showModal()}
+const TUT=[
+ {t:'ชีวิตหนึ่ง เริ่มจากการสุ่มเกิด',ic:'dice',b:`<p>คุณจะเกิดที่จังหวัดไหน ฐานะแบบไหน มีใครเลี้ยงดู เป็นเรื่องที่เลือกไม่ได้ เหมือนชีวิตจริง</p><p>หลังจากนั้นทุกอย่างคุณเลือกเอง ตั้งแต่โรงเรียน อาชีพ ความรัก ไปจนถึงวิธีใช้เงิน</p>`},
+ {t:'ค่าพลัง 4 อย่าง',ic:'heart',b:`<div class="tutList">
+   <div>${ic('heart',{cls:'lg'})}<span><b>สุขภาพ</b><br>ต่ำแล้วป่วยง่ายและตายเร็ว ลดลงตามอายุ งานหนัก บุหรี่ และเหล้า</span></div>
+   <div>${ic('smile',{cls:'lg'})}<span><b>ความสุข</b><br>ส่วนที่มีผลกับคะแนนชีวิตมากที่สุด ถ้าต่ำนานๆ อาจเป็นซึมเศร้า</span></div>
+   <div>${ic('book',{cls:'lg'})}<span><b>สติปัญญา</b><br>ใช้สอบเข้าโรงเรียน มหาลัย และงานราชการ เพิ่มขึ้นตอนเรียน</span></div>
+   <div>${ic('people',{cls:'lg'})}<span><b>สังคม</b><br>ช่วยเรื่องความรัก งานขาย และอาชีพที่ต้องใช้คน</span></div></div>
+   <p style="margin-top:10px">แถบสีเขียวคือดี สีเหลืองคือพอใช้ สีแดงคืออันตราย</p>`},
+ {t:'อ่านตัวเลือกให้เป็น',ic:'compass',b:`<p>ลูกศร <b style="color:var(--good)">▲</b> <b style="color:var(--bad)">▼</b> บอกว่าค่าไหนจะดีขึ้นหรือแย่ลง สองลูกศรแปลว่ามาก ตัวเลขจริงจะเฉลยหลังเลือก (เปิดให้เห็นตัวเลขได้ในตั้งค่า)</p><p>ราคาสีเหลืองคือเงินที่ต้องจ่าย ถ้าเงินไม่พอบางทางให้กู้ได้ แต่ดอกเบี้ยจะตามคุณไปเรื่อยๆ</p><p>ไอคอนลูกเต๋าแปลว่าผลขึ้นกับดวง</p>`},
+ {t:'ตอนจบ คุณคือใคร',ic:'medal',b:`<p>เมื่อชีวิตจบ เกมจะบอกว่าคุณเป็นคนประเภทไหน จาก 18 แบบ และเทียบกับคนไทยอีก 400 ชีวิตที่สุ่มเกิด</p><p><b>คะแนนชีวิต</b> คิดจากความสุขเฉลี่ย 42% อายุยืน 24% ทรัพย์สิน 16% และโบนัสจากครอบครัวกับความฝันที่ทำสำเร็จ</p><p>เกมบันทึกอัตโนมัติทุกครั้งที่เลือก ปิดแล้วกลับมาเล่นต่อได้</p>`}];
+function openTut(i){
+  const T=TUT[i];
+  openDlg(`<div class="tut"><h3 id="dlgTitle">${ic(T.ic,{cls:'lg'})} ${T.t}</h3>${T.b}</div>`,
+    `<div class="dots">${TUT.map((_,j)=>`<i class="${j===i?'on':''}"></i>`).join('')}</div>${i>0?'<button class="ghost" id="tPrev">ย้อนกลับ</button>':''}<button class="${i<TUT.length-1?'ghost':'big'}" id="tNext" style="${i<TUT.length-1?'':'width:auto;padding:6px 16px;font-size:15px'}">${i<TUT.length-1?'ถัดไป':'เข้าใจแล้ว เริ่มเลย'}</button>`);
+  if($('tPrev'))$('tPrev').onclick=()=>openTut(i-1);
+  $('tNext').onclick=()=>{if(i<TUT.length-1)openTut(i+1);else{store.set('blk_tut',true);dlg.close()}};
+  $('tNext').focus();
+}
+function openSettings(){
+  openDlg(`<h3 id="dlgTitle">${ic('gear',{cls:'lg'})} ตั้งค่า</h3>
+   <label class="setRow"><span>เสียงเอฟเฟกต์<small>เสียงกดปุ่มและผลลัพธ์</small></span><input type="checkbox" id="sSfx" ${SET.sfx?'checked':''}></label>
+   <label class="setRow"><span>เพลงประกอบ<small>ทำนองเบาๆ เปลี่ยนตามช่วงวัย</small></span><input type="checkbox" id="sMusic" ${SET.music?'checked':''}></label>
+   <label class="setRow"><span>ระดับเสียง</span><input type="range" id="sVol" min="0" max="1" step="0.05" value="${SET.vol}"></label>
+   <label class="setRow"><span>แสดงตัวเลขบนตัวเลือก<small>ปิดไว้จะเห็นแค่ลูกศร ▲▼ ทำให้ตัดสินใจด้วยความรู้สึก</small></span><input type="checkbox" id="sNums" ${SET.nums?'checked':''}></label>
+   <label class="setRow"><span>การเคลื่อนไหว<small>ลดแอนิเมชันสำหรับคนที่เวียนหัวง่าย</small></span><select id="sMotion"><option value="auto">ตามเครื่อง</option><option value="on">เปิด</option><option value="off">ลดการเคลื่อนไหว</option></select></label>
+   <label class="setRow"><span>ดูวิธีเล่นอีกครั้ง</span><button class="ghost" id="sTut" type="button">เปิด</button></label>`);
+  $('sMotion').value=SET.motion;
+  $('sSfx').onchange=e=>{SET.sfx=e.target.checked;saveSet();sfx.click()};
+  $('sMusic').onchange=e=>{SET.music=e.target.checked;saveSet();SET.music?Music.start():Music.stop()};
+  $('sVol').oninput=e=>{SET.vol=+e.target.value;saveSet();if(MG)MG.gain.value=SET.vol};
+  $('sNums').onchange=e=>{SET.nums=e.target.checked;saveSet();if(PHASE==='card'&&S&&!$('game').classList.contains('hidden'))renderCard()};
+  $('sMotion').onchange=e=>{SET.motion=e.target.value;saveSet();document.body.classList.toggle('rm',reduced())};
+  $('sTut').onclick=()=>openTut(0);
+}
+function collHTML(coll,cur){return ARCH.map(a=>coll[a.id]?`<div class="ci pnl ${a.id===cur?'now':''}">${archIc(a,{cls:'lg'})}<span>${a.n}</span><span class="small">× ${coll[a.id]}</span></div>`:`<div class="ci pnl lock">${ic('help',{cls:'lg'})}<span>???</span></div>`).join('')}
+$('btnLog').onclick=()=>openDlg(`<h3 id="dlgTitle">${ic('scroll',{cls:'lg'})} บันทึกชีวิตของ ${S.name}</h3><div class="moments pnl">${S.log.map(l=>`<div class="mo"><span class="a">อายุ ${l.age}</span><span>${l.imp?'<b>':''}${noEmo(l.t)}${l.imp?'</b>':''}</span></div>`).join('')}</div>`);
+$('btnHelp').onclick=$('btnHelp0').onclick=()=>openTut(0);
+$('btnSet').onclick=$('btnSet0').onclick=openSettings;
+$('btnHome').onclick=()=>{saveGame();goTitle()};
+$('btnColl').onclick=()=>{const coll=store.get('blk_coll',{});openDlg(`<h3 id="dlgTitle">${ic('medal',{cls:'lg'})} คอลเลกชันประเภทคน (${Object.keys(coll).length}/${ARCH.length})</h3><p class="small">เกิดใหม่หลายๆ ครั้ง แล้วลองเลือกทางที่ต่างออกไปเพื่อปลดล็อกทุกแบบ</p><div class="coll">${collHTML(coll,null)}</div>`)};
 
 /* =========================================================
    SUMMARY
@@ -1728,116 +1944,105 @@ $('btnLog').onclick=()=>{$('dlgBody').innerHTML=`<h3>📜 บันทึกช�
 function pct(arr,v){if(!arr.length)return 0;let c=0;for(const x of arr)if(x<v)c++;else if(x===v)c+=.5;return Math.round(c/arr.length*100)}
 function median(a){if(!a.length)return 0;const b=[...a].sort((x,y)=>x-y);return b[Math.floor(b.length/2)]}
 const EPI={tycoon:'สร้างอาณาจักรจากความกล้า',selfmade:'เริ่มจากศูนย์ ไปถึงฝัน',heir:'ใช้ชีวิตเต็มที่ทุกบาททุกสตางค์',centenarian:'อยู่ดูโลกจนเกือบร้อยปี',shortbright:'สั้นแต่สว่างจ้า',tragic:'สู้จนลมหายใจสุดท้าย',debtking:'ใช้ชีวิตล่วงหน้าเสมอ',grey:'รู้ทุกทางลัดในเมืองนี้',saint:'ใจดีกับทุกคนที่ผ่านเข้ามา',adventurer:'ไม่เคยเดินทางเดิมซ้ำ',family:'บ้านคือทุกอย่าง',scholar:'ความรู้คือมรดก',artist:'ทิ้งสีสันไว้ให้โลก',party:'ปาร์ตี้ยังไม่เลิก แค่ไปต่อที่อื่น',gambler:'ทอยลูกเต๋าจนวันสุดท้าย',grinder:'ทำงานหนักเพื่อทุกคน',stable:'มั่นคงจนวันสุดท้าย',ordinary:'คนธรรมดาที่ไม่ธรรมดาสำหรับใครบางคน'};
+function topTraits(s){const arr=Object.entries(s.tr).filter(([k,v])=>v>=2&&TRAITN[k]).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k])=>TRAITN[k]);if((s.tr.honest||0)<=-3)arr.unshift('ชอบทางลัด');return arr.slice(0,3).join(' · ')||'ยังไม่ชัด'}
 function obit(s,m){
   const job=m.mainJob?`ประกอบอาชีพ${JOBS[m.mainJob].n}เป็นเวลา ${m.mainYrs} ปี`:'ไม่เคยมีงานประจำ';
   const edu=s.edu==='ป.ตรี'||s.edu==='ป.โท'?`สำเร็จการศึกษา${s.edu==='ป.โท'?'ปริญญาโท':'ปริญญาตรี'}${s.major?'สาขา'+MAJORS[s.major]:''}${s.uni?' จาก'+s.uni:''}`:`จบการศึกษาระดับ ${s.edu}`;
   const fam=s.married?`สมรสกับคุณ${s.partner?.name||''}`:s.widowed?'เป็นหม้ายหลังคู่ชีวิตจากไปก่อน':s.divorces?`ผ่านการหย่าร้าง ${s.divorces} ครั้ง`:s.partner?`ใช้ชีวิตคู่กับคุณ${s.partner.name}`:'ครองตัวเป็นโสด';
   const kids=s.kids.length?` มีบุตร ${s.kids.length} คน คือ ${s.kids.map(k=>k.name).join(', ')}`:'';
-  const left=m.nw>=1e6?`ทิ้งทรัพย์สินไว้ราว ${fk(m.nw)} บาท`:m.nw>0?`ทิ้งทรัพย์สินไว้เพียงเล็กน้อย`:`ทิ้งหนี้สินไว้ราว ${fk(-m.nw)} บาท`;
-  const hl=s.log.filter(l=>l.imp&&!l.t.includes('→')&&/ถูกรางวัล|ล้มละลาย|ทหารเกณฑ์|บวช|รอบโลก|เหรียญ|ทุน|ไล่ออก|ร้านกาแฟ|ความฝันเป็นจริง|มรดก|เจ๊ง/.test(l.t)).slice(0,3).map(l=>`${l.t} (อายุ ${l.age})`).join(', ');
+  const left=m.nw>=1e6?`ทิ้งทรัพย์สินไว้ราว ${fk(m.nw)} บาท`:m.nw>0?'ทิ้งทรัพย์สินไว้เพียงเล็กน้อย':`ทิ้งหนี้สินไว้ราว ${fk(-m.nw)} บาท`;
+  const hl=s.log.filter(l=>l.imp&&!l.t.includes('→')&&/ถูกรางวัล|ล้มละลาย|ทหารเกณฑ์|บวช|รอบโลก|เหรียญ|ทุน|ไล่ออก|ร้านกาแฟ|ความฝันเป็นจริง|มรดก|เจ๊ง/.test(l.t)).slice(0,3).map(l=>`${noEmo(l.t)} (อายุ ${l.age})`).join(', ');
   return `${s.name} เกิดที่${s.prov[0]} ในครอบครัวฐานะ${CLASSES[s.cls].n} ${edu} ${job} ${fam}${kids}${hl?` ช่วงชีวิตที่ผู้คนจดจำคือ${hl}`:''} ก่อนจากไปด้วย${s.cause} สิริอายุ ${s.age} ปี ${left}`;
 }
-function finish(lastTxt){
-  const s=S;const m=metrics(s);document.body.className='st-elder';
+function finish(){
+  const s=S,m=metrics(s);Music.stop();sfx.end();
   const coll=store.get('blk_coll',{});const isNew=!coll[m.arch.id];coll[m.arch.id]=(coll[m.arch.id]||0)+1;store.set('blk_coll',coll);
   const past=store.get('blk_past',[]);past.unshift({name:s.name,age:s.age,arch:m.arch.id,nw:Math.round(m.nw),seed:s.seed,cls:s.cls});store.set('blk_past',past.slice(0,8));
-  const B=badges(s);const goal=s.goal?GOALS[s.goal]:null;
+  const B=badges(s),goal=s.goal?GOALS[s.goal]:null,rm=reduced();let d=0;const rv=()=>`class="rv" style="animation-delay:${rm?0:(d++)*.35}s"`;
   const famTxt=(s.married?'แต่งงาน':s.partner?'มีคู่ชีวิต':s.widowed?'หม้าย':'โสด')+(s.kids.length?` · ลูก ${s.kids.length}`:'');
   $('summary').innerHTML=`
-  <div class="sumHead">
-    <div class="frame" style="max-width:440px;margin:0 auto"><canvas id="sumScene" width="192" height="108"></canvas></div>
-    <div class="small" style="margin-top:12px">${lastTxt?('▸ '+lastTxt.replace(/<[^>]+>/g,'')):''}</div>
-    <h1 style="margin-top:8px">${s.name} จากไปเมื่ออายุ ${s.age} ปี</h1>
-    <div class="epi">“${EPI[m.arch.id]}”</div>
-  </div>
-  <div class="paper"><div class="mast"><b>ข่าวมรณกรรม</b><span>หนังสือพิมพ์${s.prov[0]}รายวัน</span></div>
-    <h3>อาลัย ${s.name} (${s.age} ปี)</h3><p>${obit(s,m)}</p><p class="q">“${EPI[m.arch.id]}”</p></div>
-  <div class="arch"><div class="em">${m.arch.e}</div>
-    <div><div class="lbl">เกิดมาชาตินี้ คุณคือ...</div><h2>${m.arch.n}</h2><p>${m.arch.d}</p>
-    <span class="rare" id="rare">กำลังคำนวณความหายาก...</span> ${isNew?'<span class="rare" style="color:var(--mint)">✨ ปลดล็อกใหม่!</span>':''}</div></div>
-  ${goal?`<div class="goalRes ${m.goalOk?'ok':'no'}"><span class="e">${goal.e}</span><div><div class="small">ความฝันตอนอายุ 16</div><div>${goal.n} — ${m.goalOk?'ทำได้สำเร็จ! 🎉 (+8 คะแนนชีวิต)':'ยังไปไม่ถึง...'}</div></div></div>`:''}
-  <div class="sgrid">
-    <div class="sbox"><div class="k">เกิดเป็น</div><div class="v">${CLASSES[s.cls].n}</div><div class="small">${s.prov[0]}</div></div>
-    <div class="sbox"><div class="k">ทรัพย์สินสุทธิสุดท้าย</div><div class="v" style="color:${m.nw<0?'var(--rose)':'var(--sun)'}">฿${fk(m.nw)}</div><div class="small">สูงสุด ฿${fk(s.peakNW)}</div></div>
-    <div class="sbox"><div class="k">ความสุขเฉลี่ยตลอดชีวิต</div><div class="v">${Math.round(m.avgJoy)} / 100</div></div>
-    <div class="sbox"><div class="k">คะแนนชีวิตรวม</div><div class="v">${m.score}</div></div>
-    <div class="sbox"><div class="k">อาชีพหลัก</div><div class="v">${m.mainJob?JOBS[m.mainJob].n:'ไม่เคยทำงาน'}</div><div class="small">${m.mainYrs?m.mainYrs+' ปี':''}</div></div>
-    <div class="sbox"><div class="k">การศึกษา</div><div class="v">${s.edu}</div><div class="small">${s.major?MAJORS[s.major]:''}</div></div>
-    <div class="sbox"><div class="k">ครอบครัว</div><div class="v">${famTxt}</div></div>
-    <div class="sbox"><div class="k">นิสัยเด่น</div><div class="v" style="font-size:15px">${topTraits(s)}</div></div>
-  </div>
-  ${B.length?`<div class="sec"><h3>🏅 เหรียญชีวิต</h3><div class="badges">${B.map((b,i)=>`<span class="badge" style="animation-delay:${i*.06}s"><span>${b[0]}</span>${b[1]}</span>`).join('')}</div></div>`:''}
-  <div class="sec"><h3>📊 เทียบกับคนไทยอีก 400 ชีวิตที่สุ่มเกิด</h3><div class="loading" id="simLoad">กำลังจำลองชีวิตคนอื่น... 0%</div><div id="simOut"></div></div>
-  <div class="sec"><h3>📈 กราฟชีวิต</h3><canvas id="lifeChart"></canvas>
-    <div class="row small" style="margin-top:6px;gap:16px"><span><span style="color:var(--sun)">■</span> ทรัพย์สินสุทธิ (แกนซ้าย)</span><span><span style="color:var(--mint)">■</span> ความสุข</span><span><span style="color:var(--hp)">■</span> สุขภาพ (แกนขวา 0–100)</span></div></div>
-  <div class="sec"><h3>🗓 ช่วงเวลาสำคัญ</h3><div class="moments">${s.log.filter(l=>l.imp).map(l=>`<div class="mo"><span class="a">อายุ ${l.age}</span><span>${l.t}</span></div>`).join('')}</div></div>
-  <div class="sec"><h3>🗂 คอลเลกชันประเภทคน (${Object.keys(coll).length}/${ARCH.length})</h3><div class="coll">${collHTML(coll,m.arch.id)}</div></div>
-  <div class="actions"><button class="big" id="sAgain">🎲 เกิดใหม่</button><button class="big alt" id="sSame">🔁 เกิดใหม่ในชาติเดิม</button><button class="big alt2" id="sCard">🖼 บันทึกการ์ดสรุป</button></div>
-  <p class="small" style="text-align:center;margin-top:-24px;margin-bottom:40px">ส่งรหัสชาติกำเนิด <b style="color:var(--sun)">#${s.seed}</b> ให้เพื่อน แล้วดูว่าใครใช้ชีวิตเดียวกันได้ดีกว่า</p>`;
-  show('summary');jingle(false);
+  <div class="sumHead" ${rv()}><div class="frame" id="sumFrame"><canvas id="sumScene" width="192" height="108" role="img" aria-label="ป้ายหลุมศพยามค่ำคืน"></canvas></div>
+    <h1>${s.name} จากไปเมื่ออายุ ${s.age} ปี</h1><div class="small">${s.cause}</div><div class="epi">“${EPI[m.arch.id]}”</div></div>
+  <div class="arch pnl" ${rv()}><div class="em">${archIc(m.arch,{cls:'xl',alt:m.arch.n})}</div>
+    <div><div class="lbl">เกิดมาชาตินี้ คุณคือ</div><h2>${m.arch.n}</h2><p>${m.arch.d}</p>
+    <span class="rare" id="rare">กำลังคำนวณความหายาก...</span> ${isNew?'<span class="rare" style="color:var(--good)">ปลดล็อกใหม่</span>':''}</div></div>
+  ${goal?`<div class="goalRes pnl ${m.goalOk?'ok':'no'}" ${rv()}>${ic(GOAL_IC[s.goal]||'target',{cls:'lg'})}<div><div class="small">ความฝันตอนอายุ 16</div><div>${goal.n} · ${m.goalOk?'ทำได้สำเร็จ (+8 คะแนนชีวิต)':'ยังไปไม่ถึง'}</div></div></div>`:''}
+  <div class="paper" ${rv()}><div class="mast"><b>ข่าวมรณกรรม</b><span>หนังสือพิมพ์${s.prov[0]}รายวัน</span></div><h3>อาลัย ${s.name} (${s.age} ปี)</h3><p>${obit(s,m)}</p><p class="q">“${EPI[m.arch.id]}”</p></div>
+  <div class="sgrid" ${rv()}>
+    <div class="sbox pnl"><div class="k">เกิดเป็น</div><div class="v">${CLASSES[s.cls].n}</div><div class="small">${s.prov[0]}</div></div>
+    <div class="sbox pnl"><div class="k">ทรัพย์สินสุทธิสุดท้าย</div><div class="v ${m.nw<0?'neg':''}">${baht(m.nw)}</div><div class="small">สูงสุด ${baht(s.peakNW)}</div></div>
+    <div class="sbox pnl"><div class="k">ความสุขเฉลี่ย</div><div class="v">${Math.round(m.avgJoy)} / 100</div></div>
+    <div class="sbox pnl"><div class="k">คะแนนชีวิตรวม</div><div class="v">${m.score}</div></div>
+    <div class="sbox pnl"><div class="k">อาชีพหลัก</div><div class="v">${m.mainJob?JOBS[m.mainJob].n:'ไม่เคยทำงาน'}</div><div class="small">${m.mainYrs?m.mainYrs+' ปี':''}</div></div>
+    <div class="sbox pnl"><div class="k">การศึกษา</div><div class="v">${s.edu}</div><div class="small">${s.major?MAJORS[s.major]:''}</div></div>
+    <div class="sbox pnl"><div class="k">ครอบครัว</div><div class="v">${famTxt}</div></div>
+    <div class="sbox pnl"><div class="k">นิสัยเด่น</div><div class="v" style="font-size:15px">${topTraits(s)}</div></div></div>
+  ${B.length?`<div class="sec" ${rv()}><h3>${ic('medal')} เหรียญชีวิต</h3><div class="badges">${B.map((b,i)=>`<span class="badge pnl" style="animation-delay:${i*.05}s">${ic(BADGE_IC[b[0]]||'star')}${b[1]}</span>`).join('')}</div></div>`:''}
+  <div class="sec" ${rv()}><h3>${ic('chart')} เทียบกับคนไทยอีก 400 ชีวิตที่สุ่มเกิด</h3><div class="small" id="simLoad">กำลังจำลองชีวิตคนอื่น 0%</div><div id="simOut"></div></div>
+  <div class="sec" ${rv()}><h3>${ic('chart')} กราฟชีวิต</h3><div class="pnl" style="padding:8px"><canvas id="lifeChart" role="img" aria-label="กราฟทรัพย์สิน ความสุข และสุขภาพตามอายุ"></canvas></div>
+    <div class="row small" style="margin-top:6px;gap:16px"><span><span style="color:var(--warn)">■</span> ทรัพย์สินสุทธิ (แกนซ้าย)</span><span><span style="color:var(--good)">■</span> ความสุข</span><span><span style="color:var(--bad)">■</span> สุขภาพ (แกนขวา 0–100)</span></div></div>
+  <div class="sec" ${rv()}><h3>${ic('scroll')} ช่วงเวลาสำคัญ</h3><div class="moments pnl">${s.log.filter(l=>l.imp).map(l=>`<div class="mo"><span class="a">อายุ ${l.age}</span><span>${noEmo(l.t)}</span></div>`).join('')}</div></div>
+  <div class="sec" ${rv()}><h3>${ic('medal')} คอลเลกชันประเภทคน (${Object.keys(coll).length}/${ARCH.length})</h3><div class="coll">${collHTML(coll,m.arch.id)}</div></div>
+  <div class="actions" ${rv()}><button class="big" id="sAgain">${ic('dice')} เกิดใหม่</button><button class="big sec" id="sSame">${ic('clover')} เกิดใหม่ในชาติเดิม</button><button class="big sec" id="sCard">${ic('star')} การ์ดสรุปชีวิต</button></div>
+  <p class="small" style="text-align:center;margin-bottom:40px">ส่งรหัสชาติกำเนิด <b style="color:var(--warn)">#${s.seed}</b> ให้เพื่อน แล้วดูว่าใครใช้ชีวิตเดียวกันได้ดีกว่า</p>`;
+  show('summary');document.body.className='st-elder'+(rm?' rm':'');
+  RO.observe($('sumFrame'));fitPixel($('sumScene'),$('sumFrame'));
   const sc=$('sumScene').getContext('2d');let t0=0;
   (function loop(){if($('summary').classList.contains('hidden'))return;cx=sc;cx.imageSmoothingEnabled=false;t0+=1/60;SCENES.grave(t0,s);requestAnimationFrame(loop)})();
   drawChart(s);
-  $('sAgain').onclick=()=>{beep();goTitle()};
-  $('sSame').onclick=()=>{beep();startLife(s.seed,s.name)};
-  $('sCard').onclick=()=>shareCard(s,m);
-  simulatePop(400,p=>{const el=$('simLoad');if(el)el.textContent=`กำลังจำลองชีวิตคนอื่น... ${Math.round(p*100)}%`},pop=>renderCmp(s,m,pop));
+  $('sAgain').onclick=()=>{sfx.click();goTitle()};$('sSame').onclick=()=>{sfx.click();startLife(s.seed,s.name)};$('sCard').onclick=()=>shareCard(s,m);
+  simulatePop(400,p=>{const el=$('simLoad');if(el)el.textContent=`กำลังจำลองชีวิตคนอื่น ${Math.round(p*100)}%`},pop=>renderCmp(s,m,pop));
 }
-function topTraits(s){const arr=Object.entries(s.tr).filter(([k,v])=>v>=2&&TRAITN[k]).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k])=>TRAITN[k]);if((s.tr.honest||0)<=-3)arr.unshift('ชอบทางลัด');return arr.slice(0,3).join(' · ')||'เรียบง่าย'}
-function collHTML(coll,cur){return ARCH.map(a=>coll[a.id]?`<div class="ci ${a.id===cur?'now':''}"><div class="e">${a.e}</div>${a.n}<div class="small">×${coll[a.id]}</div></div>`:`<div class="ci lock"><div class="e">❔</div>???</div>`).join('')}
 function renderCmp(s,m,pop){
   const el=$('simOut');if(!el)return;const ld=$('simLoad');if(ld)ld.remove();
   const P=k=>pop.map(x=>x[k]);
   const rows=[['อายุยืนกว่า',pct(P('age'),m.age)],['รวยกว่า',pct(P('nw'),m.nw)],['มีความสุขกว่า',pct(P('avgJoy'),m.avgJoy)],['คะแนนชีวิตดีกว่า',pct(P('score'),m.score)]];
-  const same=pop.filter(x=>x.cls===s.cls);const sameP=pct(same.map(x=>x.score),m.score);
-  const archCnt=pop.filter(x=>x.arch.id===m.arch.id).length;
-  $('rare').textContent=`มีเพียง ${(archCnt/pop.length*100).toFixed(1)}% ของคนทั้งหมดที่เป็นแบบนี้`;
+  const same=pop.filter(x=>x.cls===s.cls),sameP=pct(same.map(x=>x.score),m.score);
+  $('rare').textContent=`มีเพียง ${(pop.filter(x=>x.arch.id===m.arch.id).length/pop.length*100).toFixed(1)}% ของคนทั้งหมดที่เป็นแบบนี้`;
   const byCls=CLASSES.map((c,i)=>{const g=pop.filter(x=>x.cls===i);return {n:c.n,c:g.length,nw:median(g.map(x=>x.nw)),age:median(g.map(x=>x.age)),joy:median(g.map(x=>x.avgJoy))}});
-  const poor=byCls[0].c?byCls[0]:byCls[1];const rich=byCls[5].c?byCls[5]:byCls[4];
-  const archTop={};pop.forEach(x=>archTop[x.arch.id]=(archTop[x.arch.id]||0)+1);
-  const topA=Object.entries(archTop).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([id,c])=>{const a=ARCH.find(z=>z.id===id);return `${a.e} ${a.n} (${Math.round(c/pop.length*100)}%)`}).join(', ');
+  const poor=byCls[0].c?byCls[0]:byCls[1],rich=byCls[5].c?byCls[5]:byCls[4];
+  const at={};pop.forEach(x=>at[x.arch.id]=(at[x.arch.id]||0)+1);
+  const topA=Object.entries(at).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([id,c])=>`${ARCH.find(z=>z.id===id).n} (${Math.round(c/pop.length*100)}%)`).join(', ');
   const ratio=poor.nw>0?rich.nw/poor.nw:99;
   el.innerHTML=`<div class="cmp">${rows.map(([k,v])=>`<div class="cmpRow"><span>${k}</span><span class="cmpBar"><i data-w="${v}"></i></span><span class="pc">${v}%</span></div>`).join('')}</div>
-  <div class="insight">เทียบเฉพาะคนที่เกิดฐานะ<b>${CLASSES[s.cls].n}</b>เหมือนคุณ (${same.length} คน) ชีวิตคุณดีกว่า <b>${sameP}%</b> ของพวกเขา —
-  ${sameP>=70?'คุณใช้ไพ่ที่ได้มาได้เก่งมาก 👏':sameP<=30?'ไพ่ในมือไม่ได้แย่ แต่ทางที่เลือกอาจพาไปผิดทางบ้าง':'คุณเล่นไพ่ที่ได้มาได้พอๆ กับคนส่วนใหญ่'}<br><br>
-  💡 คนที่เกิด<b>${rich.n}</b>มีทรัพย์สินตอนตาย (มัธยฐาน) <b>฿${fk(rich.nw)}</b> ส่วนคนเกิด<b>${poor.n}</b>มี <b>฿${fk(poor.nw)}</b> — ${ratio>=99?'ต่างกันมหาศาล':`ต่างกัน ${Math.round(ratio)} เท่า`} · ${ratio>8?'ชาติกำเนิดสร้างความต่างได้มหาศาล':ratio>2?'ชาติกำเนิดสำคัญ แต่ไม่ได้กำหนดทุกอย่าง':'รอบนี้ทางที่เลือกสำคัญกว่าชาติกำเนิด'}<br>
-  ประเภทคนที่พบบ่อยที่สุด: ${topA}</div>
-  <div class="tblWrap"><table class="clsTable"><tr><th>เกิดเป็น</th><th>จำนวน</th><th>อายุขัย</th><th>ความสุข</th><th>ทรัพย์สิน (มัธยฐาน)</th></tr>
-  ${byCls.map((b,i)=>`<tr class="${i===s.cls?'me':''}"><td>${b.n}${i===s.cls?' ← คุณ':''}</td><td>${b.c}</td><td>${b.c?b.age:'-'}</td><td>${b.c?Math.round(b.joy):'-'}</td><td>${b.c?'฿'+fk(b.nw):'-'}</td></tr>`).join('')}</table></div>`;
+  <div class="insight">เทียบเฉพาะคนที่เกิดฐานะ<b>${CLASSES[s.cls].n}</b>เหมือนคุณ (${same.length} คน) ชีวิตคุณดีกว่า <b>${sameP}%</b> ของพวกเขา ${sameP>=70?'คุณใช้ไพ่ที่ได้มาได้เก่งมาก':sameP<=30?'ไพ่ในมือไม่ได้แย่ แต่ทางที่เลือกอาจพาไปผิดทางบ้าง':'คุณเล่นไพ่ที่ได้มาได้พอๆ กับคนส่วนใหญ่'}<br><br>
+  คนที่เกิด<b>${rich.n}</b>มีทรัพย์สินตอนตาย (ค่ากลาง) <b>${baht(rich.nw)}</b> ส่วนคนเกิด<b>${poor.n}</b>มี <b>${baht(poor.nw)}</b> ${ratio>=99?'ต่างกันมหาศาล':`ต่างกัน ${Math.round(ratio)} เท่า`} ${ratio>8?'ชาติกำเนิดสร้างความต่างได้มาก':ratio>2?'ชาติกำเนิดสำคัญ แต่ไม่ได้กำหนดทุกอย่าง':'รอบนี้ทางที่เลือกสำคัญกว่าชาติกำเนิด'}<br>ประเภทคนที่พบบ่อยที่สุด: ${topA}</div>
+  <div class="tblWrap"><table class="clsTable"><tr><th>เกิดเป็น</th><th>จำนวน</th><th>อายุขัย</th><th>ความสุข</th><th>ทรัพย์สิน (ค่ากลาง)</th></tr>
+  ${byCls.map((b,i)=>`<tr class="${i===s.cls?'me':''}"><td>${b.n}${i===s.cls?' (คุณ)':''}</td><td>${b.c}</td><td>${b.c?b.age:'-'}</td><td>${b.c?Math.round(b.joy):'-'}</td><td>${b.c?baht(b.nw):'-'}</td></tr>`).join('')}</table></div>`;
   requestAnimationFrame(()=>el.querySelectorAll('.cmpBar i').forEach(i=>i.style.width=i.dataset.w+'%'));
 }
 function drawChart(s){
   const c=$('lifeChart');const dpr=window.devicePixelRatio||1;const W=c.clientWidth,H=c.clientHeight;c.width=W*dpr;c.height=H*dpr;const g=c.getContext('2d');g.scale(dpr,dpr);
-  const pad={l:56,r:30,t:12,b:24};const iw=W-pad.l-pad.r,ih=H-pad.t-pad.b;const hs=s.hist;const maxA=Math.max(10,s.age);
-  const nws=hs.map(h=>h.nw);const mn=Math.min(0,...nws),mx=Math.max(1,...nws);
+  const pad={l:62,r:30,t:12,b:24},iw=W-pad.l-pad.r,ih=H-pad.t-pad.b,hs=s.hist,maxA=Math.max(10,s.age);
+  const nws=hs.map(h=>h.nw),mn=Math.min(0,...nws),mx=Math.max(1,...nws);
   const X=a=>pad.l+a/maxA*iw,Y=v=>pad.t+ih-(v-mn)/(mx-mn)*ih,Y2=v=>pad.t+ih-v/100*ih;
-  g.strokeStyle='#3a2f6a';g.lineWidth=1;g.font='11px Sarabun';g.fillStyle='#aaa0d0';
-  for(let i=0;i<=4;i++){const v=mn+(mx-mn)*i/4,y=Y(v);g.beginPath();g.moveTo(pad.l,y);g.lineTo(W-pad.r,y);g.stroke();g.fillText('฿'+fk(v),4,y+4)}
-  g.fillStyle='#776da3';for(let v=0;v<=100;v+=50)g.fillText(v,W-pad.r+6,Y2(v)+4);
-  g.fillStyle='#aaa0d0';for(let a=0;a<=maxA;a+=10)g.fillText(a,X(a)-6,H-6);
+  g.strokeStyle='#3a2f6a';g.lineWidth=1;g.font='11px Sarabun';g.fillStyle='#c0b8e0';
+  for(let i=0;i<=4;i++){const v=mn+(mx-mn)*i/4,y=Y(v);g.beginPath();g.moveTo(pad.l,y);g.lineTo(W-pad.r,y);g.stroke();g.fillText(baht(v),4,y+4)}
+  g.fillStyle='#a097cb';for(let v=0;v<=100;v+=50)g.fillText(v,W-pad.r+6,Y2(v)+4);
+  g.fillStyle='#c0b8e0';for(let a=0;a<=maxA;a+=10)g.fillText(a,X(a)-6,H-6);
   const line=(f,col,w)=>{g.strokeStyle=col;g.lineWidth=w;g.beginPath();hs.forEach((h,i)=>{const x=X(h.age),y=f(h);i?g.lineTo(x,y):g.moveTo(x,y)});g.stroke()};
-  g.globalAlpha=.7;line(h=>Y2(h.hp),'#ff5f7a',1.5);line(h=>Y2(h.joy),'#53e0ae',1.5);g.globalAlpha=1;
+  g.globalAlpha=.75;line(h=>Y2(h.hp),'#ff6b85',1.5);line(h=>Y2(h.joy),'#53e0ae',1.5);g.globalAlpha=1;
   const grd=g.createLinearGradient(0,pad.t,0,pad.t+ih);grd.addColorStop(0,'#ffd16655');grd.addColorStop(1,'#ffd16600');
   g.fillStyle=grd;g.beginPath();g.moveTo(X(0),Y(0));hs.forEach(h=>g.lineTo(X(h.age),Y(h.nw)));g.lineTo(X(hs[hs.length-1].age),Y(0));g.closePath();g.fill();
-  line(h=>Y(h.nw),'#ffd166',2.5);
+  line(h=>Y(h.nw),'#ffd166',2.5);const L=hs[hs.length-1];g.fillStyle='#ffd166';g.fillRect(X(L.age)-3,Y(L.nw)-3,6,6);
 }
 function shareCard(s,m){
   const c=document.createElement('canvas');c.width=1080;c.height=1350;const g=c.getContext('2d');
-  const grd=g.createLinearGradient(0,0,0,1350);grd.addColorStop(0,'#2a1f55');grd.addColorStop(1,'#120e22');g.fillStyle=grd;g.fillRect(0,0,1080,1350);
-  const sc=document.createElement('canvas');sc.width=192;sc.height=108;cx=sc.getContext('2d');cx.imageSmoothingEnabled=false;
+  const grd=g.createLinearGradient(0,0,0,1350);grd.addColorStop(0,'#2a1f55');grd.addColorStop(1,'#110d20');g.fillStyle=grd;g.fillRect(0,0,1080,1350);
+  const sc=document.createElement('canvas');sc.width=192;sc.height=108;const prev=cx;cx=sc.getContext('2d');cx.imageSmoothingEnabled=false;
   const fake=Object.assign({},s,{tod:'sunset',rain:false,age:Math.min(s.age,45),studying:false,job:m.mainJob,retired:false});
-  SCENES.home(2,fake);s.kids.slice(0,2).forEach((k,i)=>person(84-i*10,100,{age:10+i*3,g:k.g,skin:k.skin,hair:k.hair,hairCol:k.hairCol,shirt:'#ff9f6b',pants:'#3a4a7a',joy:70}));
+  SCENES.home(2,fake);EXTRAS.home(2,fake);s.kids.slice(0,2).forEach((k,i)=>person(84-i*10,100,{age:10+i*3,g:k.g,skin:k.skin,hair:k.hair,hairCol:k.hairCol,shirt:'#ff9f6b',pants:'#3a4a7a',joy:70}));
   if(s.partner)person(108,100,{age:43,g:s.partner.g,skin:s.partner.skin,hair:s.partner.hair,hairCol:s.partner.hairCol,shirt:'#ff8fb1',pants:'#3a3a52',joy:70});
-  person(96,100,Object.assign({age:fake.age,g:s.g,skin:s.skin,hair:s.hair,hairCol:s.hairCol,joy:m.avgJoy},outfit(fake)));
-  g.imageSmoothingEnabled=false;g.drawImage(sc,90,90,900,506);g.strokeStyle='#56469c';g.lineWidth=8;g.strokeRect(90,90,900,506);
-  g.textAlign='center';g.fillStyle='#aaa0d0';g.font='500 34px Mitr';g.fillText('เกิดมาชาตินี้ '+s.name+' คือ...',540,680);
-  g.font='120px serif';g.fillText(m.arch.e,540,820);
+  person(96,100,Object.assign({age:fake.age,g:s.g,skin:s.skin,hair:s.hair,hairCol:s.hairCol,joy:m.avgJoy},outfit(fake)));cx=prev;
+  g.imageSmoothingEnabled=false;g.drawImage(sc,108,90,864,486);g.strokeStyle='#5a4ca0';g.lineWidth=8;g.strokeRect(108,90,864,486);
+  const v=ARCH_IC[m.arch.id]||['clover'];const icv=ic(v[0],{pal:v[1],canvas:true});const k=Math.floor(130/icv.height);g.drawImage(icv,540-icv.width*k/2,700,icv.width*k,icv.height*k);
+  g.textAlign='center';g.fillStyle='#c0b8e0';g.font='500 34px Mitr';g.fillText('เกิดมาชาตินี้ '+s.name+' คือ',540,660);
   g.fillStyle='#ffd166';g.font='600 70px Mitr';g.fillText(m.arch.n,540,920);
   g.fillStyle='#f4f0ff';g.font='34px Sarabun';
-  [`เกิดที่${s.prov[0]} · ฐานะ${CLASSES[s.cls].n}`,`อยู่ถึง ${s.age} ปี · ${m.mainJob?JOBS[m.mainJob].n:'ไม่เคยทำงาน'}`,`ทรัพย์สิน ฿${fk(m.nw)} · ความสุขเฉลี่ย ${Math.round(m.avgJoy)}`].forEach((l,i)=>g.fillText(l,540,1000+i*54));
+  [`เกิดที่${s.prov[0]} · ฐานะ${CLASSES[s.cls].n}`,`อยู่ถึง ${s.age} ปี · ${m.mainJob?JOBS[m.mainJob].n:'ไม่เคยทำงาน'}`,`ทรัพย์สิน ${baht(m.nw)} · ความสุขเฉลี่ย ${Math.round(m.avgJoy)}`].forEach((l,i)=>g.fillText(l,540,1000+i*54));
   g.fillStyle='#ff7b5c';g.font='500 36px Mitr';g.fillText(`“${EPI[m.arch.id]}”`,540,1190);
-  g.fillStyle='#776da3';g.font='28px Sarabun';g.fillText(`เกิดมาเป็นใคร? · รหัสชาติกำเนิด #${s.seed}`,540,1290);
-  $('dlgBody').innerHTML=`<h3>🖼 การ์ดสรุปชีวิต</h3><p class="small">กดค้าง (มือถือ) หรือคลิกขวา (คอม) ที่รูปเพื่อบันทึก แล้วแชร์ให้เพื่อนได้เลย</p><img src="${c.toDataURL('image/png')}" alt="การ์ดสรุปชีวิตของ ${s.name}" style="width:100%;border-radius:10px;display:block">`;dlg.showModal();
+  g.fillStyle='#a097cb';g.font='28px Sarabun';g.fillText(`เกิดมาเป็นใคร? · รหัสชาติกำเนิด #${s.seed}`,540,1290);
+  openDlg(`<h3 id="dlgTitle">${ic('star',{cls:'lg'})} การ์ดสรุปชีวิต</h3><p class="small">กดค้าง (มือถือ) หรือคลิกขวา (คอม) ที่รูปเพื่อบันทึก แล้วแชร์ให้เพื่อนได้เลย</p><img src="${c.toDataURL('image/png')}" alt="การ์ดสรุปชีวิตของ ${s.name}" style="width:100%;display:block;border-radius:4px">`);
 }
 
 /* =========================================================
@@ -1846,37 +2051,38 @@ function shareCard(s,m){
 let titleT=0;
 function titleLoop(){
   if(!$('title').classList.contains('hidden')){
-    const c=$('titleCanvas');cx=c.getContext('2d');cx.imageSmoothingEnabled=false;titleT+=1/60;
-    const phase=Math.floor(titleT/2.6)%7;
-    const P=[['birth',0,'day',2],['school',8,'day',2],['uni',19,'sunset',2],['office',30,'day',3],['wedding',33,'day',3],['home',45,'night',4],['park',76,'sunset',4]][phase];
-    const f={g:'f',skin:SKINS[1],hair:'pony',hairCol:'#2b1a12',cls:P[3],age:P[1],tod:P[2],studying:phase>0&&phase<3,job:phase===3?'office':null,retired:phase===6,joy:70,iq:60,kids:[],partner:null};
+    const c=$('titleCanvas');cx=c.getContext('2d');cx.imageSmoothingEnabled=false;titleT+=reduced()?0:1/60;
+    const ph=Math.floor((reduced()?7.9:titleT)/2.6)%7;
+    const P=[['birth',0,'day',2],['school',8,'day',2],['uni',19,'sunset',2],['office',30,'day',3],['wedding',33,'day',3],['home',45,'night',4],['park',76,'sunset',4]][ph];
+    const f={g:'f',skin:SKINS[1],hair:'pony',hairCol:'#2b1a12',cls:P[3],age:P[1],tod:P[2],studying:ph>0&&ph<3,job:ph===3?'office':null,retired:ph===6,joy:70,iq:60,kids:[],partner:null,car:ph>=5};
     SCENES[P[0]](titleT,f);if(EXTRAS[P[0]])EXTRAS[P[0]](titleT,f);
-    if(phase===0)person(83,64,{age:0,skin:f.skin});
+    if(ph===0)person(83,64,{age:0,skin:f.skin});
     else{const gy=SH-8,x=92;
-      if(phase>=4)person(x+13,gy,{age:f.age+2,g:'m',skin:SKINS[2],hair:'short',hairCol:'#20140e',shirt:'#5a8ad0',pants:'#3a3a52',t:titleT,joy:70});
-      if(phase>=5)person(x-13,gy,{age:phase===5?8:40,g:'m',skin:SKINS[1],hair:'short',hairCol:'#20140e',shirt:'#ff9f6b',pants:'#3a4a7a',t:titleT,joy:70});
+      if(ph>=4)person(x+13,gy,{age:f.age+2,g:'m',skin:SKINS[2],hair:'short',hairCol:'#20140e',shirt:'#5a8ad0',pants:'#3a3a52',t:titleT,joy:70});
+      if(ph>=5)person(x-13,gy,{age:ph===5?8:40,g:'m',skin:SKINS[1],hair:'short',hairCol:'#20140e',shirt:'#ff9f6b',pants:'#3a4a7a',t:titleT,joy:70});
       person(x,gy,Object.assign({age:f.age,g:'f',skin:f.skin,hair:f.hair,hairCol:f.hairCol,t:titleT,joy:70,bob:Math.floor(titleT*2)%2?-1:0},outfit(f)))}
-    const fp=titleT%2.6;if(fp<.3)A(1-fp/.3,()=>R(0,0,SW,SH,'#000'));
+    const fp=titleT%2.6;if(!reduced()&&fp<.3)A(1-fp/.3,()=>R(0,0,SW,SH,'#000'));
   }
   requestAnimationFrame(titleLoop);
 }
 function goTitle(){
-  document.body.className='';show('title');
+  Music.stop();document.body.className=reduced()?'rm':'';show('title');PHASE='card';
   const sv=store.get(SAVE_KEY,null),rb=$('btnResume');
-  if(sv&&sv.picks){rb.hidden=false;rb.textContent=`▶ เล่นต่อ: ${sv.name} (อายุ ${sv.age} ปี)`;rb.onclick=()=>{beep();resumeLife(sv)};$('btnStart').textContent='🎲 เริ่มชีวิตใหม่ (ชีวิตที่ค้างไว้จะหายไป)'}
-  else{rb.hidden=true;$('btnStart').textContent='🎲 สุ่มเกิด!'}
+  if(sv&&sv.picks){rb.hidden=false;rb.innerHTML=`${ic('clover')} เล่นต่อ: ${sv.name} (อายุ ${sv.age} ปี)`;rb.onclick=()=>{sfx.click();resumeLife(sv)};$('btnStart').innerHTML=`${ic('dice')} เริ่มชีวิตใหม่ (ชีวิตที่ค้างไว้จะหายไป)`;$('btnStart').className='big sec'}
+  else{rb.hidden=true;$('btnStart').innerHTML=`${ic('dice')} สุ่มเกิด!`;$('btnStart').className='big'}
   const past=store.get('blk_past',[]);
-  $('pastLives').innerHTML=past.length?`<div class="small" style="margin-bottom:6px">ชาติที่ผ่านมาของคุณ</div>`+past.map(p=>{const a=ARCH.find(x=>x.id===p.arch)||ARCH[ARCH.length-1];return `<div class="pl"><span>${a.e} <b>${p.name}</b> · ${a.n}</span><span class="small">อายุ ${p.age} · ฿${fk(p.nw)} · #${p.seed}</span></div>`}).join(''):'';
+  $('pastLives').innerHTML=past.length?`<h4 style="font-size:var(--fs-sm);color:var(--mute);margin-bottom:6px">ชาติที่ผ่านมาของคุณ</h4>`+past.map(p=>{const a=ARCH.find(x=>x.id===p.arch)||ARCH[ARCH.length-1];return `<div class="pl"><span>${archIc(a)} <b>${p.name}</b> · ${a.n}</span><span class="small num">อายุ ${p.age} · ${baht(p.nw)} · #${p.seed}</span></div>`}).join(''):'';
 }
-$('btnStart').onclick=()=>{beep();const sv=$('inSeed').value.replace(/\D/g,'');const seed=sv?parseInt(sv,10):Math.floor(Math.random()*9e8)+1e8;startLife(seed,$('inName').value)};
-$('btnColl').onclick=()=>{const coll=store.get('blk_coll',{});$('dlgBody').innerHTML=`<h3>🗂 คอลเลกชันประเภทคน (${Object.keys(coll).length}/${ARCH.length})</h3><p class="small">เกิดใหม่หลายๆ ครั้ง แล้วลองเลือกทางที่ต่างออกไปเพื่อปลดล็อกทุกแบบ</p><div class="coll">${collHTML(coll,null)}</div>`;dlg.showModal()};
+$('features').innerHTML=[['coin','เงินแบบของจริง','ภาษี ประกันสังคม กองทุน หนี้บัตร ดอกเบี้ย'],['house','ครอบครัวมีชีวิต','พ่อแม่แก่ลง คู่ชีวิตมีงาน ลูกโตขึ้น มรดก'],['cross','สุขภาพสะสม','นิสัยวันนี้ กลายเป็นโรคในวันหน้า'],['helmet','ชีวิตแบบไทยๆ','เกณฑ์ทหาร ซองงานแต่ง ค้ำประกัน หวย'],['target','ความฝัน','ตั้งเป้าตอนวัยรุ่น แล้วดูว่าทำได้ไหม'],['chart','เทียบ 400 ชีวิต','ชาติกำเนิดหรือทางเลือก อะไรสำคัญกว่า']].map(([i,b,t])=>`<div class="feat pnl">${ic(i)}<b>${b}</b><span>${t}</span></div>`).join('');
+$('btnStart').onclick=()=>{sfx.click();const sv=$('inSeed').value.replace(/\D/g,'');const seed=sv?parseInt(sv,10):Math.floor(Math.random()*9e8)+1e8;startLife(seed,$('inName').value)};
 ['inName','inSeed'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter')$('btnStart').click()}));
+hydrateIcons();
+RO.observe($('sceneFrame'));RO.observe($('titleFrame'));
 let lastTs=0;
 function drawAvatar(t){const c=$('gAvatar');if(!c||!S)return;cx=c.getContext('2d');cx.imageSmoothingEnabled=false;R(0,0,20,18,{child:'#2a5a6a',teen:'#4a2a6a',adult:'#2a3270',elder:'#5a3a2a'}[stageOf(S.age)[0]]);R(0,14,20,4,'#00000033');person(10,29,Object.assign({age:Math.max(S.age,3),g:S.g,skin:S.skin,hair:S.hair,hairCol:S.hairCol,t,joy:S.joy},outfit(S)))}
-function gameLoop(ts){const dt=Math.min(.05,(ts-lastTs)/1000||0);lastTs=ts;if(!$('game').classList.contains('hidden')){Scene.frame(dt);drawAvatar(Scene.t)}requestAnimationFrame(gameLoop)}
+function gameLoop(ts){const dt=Math.min(.05,(ts-lastTs)/1000||0)*(reduced()?0.25:1);lastTs=ts;if(!$('game').classList.contains('hidden')&&Scene.s){Scene.frame(dt);drawAvatar(Scene.t)}requestAnimationFrame(gameLoop)}
 requestAnimationFrame(gameLoop);requestAnimationFrame(titleLoop);
 goTitle();
-const hs0=(location.hash.match(/seed=(\d+)/)||[])[1];if(hs0)$('inSeed').value=hs0;
 </script>
 </body>
 </html>

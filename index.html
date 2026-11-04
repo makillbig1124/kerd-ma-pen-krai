@@ -330,7 +330,8 @@ body.rm *,body.rm *::before,body.rm *::after{animation:none!important;transition
     <p class="small" style="margin:0">แต่ละคนมีเซฟ คอลเลกชัน และชาติที่ผ่านมาเป็นของตัวเอง ไม่ปนกัน</p>
     <div class="profGrid" id="profGrid"></div>
     <div class="pnl lgForm" id="lgForm" hidden></div>
-    <p class="small" style="max-width:60ch">ข้อมูลผู้เล่นเก็บไว้ในเบราว์เซอร์ของเครื่องนี้เท่านั้น ไม่ได้ส่งไปที่ไหน PIN ใช้กันคนอื่นกดเล่นแทนเท่านั้น ไม่ใช่ระบบความปลอดภัย</p>
+    <div class="row" id="adminBar" style="justify-content:center"></div>
+    <p class="small" style="max-width:60ch">ข้อมูลผู้เล่นเก็บไว้ในเบราว์เซอร์ของเครื่องนี้เท่านั้น ไม่ได้ส่งไปที่ไหน เฉพาะผู้ดูแลที่มีรหัสเท่านั้นที่เพิ่มหรือลบผู้เล่นได้</p>
   </div>
 </section>
 
@@ -2105,38 +2106,79 @@ function randLook(){const r=Math.random,g=r()<.5?'f':'m';return {g,skin:SKINS[Ma
 function drawLook(cv,L,bg){const prev=cx;cx=cv.getContext('2d');cx.imageSmoothingEnabled=false;R(0,0,20,18,bg||'#2a3270');R(0,14,20,4,'#00000033');person(10,29,{age:26,g:L.g,skin:L.skin,hair:L.hair,hairCol:L.hairCol,shirt:L.shirt,pants:'#2c3e66',joy:70});cx=prev}
 function applyProfile(id){CUR_PROFILE=id;Object.assign(SET,{sfx:true,music:false,vol:.6,nums:false,motion:'auto'},store.get('blk_set',{}));if(MG)MG.gain.value=SET.vol;TAB=store.get('blk_tab','money')}
 function loginAs(id){const P=profGet();P.cur=id;profSet(P);applyProfile(id);sfx.good();goTitle()}
-function logout(){Music.stop();const P=profGet();P.cur=null;profSet(P);CUR_PROFILE=null;showLogin()}
+function logout(){Music.stop();if(CUR_PROFILE==='guest')wipeGuest();const P=profGet();P.cur=null;profSet(P);CUR_PROFILE=null;showLogin()}
+const ADMIN={salt:'bb2135ba832822e4d87efa0112f8f3dc',hash:'5d13b461a360661e8538f981f4e3161a5d39f114f9355047096c13d4eae90990',iter:150000};
+let ADMIN_OK=(()=>{try{return sessionStorage.getItem('blk_admin')==='1'}catch(e){return false}})();
+function setAdmin(v){ADMIN_OK=v;try{v?sessionStorage.setItem('blk_admin','1'):sessionStorage.removeItem('blk_admin')}catch(e){}}
+function sha256(bytes){const K=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+  const l=bytes.length,n=((l+9+63)>>6)<<6,m=new Uint8Array(n);m.set(bytes);m[l]=0x80;const bl=l*8;m[n-4]=bl>>>24;m[n-3]=bl>>>16&255;m[n-2]=bl>>>8&255;m[n-1]=bl&255;m[n-5]=(l/0x20000000)|0;
+  let h0=0x6a09e667,h1=0xbb67ae85,h2=0x3c6ef372,h3=0xa54ff53a,h4=0x510e527f,h5=0x9b05688c,h6=0x1f83d9ab,h7=0x5be0cd19;const w=new Uint32Array(64);
+  for(let o=0;o<n;o+=64){for(let i=0;i<16;i++)w[i]=m[o+i*4]<<24|m[o+i*4+1]<<16|m[o+i*4+2]<<8|m[o+i*4+3];
+    for(let i=16;i<64;i++){const a=w[i-15],b=w[i-2];w[i]=(((a>>>7|a<<25)^(a>>>18|a<<14)^(a>>>3))+w[i-7]+((b>>>17|b<<15)^(b>>>19|b<<13)^(b>>>10))+w[i-16])|0}
+    let a=h0,b=h1,c=h2,d=h3,e=h4,f=h5,g=h6,h=h7;
+    for(let i=0;i<64;i++){const t1=(h+((e>>>6|e<<26)^(e>>>11|e<<21)^(e>>>25|e<<7))+((e&f)^(~e&g))+K[i]+w[i])|0,t2=(((a>>>2|a<<30)^(a>>>13|a<<19)^(a>>>22|a<<10))+((a&b)^(a&c)^(b&c)))|0;h=g;g=f;f=e;e=(d+t1)|0;d=c;c=b;b=a;a=(t1+t2)|0}
+    h0=h0+a|0;h1=h1+b|0;h2=h2+c|0;h3=h3+d|0;h4=h4+e|0;h5=h5+f|0;h6=h6+g|0;h7=h7+h|0}
+  const out=new Uint8Array(32);[h0,h1,h2,h3,h4,h5,h6,h7].forEach((v,i)=>{out[i*4]=v>>>24;out[i*4+1]=v>>>16&255;out[i*4+2]=v>>>8&255;out[i*4+3]=v&255});return out}
+function pbkdf2JS(pw,salt,iter){let key=pw;if(key.length>64)key=sha256(key);const k=new Uint8Array(64);k.set(key);const ip=k.map(x=>x^0x36),op=k.map(x=>x^0x5c);
+  const hmac=msg=>{const a=new Uint8Array(64+msg.length);a.set(ip);a.set(msg,64);const ih=sha256(a);const b=new Uint8Array(96);b.set(op);b.set(ih,64);return sha256(b)};
+  const s1=new Uint8Array(salt.length+4);s1.set(salt);s1[salt.length+3]=1;let u=hmac(s1);const t=u.slice();for(let i=1;i<iter;i++){u=hmac(u);for(let j=0;j<32;j++)t[j]^=u[j]}return t}
+const hex=b=>[...b].map(x=>x.toString(16).padStart(2,'0')).join('');
+async function checkAdmin(code){try{const c=String(code).toUpperCase().replace(/[^A-Z0-9]/g,'');if(!c)return false;const enc=new TextEncoder();let out;
+  if(window.crypto&&crypto.subtle){const k=await crypto.subtle.importKey('raw',enc.encode(c),'PBKDF2',false,['deriveBits']);out=new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2',salt:enc.encode(ADMIN.salt),iterations:ADMIN.iter,hash:'SHA-256'},k,256))}
+  else{await new Promise(r=>setTimeout(r,30));out=pbkdf2JS(enc.encode(c),enc.encode(ADMIN.salt),ADMIN.iter)}
+  return hex(out)===ADMIN.hash}catch(e){return false}}
+const wipeGuest=()=>{try{Object.keys(localStorage).filter(k=>k.startsWith('p_guest_')).forEach(k=>localStorage.removeItem(k))}catch(e){}};
+function loginGuest(){wipeGuest();const P=profGet();P.cur='guest';profSet(P);applyProfile('guest');sfx.good();goTitle()}
 function showLogin(){
   show('login');document.body.className=reduced()?'rm':'';
   const P=profGet(),g=$('profGrid');$('lgForm').hidden=true;
   g.innerHTML=P.list.map(p=>{const lives=profData(p.id,'blk_lives',0),coll=Object.keys(profData(p.id,'blk_coll',{})).length,sv=profData(p.id,'blk_save_v1',null);
-    return `<div class="profWrap"><button class="prof pnl" data-id="${p.id}" aria-label="เล่นในชื่อ ${esc(p.name)}"><canvas width="20" height="18" data-look="${p.id}" aria-hidden="true"></canvas><span class="pn">${p.pin?ic('lock',{alt:'มี PIN'}):''}${esc(p.name)}</span><span class="ps">${lives?`เล่นไป ${lives} ชีวิต · ปลดล็อก ${coll}/${ARCH.length}`:'ยังไม่เคยเล่น'}${sv?' · มีชีวิตค้างอยู่':''}</span></button><button class="profDel" data-del="${p.id}" title="ลบผู้เล่น ${esc(p.name)}" aria-label="ลบผู้เล่น ${esc(p.name)}">ลบ</button></div>`}).join('')+
-    `<button class="prof pnl" id="profAdd"><span class="plus" aria-hidden="true">+</span><span class="pn">ผู้เล่นใหม่</span><span class="ps">สร้างโปรไฟล์ของคุณ</span></button>`;
+    return `<div class="profWrap"><button class="prof pnl" data-id="${p.id}" aria-label="เล่นในชื่อ ${esc(p.name)}"><canvas width="20" height="18" data-look="${p.id}" aria-hidden="true"></canvas><span class="pn">${p.pin?ic('lock',{alt:'มี PIN'}):''}${esc(p.name)}</span><span class="ps">${lives?`เล่นไป ${lives} ชีวิต · ปลดล็อก ${coll}/${ARCH.length}`:'ยังไม่เคยเล่น'}${sv?' · มีชีวิตค้างอยู่':''}</span></button>${ADMIN_OK?`<button class="profDel" data-del="${p.id}" aria-label="ลบผู้เล่น ${esc(p.name)}">ลบ</button>`:''}</div>`}).join('')+
+    `<button class="prof pnl" id="profGuest"><canvas width="20" height="18" id="guestCv" aria-hidden="true"></canvas><span class="pn">ผู้เยี่ยมชม</span><span class="ps">เล่นได้เลย แต่ไม่บันทึก</span></button>`+
+    (ADMIN_OK?`<button class="prof pnl" id="profAdd"><span class="plus" aria-hidden="true">+</span><span class="pn">ผู้เล่นใหม่</span><span class="ps">สร้างโปรไฟล์ให้ผู้เล่น</span></button>`:'');
   for(const p of P.list){const cv=g.querySelector(`[data-look="${p.id}"]`);if(cv)drawLook(cv,p.look)}
+  drawLook($('guestCv'),{g:'m',skin:'#9a91c4',hair:'short',hairCol:'#5a4ca0',shirt:'#5a4ca0'},'#30275f');
   g.querySelectorAll('.prof[data-id]').forEach(b=>b.onclick=()=>{const p=profGet().list.find(x=>x.id===b.dataset.id);if(!p)return;sfx.click();p.pin?askPin(p):loginAs(p.id)});
   g.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{const p=profGet().list.find(x=>x.id===b.dataset.del);if(p)askDelete(p)});
-  $('profAdd').onclick=()=>{sfx.click();newProfileForm()};
-  if(!P.list.length)newProfileForm();
+  $('profGuest').onclick=()=>{sfx.click();loginGuest()};
+  if($('profAdd'))$('profAdd').onclick=()=>{sfx.click();newProfileForm()};
+  $('adminBar').innerHTML=ADMIN_OK?`<span class="small">${ic('lock')} โหมดผู้ดูแลเปิดอยู่ เพิ่มหรือลบผู้เล่นได้</span> <button class="ghost" id="adOut" type="button">ออกจากโหมดผู้ดูแล</button>`
+    :`${P.list.length?'':'<span class="small">ยังไม่มีผู้เล่นในเครื่องนี้ ให้ผู้ดูแลสร้างให้ หรือเล่นแบบผู้เยี่ยมชมไปก่อน</span> '}<button class="ghost" id="adIn" type="button">${ic('lock')} ผู้ดูแล: เพิ่มหรือลบผู้เล่น</button>`;
+  if($('adOut'))$('adOut').onclick=()=>{setAdmin(false);showLogin()};
+  if($('adIn'))$('adIn').onclick=()=>askAdmin(()=>showLogin());
+}
+function askAdmin(then){
+  const f=$('lgForm');f.hidden=false;
+  f.innerHTML=`<h3>${ic('lock',{cls:'lg'})} รหัสผู้ดูแล</h3>
+    <p style="margin:0;color:var(--mute)">เฉพาะผู้ดูแลเท่านั้นที่เพิ่มหรือลบผู้เล่นได้</p>
+    <div><label for="adCode">รหัสผู้ดูแล</label><input id="adCode" type="password" autocomplete="off" spellcheck="false"></div>
+    <div class="err" id="adErr" role="alert"></div>
+    <div class="lgBtns"><button class="big sec" id="adCancel" type="button">ยกเลิก</button><button class="big" id="adOk" type="button">ยืนยัน</button></div>`;
+  const go=async()=>{const b=$('adOk');b.disabled=true;b.textContent='กำลังตรวจ...';const ok=await checkAdmin($('adCode').value);
+    if(ok){setAdmin(true);sfx.good();then()}else{b.disabled=false;b.textContent='ยืนยัน';$('adErr').textContent='รหัสไม่ถูกต้อง';$('adCode').value='';$('adCode').focus();sfx.bad()}};
+  $('adOk').onclick=go;$('adCode').addEventListener('keydown',e=>{if(e.key==='Enter')go()});$('adCancel').onclick=()=>{f.hidden=true};$('adCode').focus();
 }
 function newProfileForm(){
+  if(!ADMIN_OK){askAdmin(newProfileForm);return}
   let look=randLook();const f=$('lgForm');f.hidden=false;
   f.innerHTML=`<h3>${ic('people',{cls:'lg'})} สร้างผู้เล่นใหม่</h3>
     <div class="lookRow"><canvas width="20" height="18" id="lkCv" aria-label="หน้าตาผู้เล่น" role="img"></canvas><button class="ghost" type="button" id="lkRnd">${ic('dice')} สุ่มหน้าตา</button></div>
-    <div><label for="pfName">ชื่อผู้เล่น</label><input id="pfName" maxlength="14" placeholder="เช่น บีม, แม่, ลูกคนเล็ก" autocomplete="nickname"></div>
-    <div><label for="pfPin">PIN 4 หลัก (ไม่บังคับ)</label><input id="pfPin" class="pin" inputmode="numeric" maxlength="4" placeholder="····" autocomplete="off"></div>
+    <div><label for="pfName">ชื่อผู้เล่น</label><input id="pfName" maxlength="14" placeholder="เช่น บีม, แม่, ลูกคนเล็ก" autocomplete="off"></div>
+    <div><label for="pfPin">PIN 4 หลักของผู้เล่น (ไม่บังคับ)</label><input id="pfPin" class="pin" inputmode="numeric" maxlength="4" placeholder="····" autocomplete="off"></div>
     <div class="err" id="pfErr" role="alert"></div>
-    <div class="lgBtns">${profGet().list.length?'<button class="big sec" id="pfCancel" type="button">ยกเลิก</button>':''}<button class="big" id="pfOk" type="button">${ic('clover')} เริ่มเล่น</button></div>`;
+    <div class="lgBtns"><button class="big sec" id="pfCancel" type="button">ยกเลิก</button><button class="big" id="pfOk" type="button">${ic('clover')} สร้างผู้เล่น</button></div>`;
   const draw=()=>drawLook($('lkCv'),look);draw();
   $('lkRnd').onclick=()=>{look=randLook();draw();sfx.tick()};
-  if($('pfCancel'))$('pfCancel').onclick=()=>{f.hidden=true};
+  $('pfCancel').onclick=()=>{f.hidden=true};
   $('pfPin').oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'')};
-  const ok=()=>{const name=$('pfName').value.trim(),pin=$('pfPin').value;
-    if(!name){$('pfErr').textContent='ใส่ชื่อผู้เล่นก่อนนะ';$('pfName').focus();return}
+  const ok=()=>{if(!ADMIN_OK){askAdmin(newProfileForm);return}
+    const name=$('pfName').value.trim(),pin=$('pfPin').value;
+    if(!name){$('pfErr').textContent='ใส่ชื่อผู้เล่นก่อน';$('pfName').focus();return}
     const P=profGet();if(P.list.some(x=>x.name===name)){$('pfErr').textContent='มีผู้เล่นชื่อนี้แล้ว ลองชื่ออื่น';return}
     if(pin&&pin.length!==4){$('pfErr').textContent='PIN ต้องเป็นตัวเลข 4 หลัก หรือเว้นว่างไว้';return}
     const id=Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36);
     if(!P.list.length){try{for(const k of OLD_KEYS){const v=localStorage.getItem(k);if(v!=null){localStorage.setItem(`p_${id}_${k}`,v);localStorage.removeItem(k)}}}catch(e){}}
-    P.list.push({id,name,pin:pin?pinHash(pin):null,look,created:Date.now()});profSet(P);loginAs(id)};
+    P.list.push({id,name,pin:pin?pinHash(pin):null,look,created:Date.now()});profSet(P);sfx.good();showLogin()};
   $('pfOk').onclick=ok;['pfName','pfPin'].forEach(i=>$(i).addEventListener('keydown',e=>{if(e.key==='Enter')ok()}));
   $('pfName').focus();
 }
@@ -2146,24 +2188,24 @@ function askPin(p){
     <div><label for="pnIn">PIN 4 หลัก</label><input id="pnIn" class="pin" inputmode="numeric" maxlength="4" placeholder="····" autocomplete="off"></div>
     <div class="err" id="pnErr" role="alert"></div>
     <div class="lgBtns"><button class="big sec" id="pnCancel" type="button">ยกเลิก</button><button class="big" id="pnOk" type="button">เข้าเล่น</button></div>
-    <p class="small" style="margin:0">ลืม PIN? กด "ลบ" ที่โปรไฟล์นี้แล้วสร้างใหม่ (ข้อมูลของโปรไฟล์นี้จะหาย)</p>`;
+    <p class="small" style="margin:0">ลืม PIN? ให้ผู้ดูแลลบโปรไฟล์นี้แล้วสร้างใหม่</p>`;
   const go=()=>{const v=$('pnIn').value;if(pinHash(v)===p.pin)loginAs(p.id);else{$('pnErr').textContent='PIN ไม่ถูก ลองอีกครั้ง';$('pnIn').value='';$('pnIn').focus();sfx.bad()}};
   $('pnIn').oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'');if(e.target.value.length===4)go()};
   $('pnOk').onclick=go;$('pnCancel').onclick=()=>{f.hidden=true};$('pnIn').focus();
 }
 function askDelete(p){
+  if(!ADMIN_OK){askAdmin(()=>askDelete(p));return}
   const f=$('lgForm');f.hidden=false;
   f.innerHTML=`<h3>${ic('warn',{cls:'lg'})} ลบผู้เล่น ${esc(p.name)}?</h3>
     <p style="margin:0;color:var(--mute)">ชีวิตที่ค้างอยู่ คอลเลกชัน ชาติที่ผ่านมา และการตั้งค่าของ ${esc(p.name)} จะหายทั้งหมด และกู้คืนไม่ได้</p>
-    ${p.pin?`<div><label for="dlPin">ใส่ PIN เพื่อยืนยัน (ถ้าลืม ให้พิมพ์คำว่า ลบ)</label><input id="dlPin" autocomplete="off"></div>`:''}
-    <div class="err" id="dlErr" role="alert"></div>
     <div class="lgBtns"><button class="big sec" id="dlCancel" type="button">ยกเลิก</button><button class="big" id="dlOk" type="button" style="background:var(--bad);box-shadow:0 5px 0 #9a3348">ลบผู้เล่นนี้</button></div>`;
   $('dlCancel').onclick=()=>{f.hidden=true};
-  $('dlOk').onclick=()=>{if(p.pin){const v=$('dlPin').value.trim();if(v!=='ลบ'&&pinHash(v)!==p.pin){$('dlErr').textContent='PIN ไม่ถูก';return}}
-    try{const pre=`p_${p.id}_`;Object.keys(localStorage).filter(k=>k.startsWith(pre)).forEach(k=>localStorage.removeItem(k))}catch(e){}
+  $('dlOk').onclick=()=>{try{const pre=`p_${p.id}_`;Object.keys(localStorage).filter(k=>k.startsWith(pre)).forEach(k=>localStorage.removeItem(k))}catch(e){}
     const P=profGet();P.list=P.list.filter(x=>x.id!==p.id);if(P.cur===p.id)P.cur=null;profSet(P);showLogin()};
 }
 function renderProfBar(){
+  if(CUR_PROFILE==='guest'){$('profBar').innerHTML=`<span class="pb"><canvas width="20" height="18" id="pbCv" aria-hidden="true"></canvas><span>ผู้เยี่ยมชม<br><span class="small">ออกแล้วข้อมูลจะหาย</span></span></span><button class="ghost" id="btnSwitch" type="button">${ic('people')} เปลี่ยนผู้เล่น</button>`;
+    drawLook($('pbCv'),{g:'m',skin:'#9a91c4',hair:'short',hairCol:'#5a4ca0',shirt:'#5a4ca0'},'#30275f');$('btnSwitch').onclick=()=>{sfx.click();logout()};return}
   const p=profGet().list.find(x=>x.id===CUR_PROFILE);if(!p){$('profBar').innerHTML='';return}
   $('profBar').innerHTML=`<span class="pb"><canvas width="20" height="18" id="pbCv" aria-hidden="true"></canvas><span>เล่นในชื่อ<br><b>${esc(p.name)}</b></span></span><button class="ghost" id="btnSwitch" type="button">${ic('people')} เปลี่ยนผู้เล่น</button>`;
   drawLook($('pbCv'),p.look);$('btnSwitch').onclick=()=>{sfx.click();logout()};
@@ -2208,7 +2250,7 @@ let lastTs=0;
 function drawAvatar(t){const c=$('gAvatar');if(!c||!S)return;cx=c.getContext('2d');cx.imageSmoothingEnabled=false;R(0,0,20,18,{child:'#2a5a6a',teen:'#4a2a6a',adult:'#2a3270',elder:'#5a3a2a'}[stageOf(S.age)[0]]);R(0,14,20,4,'#00000033');person(10,29,Object.assign({age:Math.max(S.age,3),g:S.g,skin:S.skin,hair:S.hair,hairCol:S.hairCol,t,joy:S.joy},outfit(S)))}
 function gameLoop(ts){const dt=Math.min(.05,(ts-lastTs)/1000||0)*(reduced()?0.25:1);lastTs=ts;if(!$('game').classList.contains('hidden')&&Scene.s){Scene.frame(dt);drawAvatar(Scene.t)}requestAnimationFrame(gameLoop)}
 requestAnimationFrame(gameLoop);requestAnimationFrame(titleLoop);
-{const P=profGet();if(P.cur&&P.list.some(x=>x.id===P.cur)){applyProfile(P.cur);goTitle()}else showLogin()}
+{const P=profGet();if(P.cur&&P.list.some(x=>x.id===P.cur)){applyProfile(P.cur);goTitle()}else{if(P.cur==='guest'){wipeGuest();P.cur=null;profSet(P)}showLogin()}}
 </script>
 </body>
 </html>

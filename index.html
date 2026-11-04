@@ -458,7 +458,7 @@ const PJOBS=[['พนักงานบริษัท',18000,60000],['ครู
 const JOBS={
  labor:{n:'แรงงานรับจ้างรายวัน',min:9000,max:16000,stat:'hp',yrs:15,hpY:-.8,joyY:-.4,scene:'market',d:'ค่าแรงขั้นต่ำ ไม่ต้องใช้วุฒิ ไม่มีสวัสดิการ'},
  factory:{n:'พนักงานโรงงาน',min:11000,max:26000,stat:'hp',yrs:20,hpY:-.6,joyY:-.5,scene:'factory',f:1,d:'มีโอที ประกันสังคม'},
- rider:{n:'ไรเดอร์ส่งอาหาร',min:9000,max:28000,stat:'hp',yrs:4,hpY:-1.2,joyY:-.2,scene:'city',d:'อิสระ แต่ตากแดดตากฝน เสี่ยงอุบัติเหตุ',age:18},
+ rider:{n:'ไรเดอร์ส่งอาหาร',min:9000,max:28000,stat:'hp',yrs:4,hpY:-1.2,joyY:-.2,scene:'city',d:'อิสระ แต่ตากแดดตากฝน เสี่ยงอุบัติเหตุ',age:18,block:['vis','mob']},
  vendor:{n:'พ่อค้าแม่ค้าออนไลน์',min:4000,max:150000,stat:'soc',vol:1,yrs:8,hpY:-.3,joyY:.3,cost:20000,scene:'market',d:'ลงทุนน้อย รายได้ขึ้นกับฝีมือและดวง'},
  farmer:{n:'เกษตรกร',min:4500,max:50000,stat:'iq',vol:.5,yrs:25,hpY:-.3,joyY:.5,scene:'farm',d:'ขึ้นกับฟ้าฝนและราคาพืชผล'},
  tech:{n:'ช่างเทคนิค',min:13000,max:55000,stat:'iq',yrs:20,hpY:-.4,joyY:0,scene:'factory',f:1,d:'งานช่างเป็นที่ต้องการเสมอ',need:'voc'},
@@ -470,20 +470,58 @@ const JOBS={
  engineer:{n:'วิศวกร',min:22000,max:160000,stat:'iq',yrs:20,f:1,hpY:-.5,joyY:-.1,scene:'factory',d:'คุมงานโครงการ รายได้ดี',major:'eng'},
  dev:{n:'โปรแกรมเมอร์',min:22000,max:220000,stat:'iq',yrs:15,f:1,hpY:-.7,joyY:0,scene:'office',d:'จบคอมฯ หรือเก่งพอ (📘75+)'},
  lawyer:{n:'ทนายความ',min:18000,max:260000,stat:'iq',yrs:22,hpY:-.5,joyY:-.2,scene:'office',d:'ต้องสอบเนติบัณฑิต',major:'law',exam:58},
- police:{n:'ตำรวจ',min:15000,max:85000,stat:'soc',yrs:28,gov:1,hpY:-.6,joyY:-.2,scene:'city',d:'จบโรงเรียนนายร้อยตำรวจ',major:'police'},
- athlete:{n:'นักกีฬาอาชีพ',min:8000,max:1000000,stat:'hp',vol:1,yrs:6,hpY:.5,joyY:.6,scene:'park',d:'รุ่งเร็ว ร่วงเร็ว'},
+ police:{n:'ตำรวจ',min:15000,max:85000,stat:'soc',yrs:28,gov:1,hpY:-.6,joyY:-.2,scene:'city',d:'จบโรงเรียนนายร้อยตำรวจ',major:'police',block:['vis','mob','hear']},
+ athlete:{n:'นักกีฬาอาชีพ',min:8000,max:1000000,stat:'hp',vol:1,yrs:6,hpY:.5,joyY:.6,scene:'park',d:'รุ่งเร็ว ร่วงเร็ว',block:['vis','mob','hear']},
  creator:{n:'ยูทูบเบอร์ / สตรีมเมอร์',min:0,max:600000,stat:'soc',vol:1,yrs:6,hpY:-.6,joyY:.5,scene:'bedroom',d:'อาจไม่ได้สักบาท หรือรวยข้ามคืน'},
  artist:{n:'ศิลปิน / นักดนตรีอิสระ',min:3000,max:300000,stat:'cre',vol:1,yrs:10,hpY:-.2,joyY:1,scene:'cafe',d:'ทำสิ่งที่รัก รายได้ไม่แน่นอน'},
  sales:{n:'เซลส์ / นายหน้า',min:12000,max:180000,stat:'soc',vol:.6,yrs:10,f:1,hpY:-.5,joyY:-.2,scene:'city',d:'ปากหวานเท่าไหร่ คอมมิชชันยิ่งเยอะ'},
  biz:{n:'เจ้าของธุรกิจ',min:0,max:1200000,stat:'iq',vol:1,yrs:12,hpY:-.7,joyY:.2,cost:400000,loan:.08,scene:'cafe',d:'เสี่ยงสูงสุด แต่ไม่มีเพดาน',age:20},
  abroad:{n:'แรงงานต่างประเทศ',min:35000,max:80000,stat:'hp',yrs:8,hpY:-.7,joyY:-1.1,cost:150000,loan:.18,scene:'airport',d:'เงินดี แต่ห่างบ้าน (ค่านายหน้า)',age:20},
  politic:{n:'นักการเมืองท้องถิ่น',min:30000,max:300000,stat:'soc',vol:.5,yrs:12,hpY:-.4,joyY:.1,cost:1500000,loan:.1,scene:'city',d:'ต้องมีทุนและคอนเนคชัน (🤝70+)',age:28},
+ barber:{n:'ช่างตัดผม / ช่างเสริมสวย',min:9000,max:70000,stat:'soc',vol:.5,yrs:10,hpY:-.3,joyY:.4,cost:30000,scene:'market',d:'เปิดร้านในซอยหรือทำในห้าง'},
+ chef:{n:'เชฟ / พ่อครัวแม่ครัว',min:10000,max:120000,stat:'cre',vol:.4,yrs:12,hpY:-.6,joyY:.3,scene:'cafe',d:'ครัวร้อน งานหนัก แต่ฝีมือคือทุกอย่าง'},
+ store:{n:'พนักงานร้านสะดวกซื้อ',min:10500,max:22000,stat:'soc',yrs:8,f:1,hpY:-.4,joyY:-.4,scene:'market',d:'เข้ากะดึกได้ค่ากะเพิ่ม',age:16},
+ guard:{n:'พนักงานรักษาความปลอดภัย',min:10000,max:19000,stat:'hp',yrs:10,f:1,hpY:-.3,joyY:-.4,scene:'city',d:'ยืนเฝ้าทั้งวัน เงินน้อยแต่มั่นคง',age:18,block:['vis','mob']},
+ taxi:{n:'คนขับแท็กซี่ / วินมอเตอร์ไซค์',min:9000,max:35000,stat:'hp',yrs:6,hpY:-.9,joyY:-.2,cost:15000,scene:'city',d:'รถติด ฝุ่นเยอะ รายได้ตามรอบวิ่ง',age:20,block:['vis']},
+ fisher:{n:'ชาวประมง',min:6000,max:60000,stat:'hp',vol:.6,yrs:15,hpY:-.6,joyY:.3,scene:'beach',d:'ออกเรือตามฤดู รายได้ขึ้นกับทะเล',req:s=>['ใต้','ตะวันออก'].includes(s.prov[3])?null:'ต้องอยู่จังหวัดติดทะเล',block:['mob','vis']},
+ elec:{n:'ช่างไฟ / ช่างแอร์',min:13000,max:65000,stat:'iq',yrs:15,hpY:-.5,joyY:.1,scene:'factory',d:'หน้าร้อนงานล้นมือ',need:'voc',block:['vis']},
+ maid:{n:'แม่บ้าน / พนักงานทำความสะอาด',min:9000,max:18000,stat:'hp',yrs:10,f:1,hpY:-.6,joyY:-.3,scene:'office',d:'งานหนัก ค่าแรงขั้นต่ำ มีประกันสังคม'},
+ massage:{n:'หมอนวดแผนไทย',min:8000,max:40000,stat:'soc',vol:.3,yrs:8,hpY:-.4,joyY:.2,cost:6000,scene:'cafe',d:'เรียนคอร์ส 150 ชั่วโมงแล้วเปิดรับลูกค้าได้'},
+ accountant:{n:'นักบัญชี',min:18000,max:120000,stat:'iq',yrs:20,f:1,hpY:-.5,joyY:-.3,scene:'office',d:'ปิดงบสิ้นปีคือสงคราม',major:'biz'},
+ banker:{n:'พนักงานธนาคาร',min:18000,max:140000,stat:'soc',yrs:22,f:1,hpY:-.5,joyY:-.3,scene:'office',d:'สวัสดิการดี มีเป้ายอดขายประกัน',need:'deg',exam:50},
+ pharm:{n:'เภสัชกร',min:25000,max:120000,stat:'iq',yrs:18,f:1,hpY:-.3,joyY:.1,scene:'hospital',d:'ร้านยาหรือโรงพยาบาล',major:'pharm'},
+ vet:{n:'สัตวแพทย์',min:25000,max:160000,stat:'iq',yrs:18,f:1,hpY:-.4,joyY:.6,scene:'hospital',d:'รักสัตว์ต้องเรียน 6 ปี',major:'vet'},
+ dentist:{n:'ทันตแพทย์',min:40000,max:320000,stat:'iq',yrs:18,f:1,hpY:-.4,joyY:0,scene:'hospital',d:'คลินิกส่วนตัวรายได้ดีมาก',major:'dent'},
+ architect:{n:'สถาปนิก',min:20000,max:180000,stat:'cre',yrs:20,f:1,hpY:-.6,joyY:.1,scene:'office',d:'ปั่นแบบทั้งคืนก่อนส่งงาน',major:'arch'},
+ pilot:{n:'นักบิน',min:60000,max:350000,stat:'iq',yrs:20,f:1,hpY:-.3,joyY:.3,cost:2500000,loan:.06,scene:'airport',d:'ค่าเรียนบินหลายล้าน แต่เงินเดือนสูง',need:'deg',exam:68,block:['vis','hear','mob']},
+ cabin:{n:'ลูกเรือบนเครื่องบิน',min:30000,max:110000,stat:'soc',yrs:12,f:1,hpY:-.6,joyY:.3,scene:'airport',d:'ได้เที่ยวรอบโลก แต่นอนไม่ตรงเวลา',need:'deg',req:s=>s.soc<55?'ต้องมี 🤝 55+':s.age>35?'รับอายุไม่เกิน 35':null,block:['vis','hear','mob']},
+ journalist:{n:'นักข่าว',min:18000,max:90000,stat:'soc',yrs:15,f:1,hpY:-.6,joyY:.1,scene:'city',d:'ตามข่าว 24 ชั่วโมง',major:'comm'},
+ actor:{n:'นักแสดง / ดารา',min:0,max:2000000,stat:'soc',vol:1,yrs:8,hpY:-.4,joyY:.5,scene:'city',d:'แคสติ้งร้อยครั้ง อาจได้บทครั้งเดียว',req:s=>s.soc<60?'ต้องมี 🤝 60+':null},
+ idol:{n:'นักร้อง / ไอดอล',min:0,max:1500000,stat:'cre',vol:1,yrs:6,hpY:-.6,joyY:.5,scene:'city',d:'ซ้อมหนัก แฟนคลับคือทุกอย่าง',req:s=>s.age>28?'อายุเกิน 28':(s.tr.cre||0)<2&&s.soc<60?'ต้องครีเอทีฟ หรือ 🤝 60+':null},
+ designer:{n:'นักออกแบบกราฟิก',min:15000,max:120000,stat:'cre',yrs:15,f:1,hpY:-.5,joyY:.3,scene:'office',d:'ลูกค้าขอแก้ครั้งที่ 27',req:s=>['art','comm','arch'].includes(s.major)||(s.tr.cre||0)>=3?null:'จบศิลปะ/นิเทศ หรือครีเอทีฟสูง'},
+ photo:{n:'ช่างภาพ',min:8000,max:150000,stat:'cre',vol:.6,yrs:10,hpY:-.4,joyY:.6,cost:60000,scene:'park',d:'กล้องแพง งานแต่งทุกเสาร์อาทิตย์',req:s=>(s.tr.cre||0)>=2?null:'ต้องมีความคิดสร้างสรรค์',block:['vis']},
+ guide:{n:'ไกด์ทัวร์',min:10000,max:90000,stat:'soc',vol:.4,yrs:10,hpY:-.4,joyY:.5,scene:'airport',d:'พาเที่ยวทั่วไทย ได้ทิปจากนักท่องเที่ยว',req:s=>s.major==='tourism'||(s.flags.eng&&s.soc>=50)?null:'จบการท่องเที่ยว หรือพูดอังกฤษได้'},
+ hotel:{n:'พนักงานโรงแรม',min:13000,max:80000,stat:'soc',yrs:15,f:1,hpY:-.4,joyY:.1,scene:'cafe',d:'ไต่จากหน้าเคาน์เตอร์ถึงผู้จัดการ',req:s=>s.major==='tourism'||s.soc>=50?null:'จบการท่องเที่ยว หรือ 🤝 50+'},
+ researcher:{n:'นักวิจัย / นักวิทยาศาสตร์',min:25000,max:130000,stat:'iq',yrs:20,f:1,hpY:-.4,joyY:.4,scene:'office',d:'ทดลองซ้ำร้อยครั้งเพื่อค้นพบหนึ่งอย่าง',req:s=>s.edu!=='ป.โท'?'ต้องจบปริญญาโท':!['sci','eng','cs','med','pharm','agri','vet'].includes(s.major)?'ต้องจบสายวิทยาศาสตร์':null},
+ lecturer:{n:'อาจารย์มหาวิทยาลัย',min:22000,max:110000,stat:'iq',yrs:25,gov:.6,hpY:-.3,joyY:.4,scene:'uni',d:'สอน วิจัย และตรวจงานจนดึก',req:s=>s.edu!=='ป.โท'?'ต้องจบปริญญาโท':s.iq<65?'ต้องมี 📘 65+':null},
+ judge:{n:'ผู้พิพากษา / อัยการ',min:30000,max:180000,stat:'iq',yrs:25,gov:1,hpY:-.3,joyY:.1,scene:'office',d:'สนามสอบที่ยากที่สุดของสายกฎหมาย',major:'law',exam:76,age:25},
+ firefighter:{n:'พนักงานดับเพลิงและกู้ภัย',min:15000,max:50000,stat:'hp',yrs:20,gov:1,hpY:-.5,joyY:.4,scene:'city',d:'วิ่งเข้าหาไฟในตอนที่คนอื่นวิ่งหนี',req:s=>s.hp<60?'ต้องมี ❤️ 60+':null,block:['vis','mob','hear']},
+ esport:{n:'นักกีฬาอีสปอร์ต',min:5000,max:400000,stat:'iq',vol:1,yrs:5,hpY:-.7,joyY:.4,scene:'bedroom',d:'ซ้อมวันละ 10 ชั่วโมง เลิกเล่นตอนอายุ 27',req:s=>s.age>26?'อายุเกิน 26':null},
+ monk:{n:'พระสงฆ์ (บวชไม่สึก)',min:3000,max:15000,stat:'soc',yrs:20,hpY:.2,joyY:1.1,scene:'temple',d:'ละทางโลก ใช้ชีวิตเรียบง่ายในวัด',req:s=>s.g!=='m'||s.rel!=='พุทธ'?'เฉพาะผู้ชายที่นับถือศาสนาพุทธ':s.partner?'ต้องไม่มีคู่ครอง':null},
+ massageB:{n:'หมอนวด (ศูนย์ฝึกอาชีพคนตาบอด)',min:9000,max:35000,stat:'soc',vol:.2,yrs:8,hpY:-.2,joyY:.4,scene:'cafe',d:'ฝึกฟรีที่ศูนย์ฝึกอาชีพ มีลูกค้าประจำ',only:['vis']},
+ signT:{n:'ครูสอนภาษามือ',min:15000,max:45000,stat:'soc',yrs:20,gov:.5,hpY:-.2,joyY:.6,scene:'school',d:'สอนภาษามือให้เด็กหูหนวกและครอบครัว',only:['hear']},
+ para:{n:'นักกีฬาพาราลิมปิก',min:12000,max:150000,stat:'hp',vol:.6,yrs:8,hpY:.4,joyY:.8,scene:'park',d:'ทีมชาติไทยมีชื่อเสียงระดับโลก เงินอัดฉีดเมื่อได้เหรียญ',only:['mob','vis','hear','aut'],req:s=>s.flags.paraPicked?null:'ต้องผ่านการคัดตัวทีมชาติก่อน'},
  soldier:{n:'ทหารเกณฑ์',min:10500,max:11000,stat:'hp',yrs:2,hpY:1,joyY:-1,scene:'army',hidden:1},
  army:{n:'ทหารอาชีพ',min:15000,max:70000,stat:'hp',yrs:28,gov:1,hpY:-.2,joyY:0,scene:'army',hidden:1}
 };
-const MAJORS={biz:'บริหารธุรกิจ',eng:'วิศวกรรมศาสตร์',cs:'วิทยาการคอมพิวเตอร์',med:'แพทยศาสตร์',nurse:'พยาบาลศาสตร์',edu:'ครุศาสตร์',comm:'นิเทศศาสตร์',art:'ศิลปกรรม / ดนตรี',law:'นิติศาสตร์',agri:'เกษตรศาสตร์',police:'โรงเรียนนายร้อยตำรวจ',sport:'วิทยาศาสตร์การกีฬา'};
+const MAJORS={pharm:'เภสัชศาสตร์',vet:'สัตวแพทยศาสตร์',dent:'ทันตแพทยศาสตร์',arch:'สถาปัตยกรรมศาสตร์',sci:'วิทยาศาสตร์',tourism:'การท่องเที่ยวและการโรงแรม',biz:'บริหารธุรกิจ',eng:'วิศวกรรมศาสตร์',cs:'วิทยาการคอมพิวเตอร์',med:'แพทยศาสตร์',nurse:'พยาบาลศาสตร์',edu:'ครุศาสตร์',comm:'นิเทศศาสตร์',art:'ศิลปกรรม / ดนตรี',law:'นิติศาสตร์',agri:'เกษตรศาสตร์',police:'โรงเรียนนายร้อยตำรวจ',sport:'วิทยาศาสตร์การกีฬา'};
+const DIS={
+ mob:{n:'ความพิการทางการเคลื่อนไหว',who:'ผู้ใช้วีลแชร์',dev:'วีลแชร์',eff:{hp:-6},cost:1500},
+ vis:{n:'ความพิการทางการมองเห็น',who:'คนตาบอด',dev:'ไม้เท้าขาวและโปรแกรมอ่านหน้าจอ',eff:{},cost:800},
+ hear:{n:'ความพิการทางการได้ยิน',who:'คนหูหนวก',dev:'เครื่องช่วยฟัง',eff:{soc:-3},cost:900},
+ aut:{n:'ออทิสติก',who:'คนออทิสติก',dev:'การบำบัดและกิจกรรมพัฒนาการ',eff:{soc:-5},cost:1200}};
 const GOALS={
- rich:{n:'มีทรัพย์สิน 10 ล้านบาท',e:'💰',ok:s=>netWorth(s)>=10e6||s.peakNW>=10e6},
+ rich:{n:'มีทรัพย์สิน 10 ล้านบาท',e:'💰',ok:s=>netWorth(s)>=10e6||s.peakNW>=10e6,block:['vis','mob','hear']},
  home:{n:'มีบ้านเป็นของตัวเอง',e:'🏠',ok:s=>s.home>0||s.flags.hadHome},
  family:{n:'มีครอบครัวอบอุ่น มีลูก',e:'👨‍👩‍👧',ok:s=>(s.married||s.partner)&&s.kids.length>0},
  travel:{n:'เที่ยวต่างประเทศ 3 ครั้ง',e:'✈️',ok:s=>(s.flags.trips||0)>=3},
@@ -541,11 +579,12 @@ function newLife(seed,opts={}){
     econ:1,dead:false,cause:'',joySum:0,joyN:0,peakNW:0,lastNation:-99,pend:null};
   if(care[0]==='บ้านเด็กกำพร้า')s.flags.inherited=1;
   for(const k in care[2])s[k]+=care[2][k];
+  {const dr=mulberry32(seed^0x5bd1e995);if(dr()<.035){const t=wpick(dr,['mob','vis','hear','aut'],k=>({mob:.35,vis:.2,hear:.25,aut:.2})[k]);s.dis={t,born:true,age:0};for(const k in DIS[t].eff)s[k]+=DIS[t].eff[k];if(t==='aut')tr(s,{cre:2});q(s,5,'disDevice');s.flags.rd=1}}
   s.chance=(prov[1]/PROV_TOT)*classDist[cls]*.5;
   q(s,0,'birth');qp(s,4,'toddler');q(s,6,'school');qp(s,8,'child');qp(s,10,'child');qp(s,12,'child');
   qp(s,14,'teen');q(s,15,'track');q(s,16,'goal');qp(s,16,'teen');qp(s,17,'teen');
   q(s,18,'after18',{cond:s=>{if(s.studying)s.edu=s.track==='voc'?'ปวช.':'ม.6';return s.studying}});
-  q(s,21,'draft',{cond:s=>{if(s.g!=='m'||s.flags.rd||s.flags.drafted)return false;if(s.studying){s.flags.draftDefer=1;return false}return true}});
+  q(s,21,'draft',{cond:s=>{if(s.g!=='m'||s.flags.rd||s.flags.drafted||s.dis)return false;if(s.studying){s.flags.draftDefer=1;return false}return true}});
   log(s,`ลืมตาดูโลกที่${prov[0]} ในครอบครัว${CLASSES[cls].n}`,1);
   snap(s);return s;
 }
@@ -610,6 +649,7 @@ function yearly(s){
   let inc=sal+s.side*12;
   const tx=taxOf(inc);inc-=tx;
   if(s.retired)inc+=s.pension*12;else if(s.age>=60)inc+=700*12;
+  if(s.dis)inc+=1000*12;
   if(s.flags.kidSupport&&s.age>=58)inc+=s.kids.filter(k=>s.age-k.born>=23).length*4000*12;
   if(s.partner&&s.partner.inc){const pAge=s.age+s.partner.dAge;inc+=(pAge>=60?s.partner.inc*.25:s.partner.inc)*12*.55}
   const independent=s.age>=18&&!(s.studying&&!s.job);
@@ -619,7 +659,7 @@ function yearly(s){
     lv=Math.max((s.age>=60?3500:5200)*12,inc*spendRate(mInc)*clamp(1-(s.tr.frugal||0)*.025+(s.tr.fun||0)*.025,.78,1.2));
     const kidsU=s.kids.filter(k=>s.age-k.born<22).length;
     lv+=kidsU*clamp(mInc*.12,2500,40000)*12*(s.partner?.6:1);
-    lv+=((s.car?3000:0)+(s.pet?900:0)+s.sendHome)*12+(s.insur?12000+s.age*450:0);
+    lv+=((s.car?3000:0)+(s.pet?900:0)+s.sendHome+(s.dis?DIS[s.dis.t].cost:0))*12+(s.insur?12000+s.age*450:0);
     if(s.flags.spendAll&&s.age>65)lv+=Math.max(0,s.money)*.15;
   }
   s.money+=inc-lv;s.cash={inc:inc+tx,lv,tx};
@@ -727,7 +767,7 @@ function nextNode(s){
     if(s.queue.some(x=>x.age<=s.age))continue;
     let e=null;
     const lifeStage=()=>{const r=s.r();
-      if(!s.partner&&s.age>=20&&s.age<=42&&r<.42&&s.age-(s.cool.love??-99)>=2){s.cool.love=s.age;return EV.love}
+      if(!s.partner&&s.job!=='monk'&&s.age>=20&&s.age<=42&&r<.42&&s.age-(s.cool.love??-99)>=2){s.cool.love=s.age;return EV.love}
       if(s.partner&&!s.married&&s.age-s.partner.since>=1&&s.r()<.35&&s.age-(s.cool.marry??-99)>=3){s.cool.marry=s.age;return EV.marry}
       if(s.partner&&s.kids.length<3&&s.age>=24&&s.age<=43&&s.r()<(s.kids.length?.22:.4)&&s.age-(s.cool.baby??-99)>=2){s.cool.baby=s.age;return EV.baby}
       return null};
@@ -763,6 +803,9 @@ function choose(s,node,c){
 const EV={},POOLS={};
 function def(pool,e){e.pool=pool;EV[e.id]=e;if(pool!=='fixed')(POOLS[pool]=POOLS[pool]||[]).push(e)}
 const trip=s=>{s.flags.trips=(s.flags.trips||0)+1};
+function injure(s,p,why){if(s.dis||s.r()>=p)return '';s.dis={t:'mob',born:false,age:s.age};s.hp=clamp(s.hp-8,0,100);s.joy=clamp(s.joy-12,0,100);
+  if(s.job&&JOBS[s.job].block&&JOBS[s.job].block.includes('mob'))quitJob(s);log(s,`พิการทางการเคลื่อนไหวจาก${why}`,1);q(s,s.age+1,'disAfter');
+  return ' · แต่การบาดเจ็บรุนแรงจนต้องใช้วีลแชร์ไปตลอดชีวิต'}
 function addPartner(s){const g=s.r()<.92?(s.g==='m'?'f':'m'):s.g;const p=mkPerson(s.r,g);const pj=pick(s.r,PJOBS);
   p.job=pj[0];p.inc=Math.round((pj[1]+(pj[2]-pj[1])*Math.pow(s.r(),1.4))*(.85+s.cls*.07)/500)*500;p.dAge=Math.round(gauss(s.r)*3);p.since=s.age;s.partner=p;s.flags.pdq=0;
   log(s,`มีคนรักชื่อ${p.name}`,1);return p}
@@ -783,6 +826,7 @@ def('toddler',{id:'firstword',tag:'วัยเตาะแตะ',scene:'home',
  {t:'ร้องเพลงโฆษณาทั้งท่อน',eff:{soc:3},tr:{cre:1},o:'คลิปคุณถูกแชร์ในกลุ่มไลน์ครอบครัว 48 ครั้ง'}]});
 
 def('fixed',{id:'school',tag:'ตัดสินใจหลัก',scene:'school',imp:1,short:'เลือกโรงเรียน',title:'เลือกโรงเรียน (ป.1 – ม.3)',text:s=>`ครอบครัวมีเงินเก็บไว้ให้ ฿${fmt(s.money)} ค่าเรียน 9 ปีจะจ่ายจากก้อนนี้`,choices:[
+ {t:'โรงเรียนเฉพาะความพิการ',cond:s=>!!s.dis,d:s=>({mob:'ศูนย์การศึกษาพิเศษ ทางลาดครบ',vis:'โรงเรียนสอนคนตาบอด เรียนอักษรเบรลล์',hear:'โรงเรียนโสตศึกษา เรียนภาษามือ',aut:'ศูนย์การศึกษาพิเศษ ห้องเรียนเล็ก ครูเข้าใจ'})[s.dis.t]+' · เรียนฟรี',eff:{joy:5,soc:5},run:s=>{s.studying=true;s.eduRate=1.1;s.edu='ประถม';s.school='พิเศษ'},o:'คุณเจอครูและเพื่อนที่เข้าใจ และได้เรียนด้วยวิธีที่เหมาะกับคุณ'},
  {t:'โรงเรียนวัดใกล้บ้าน',d:'เรียนฟรี ครูน้อยแต่ใจดี',eff:{soc:4},run:s=>{s.studying=true;s.eduRate=.9;s.edu='ประถม';s.school='วัด'},o:'คุณเดินไปโรงเรียนกับเพื่อนในซอยทุกเช้า'},
  {t:'โรงเรียนรัฐประจำอำเภอ',d:'มาตรฐาน ค่าใช้จ่ายไม่สูง',cost:30000,eff:{iq:3,soc:3},run:s=>{s.studying=true;s.eduRate=1.1;s.edu='ประถม';s.school='รัฐ'},o:'โรงเรียนธรรมดาที่มีเพื่อนไม่ธรรมดา'},
  {t:'โรงเรียนรัฐชื่อดังในเมือง',d:s=>`ต้องสอบเข้า (โอกาสติด ${Math.round(examP(s.iq,34)*100)}%)`,cost:120000,run:s=>{s.studying=true;s.edu='ประถม'},chance:s=>examP(s.iq,34),
@@ -885,13 +929,42 @@ def('fixed',{id:'after18',tag:'ตัดสินใจหลัก',scene:'uni'
  {t:'ต่อ ปวส. สายช่าง 2 ปี',d:'เรียนสั้น จบไวมีงานทำ',req:s=>s.track!=='voc'?'ต้องจบสายอาชีพ':null,cost:40000,loan:.01,eff:{iq:3},run:s=>{s.studying=true;s.uni='วิทยาลัยเทคนิค';q(s,s.age+2,'gradVoc')},o:'ได้ประกาศนียบัตรวิชาชีพชั้นสูงติดตัว'},
  {t:'ไม่เรียนต่อ ทำงานเลย',d:'มีรายได้ทันที',eff:{joy:-1},tr:{frugal:1},run:s=>{s.studying=false;q(s,s.age,'career')},o:'คุณเริ่มหางานตั้งแต่สัปดาห์แรกหลังจบ'}]});
 def('fixed',{id:'major',tag:'ตัดสินใจหลัก',scene:'uni',imp:1,short:'เลือกคณะ',title:s=>`เลือกคณะที่${s.uni}`,text:'คณะจะเปิดประตูสู่อาชีพที่ต่างกัน',choices:[
- ...['biz','eng','cs','med','nurse','edu','comm','art','law','agri'].map(m=>({t:MAJORS[m],
-   d:{med:s=>`เรียน 6 ปี · ต้องสอบอีกรอบ (${Math.round(examP(s.iq,80)*100)}%)`,eng:'จบไปเป็นวิศวกร',cs:'จบไปเป็นโปรแกรมเมอร์',nurse:'งานมั่นคง ขาดแคลนตลอด',edu:'ปูทางสอบครู',comm:'สื่อ คอนเทนต์ โฆษณา',art:'ทำงานศิลปะ ดนตรี',law:'ปูทางเป็นทนาย',biz:'เปิดทางงานออฟฟิศ/ธุรกิจ',agri:'ทำเกษตรแบบมีความรู้'}[m],
-   req:s=>{if(['eng','med','nurse'].includes(m)&&s.track!=='sci')return 'ต้องจบสายวิทย์-คณิต';if(m==='med'&&s.uniTier<3)return 'เฉพาะมหาลัยรัฐชั้นนำ/ต่างประเทศ';return null},
+ ...['biz','eng','cs','med','dent','pharm','vet','nurse','arch','sci','edu','comm','art','law','tourism','agri'].map(m=>({t:MAJORS[m],
+   d:{med:s=>`เรียน 6 ปี · ต้องสอบอีกรอบ (${Math.round(examP(s.iq,80)*100)}%)`,eng:'จบไปเป็นวิศวกร',cs:'จบไปเป็นโปรแกรมเมอร์',nurse:'งานมั่นคง ขาดแคลนตลอด',edu:'ปูทางสอบครู',comm:'สื่อ คอนเทนต์ โฆษณา',art:'ทำงานศิลปะ ดนตรี',law:'ปูทางเป็นทนาย',biz:'งานออฟฟิศ นักบัญชี ธุรกิจ',agri:'ทำเกษตรแบบมีความรู้',dent:'เรียน 6 ปี จบไปเป็นหมอฟัน',pharm:'เรียน 6 ปี จบไปเป็นเภสัชกร',vet:'เรียน 6 ปี จบไปเป็นหมอสัตว์',arch:'เรียน 5 ปี จบไปเป็นสถาปนิก',sci:'ปูทางนักวิจัย (ต่อ ป.โท)',tourism:'ไกด์ โรงแรม สายการบิน'}[m],
+   req:s=>{if(['eng','med','nurse','dent','pharm','vet','sci'].includes(m)&&s.track!=='sci')return 'ต้องจบสายวิทย์-คณิต';if(m==='med'&&s.uniTier<3)return 'เฉพาะมหาลัยรัฐชั้นนำ/ต่างประเทศ';if(['dent','pharm','vet'].includes(m)&&s.iq<62)return 'ต้องมี 📘 62+';if(m==='arch'&&(s.tr.cre||0)<1&&s.iq<55)return 'ต้องครีเอทีฟ หรือ 📘 55+';return null},
    chance:m==='med'?(s=>examP(s.iq,80)):undefined,
    win:m==='med'?{eff:{iq:6,joy:5},run:s=>{s.major='med';q(s,s.age+6,'grad');qp(s,s.age+2,'uni');qp(s,s.age+4,'uni');return 'ติดแพทย์! อีก 6 ปีคุณจะได้ใส่เสื้อกาวน์'}}:undefined,
    lose:m==='med'?{eff:{joy:-5},run:s=>{s.major='biz';q(s,s.age+4,'grad');qp(s,s.age+2,'uni');return 'ไม่ติดแพทย์... เลยเรียนบริหารธุรกิจแทน'}}:undefined,
-   run:m==='med'?undefined:(s=>{s.major=m;q(s,s.age+4,'grad');qp(s,s.age+1,'uni');qp(s,s.age+3,'uni');if(m==='art'||m==='comm')tr(s,{cre:1});return `คุณได้เป็นนักศึกษา${MAJORS[m]}ปีหนึ่งแล้ว!`})}))]});
+   run:m==='med'?undefined:(s=>{s.major=m;const yrs={dent:6,pharm:6,vet:6,arch:5}[m]||4;q(s,s.age+yrs,'grad');qp(s,s.age+1,'uni');qp(s,s.age+3,'uni');if(m==='art'||m==='comm')tr(s,{cre:1});return `คุณได้เป็นนักศึกษา${MAJORS[m]}ปีหนึ่งแล้ว!`})}))]});
+const disTxt=s=>s.dis?DIS[s.dis.t]:null;
+def('fixed',{id:'disDevice',tag:'ครอบครัว',scene:'home',imp:1,short:'อุปกรณ์ช่วยเหลือ',title:s=>`ถึงวัยที่ต้องใช้${disTxt(s).dev}`,text:s=>`คุณเกิดมาพร้อม${disTxt(s).n} ครอบครัวทำบัตรคนพิการให้แล้ว ได้เบี้ยความพิการเดือนละ ฿1,000`,choices:[
+ {t:'ซื้ออุปกรณ์อย่างดี',d:s=>s.dis.t==='mob'?'วีลแชร์น้ำหนักเบา ปรับตามสรีระ':s.dis.t==='vis'?'อุปกรณ์อ่านอักษรเบรลล์และแท็บเล็ตอ่านหน้าจอ':s.dis.t==='hear'?'เครื่องช่วยฟังแบบดิจิทัล':'นักบำบัดพัฒนาการแบบตัวต่อตัว',cost:s=>({mob:90000,vis:45000,hear:70000,aut:120000})[s.dis.t],loan:.07,eff:{joy:6,soc:4,iq:3},tr:{fam:1},o:'อุปกรณ์ที่เหมาะกับคุณเปิดโลกให้กว้างขึ้นมาก'},
+ {t:'ใช้สิทธิ์รัฐ (ฟรี)',eff:{joy:2,soc:1},o:'ได้อุปกรณ์พื้นฐานจากโรงพยาบาลรัฐ ใช้ได้แต่ไม่ค่อยพอดีตัว'},
+ {t:'ให้ครอบครัวช่วยดูแลแทน',eff:{soc:-3,joy:-2},tr:{fam:2},o:'ทุกคนในบ้านช่วยคุณ แต่บางวันคุณก็อยากทำอะไรได้ด้วยตัวเอง'}]});
+def('child',{id:'disSchoolLife',age:[7,13],cond:s=>!!s.dis,w:2,tag:'วัยเด็ก',scene:'school',title:'บางคนที่โรงเรียนล้อเลียนความพิการของคุณ',choices:[
+ {t:'ตอบกลับไปตรงๆ',eff:{soc:2,joy:-1},tr:{adv:1},o:'"ฉันก็แค่ทำบางอย่างต่างจากเธอ" เพื่อนในห้องเริ่มเข้าใจมากขึ้น'},
+ {t:'ขอให้ครูช่วยคุยกับห้อง',eff:{soc:3},tr:{honest:1},o:'ครูชวนทั้งห้องลองใช้ชีวิตแบบคุณหนึ่งวัน หลายคนเปลี่ยนไปเลย'},
+ {t:'เข้าชมรมเด็กพิการของจังหวัด',eff:{joy:5,soc:4},tr:{kind:1},o:'คุณเจอเพื่อนที่เข้าใจโดยไม่ต้องอธิบาย'}]});
+def('teen',{id:'paraTry',age:[14,30],cond:s=>s.dis&&!s.flags.paraPicked&&s.dis.t!=='aut',w:1.5,tag:'วัยรุ่น',scene:'park',imp:1,short:'คัดตัวพาราลิมปิก',title:'โค้ชทีมชาติพาราลิมปิกมาคัดตัวที่จังหวัด',text:s=>s.dis.t==='mob'?'วีลแชร์เรซซิ่งและบอคเซีย คือกีฬาที่ไทยคว้าเหรียญบ่อยที่สุด':s.dis.t==='vis'?'กรีฑาคนตาบอดและฟุตบอล 5 คน กำลังหาตัวแทนรุ่นใหม่':'กรีฑาและแบดมินตันสำหรับคนพิการกำลังหานักกีฬา',choices:[
+ {t:'ซ้อมหนักแล้วไปคัดตัว',eff:{hp:5,joy:2},tr:{amb:2,health:1},chance:s=>clamp(.25+s.hp/200,0,.75),win:{eff:{joy:10,soc:4},run:s=>{s.flags.paraPicked=1;log(s,'ติดทีมชาติพาราลิมปิก',1);return 'ติดทีมชาติ! ตอนนี้คุณสมัครเป็นนักกีฬาพาราลิมปิกได้แล้ว'}},lose:{eff:{joy:-3},o:'พลาดไปนิดเดียว โค้ชบอกว่าปีหน้าลองใหม่'}},
+ {t:'เล่นเป็นงานอดิเรก',eff:{hp:3,joy:3},o:'กีฬาทำให้คุณแข็งแรงและมีเพื่อนเยอะขึ้น'},
+ {t:'ไม่สนใจกีฬา',eff:{iq:1},o:'คุณมีทางอื่นที่อยากไปมากกว่า'}]});
+(POOLS.life=POOLS.life||[]).push(EV.paraTry);
+def('life',{id:'paraGames',rep:1,cd:4,age:[16,45],cond:s=>s.job==='para',tag:'การงาน',scene:'park',imp:1,short:'แข่งพาราลิมปิก',banner:'🏅 พาราลิมปิกเกมส์',title:'ได้เป็นตัวแทนประเทศไทยในพาราลิมปิก',choices:[
+ {t:'ทุ่มสุดตัว',eff:{hp:-3},tr:{amb:2},chance:s=>clamp(.12+s.hp/220+s.jobXP*.02,0,.6),win:{eff:{joy:18,soc:10},run:s=>{const g=s.r();const m=g<.35?['ทอง',3000000]:g<.7?['เงิน',1800000]:['ทองแดง',1200000];s.money+=m[1];s.flags.paraMedal=m[0];log(s,`ได้เหรียญ${m[0]}พาราลิมปิก`,1);return `เหรียญ${m[0]}!! ทั้งประเทศเชียร์คุณ ได้เงินอัดฉีด ฿${fmt(m[1])}`}},lose:{eff:{joy:-4},o:'ได้อันดับ 5 ของโลก ไม่ได้เหรียญ แต่ทำสถิติส่วนตัวดีที่สุด'}},
+ {t:'ลงแข่งแบบไม่กดดันตัวเอง',eff:{joy:5},o:'คุณสนุกกับการแข่งขันและได้เพื่อนจากทั่วโลก'}]});
+def('life',{id:'disAccess',rep:1,cd:8,age:[16,85],cond:s=>s.dis&&['mob','vis'].includes(s.dis.t),tag:'ชีวิตประจำวัน',scene:'city',title:s=>s.dis.t==='mob'?'ทางเท้าแตก ไม่มีทางลาด ลิฟต์สถานีเสีย':'ทางเท้ามีแผงลอยขวาง ปุ่มนำทางคนตาบอดหายไปครึ่งทาง',choices:[
+ {t:'ร้องเรียนเขตและโพสต์ลงโซเชียล',tr:{adv:1,kind:1},chance:.45,win:{eff:{joy:6,soc:5},o:'โพสต์ไวรัล เขตส่งคนมาซ่อมภายในสัปดาห์'},lose:{eff:{joy:-2},o:'ได้รับคำตอบว่า "รับเรื่องไว้แล้ว" ...ผ่านไปปีกว่ายังเหมือนเดิม'}},
+ {t:'เรียกแท็กซี่ไปแทน',cost:600,eff:{joy:-1},o:'ไปถึงได้ แต่ค่าเดินทางของคุณแพงกว่าคนอื่นเสมอ'},
+ {t:'อยู่บ้านวันนี้',eff:{joy:-4,soc:-2},o:'บางวันโลกข้างนอกก็เหนื่อยเกินไป'}]});
+def('life',{id:'disAdvocate',age:[22,65],cond:s=>!!s.dis,tag:'สังคม',scene:'temple',imp:1,short:'แกนนำสิทธิคนพิการ',title:'สมาคมคนพิการชวนคุณเป็นแกนนำเรียกร้องสิทธิ',text:'เรื่องทางลาด ล่ามภาษามือในโรงพยาบาล และการจ้างงานตามโควตา',choices:[
+ {t:'รับเป็นแกนนำ',eff:{soc:8,joy:5,hp:-2},tr:{kind:3,adv:1},run:s=>{s.flags.advocate=1;log(s,'เป็นแกนนำเรียกร้องสิทธิคนพิการ',1)},o:'คุณยืนพูดในสภาเป็นครั้งแรก กฎหมายใหม่ผ่านในปีต่อมา'},
+ {t:'ช่วยอยู่เบื้องหลัง',eff:{soc:3,joy:3},tr:{kind:2},o:'คุณช่วยทำเอกสารและพาสมาชิกใหม่มาร่วม'},
+ {t:'ขอโฟกัสชีวิตตัวเองก่อน',eff:{joy:1},o:'ไว้วันที่พร้อมค่อยกลับมาช่วย'}]});
+def('fixed',{id:'disAfter',tag:'ความสูญเสีย',scene:'hospital',imp:1,short:'ชีวิตหลังพิการ',title:'ชีวิตเปลี่ยนไปหลังอุบัติเหตุ',text:'คุณต้องเรียนรู้การใช้วีลแชร์ ทำบัตรคนพิการ และปรับบ้านใหม่',choices:[
+ {t:'เข้าศูนย์ฟื้นฟูสมรรถภาพ',eff:{hp:6,joy:4,soc:2},tr:{health:1},o:'นักกายภาพสอนให้คุณใช้ชีวิตได้คล่องขึ้นทุกสัปดาห์'},
+ {t:'ปรับบ้านให้เข้าถึงได้',cost:120000,loan:.08,eff:{joy:6},tr:{fam:1},o:'ทางลาด ห้องน้ำกว้าง และราวจับ ทำให้บ้านกลับมาเป็นของคุณอีกครั้ง'},
+ {t:'ขังตัวเองอยู่ในห้อง',eff:{joy:-8,soc:-4},o:'หลายเดือนผ่านไปก่อนที่คุณจะยอมออกไปข้างนอกอีกครั้ง'}]});
 function graduate(s){s.edu='ป.ตรี';s.studying=false;if(s.flags.draftDefer&&!s.flags.drafted&&!s.flags.rd)q(s,s.age,'draft');q(s,s.age,'career')}
 def('fixed',{id:'grad',tag:'ความสำเร็จ',scene:'uni',imp:1,short:'รับปริญญา',title:'วันรับปริญญา 🎓',text:s=>`คุณจบ${MAJORS[s.major]||''} จาก${s.uni||'มหาวิทยาลัย'}${s.debt>0?` · หนี้ กยศ./เงินกู้ค้างอยู่ ฿${fmt(s.debt)}`:''}`,choices:[
  {t:'ถ่ายรูปกับครอบครัว',eff:{joy:6},tr:{fam:2},run:s=>{graduate(s)},o:'รูปนี้ถูกใส่กรอบแขวนกลางบ้านไปอีกหลายสิบปี'},
@@ -926,12 +999,15 @@ def('fixed',{id:'draft',tag:'หน้าที่',scene:'army',imp:1,short:'�
  {t:'วิ่งเต้นจ่ายใต้โต๊ะ ฿60,000',cost:60000,tr:{honest:-4},chance:.8,win:{eff:{joy:3},run:s=>{s.flags.rd=1;return 'มีคน "ช่วยดูแล" ให้ได้ใบดำ... คุณไม่ค่อยภูมิใจนัก'}},lose:{eff:{joy:-12},run:s=>{becomeSoldier(s,2);return 'โดนหลอก! เสียเงินแถมได้ใบแดงอยู่ดี'}}}]});
 def('fixed',{id:'armyEnd',tag:'หน้าที่',scene:'army',imp:1,short:'ปลดประจำการ',title:'ปลดประจำการแล้ว!',text:'ผิวคล้ำขึ้น แข็งแรงขึ้น และตื่นตีห้าได้โดยไม่ต้องตั้งนาฬิกา',choices:[
  {t:'กลับไปใช้ชีวิตพลเรือน',eff:{joy:6},run:s=>{quitJob(s);const pj=s.flags.prevJob;if(pj&&JOBS[pj]&&!JOBS[pj].hidden){return startJob(s,pj)+' (กลับไปทำงานเดิม)'}q(s,s.age,'career');return 'คุณเริ่มหางานใหม่'}},
- {t:'สมัครเป็นทหารอาชีพ (นายสิบ)',eff:{soc:3},tr:{amb:1},run:s=>{quitJob(s);return startJob(s,'army')}}]});
+ {t:'สมัครเป็นทหารอาชีพ (นายสิบ)',bw:.25,eff:{soc:3},tr:{amb:1},run:s=>{quitJob(s);return startJob(s,'army')}}]});
 
 function jobReq(s,id){
   const J=JOBS[id];
   if(s.job===id)return 'ทำอาชีพนี้อยู่แล้ว';
+  if(J.only&&!(s.dis&&J.only.includes(s.dis.t)))return 'สำหรับ'+(J.only.length>1?'คนพิการ':DIS[J.only[0]].who);
+  if(J.block&&s.dis&&J.block.includes(s.dis.t))return 'ยังไม่รองรับ'+DIS[s.dis.t].who;
   if(J.age&&s.age<J.age)return `อายุ ${J.age} ขึ้นไป`;
+  if(J.req){const r=J.req(s);if(r)return r}
   if(J.need==='deg'&&!['ป.ตรี','ป.โท'].includes(s.edu))return 'ต้องจบปริญญาตรี';
   if(J.need==='voc'&&!['ปวช.','ปวส.'].includes(s.edu)&&s.major!=='eng')return 'ต้องจบสายช่าง';
   if(J.major&&s.major!==J.major)return `ต้องจบ${MAJORS[J.major]}`;
@@ -947,13 +1023,14 @@ function jobReq(s,id){
 }
 function careerChoices(s){
   const ids=Object.keys(JOBS).filter(id=>!JOBS[id].hidden&&(id!=='labor'||!s.job));
-  const list=ids.map(id=>{const J=JOBS[id];return {t:J.n,_id:id,
-    d:s=>`฿${fk(J.min)}–${fk(J.max)}/เดือน · ${J.d}${J.exam?` · สอบผ่าน ${Math.round(examP(s.iq,J.exam)*100)}%`:''}${J.f?' · มีประกันสังคม':''}${J.gov?' · บำนาญ':''}`,
+  const list=ids.map(id=>{const J=JOBS[id];const hire=s.dis&&J.f&&!J.only;const pc=s=>(J.exam?examP(s.iq,J.exam):1)*(hire?.62:1);const gated=J.exam||hire;
+    return {t:J.n,_id:id,bw:J.only?6:J.major&&J.major===s.major?8:(J.need==='deg'||J.exam)&&['ป.ตรี','ป.โท'].includes(s.edu)?2.5:id==='army'||id==='firefighter'?.4:1,
+    d:s=>`฿${fk(J.min)}–${fk(J.max)}/เดือน · ${J.d}${J.exam?` · สอบผ่าน ${Math.round(examP(s.iq,J.exam)*100)}%`:''}${hire?` · สัมภาษณ์ผ่าน ~${Math.round(pc(s)*100)}% (มีโควตาจ้างงานคนพิการ)`:''}${J.f?' · มีประกันสังคม':''}${J.gov?' · บำนาญ':''}`,
     cost:J.cost||0,loan:J.loan,req:s=>jobReq(s,id),imp:1,
-    chance:J.exam?(s=>examP(s.iq,J.exam)):undefined,
-    win:J.exam?{eff:{joy:6},run:s=>startJob(s,id)}:undefined,
-    lose:J.exam?{eff:{joy:-6},o:'สอบไม่ผ่าน... ปีนี้ต้องลองใหม่'}:undefined,
-    run:J.exam?undefined:(s=>startJob(s,id))}});
+    chance:gated?pc:undefined,
+    win:gated?{eff:{joy:6},run:s=>startJob(s,id)+(hire?' · บริษัทปรับที่ทำงานให้เหมาะกับคุณ':'')}:undefined,
+    lose:gated?{eff:{joy:-6},o:hire&&!J.exam?'ผู้สัมภาษณ์ดูลังเลเรื่องความพิการ... ไม่ได้งานนี้ ลองที่อื่นต่อ':'สอบไม่ผ่าน... ปีนี้ต้องลองใหม่'}:undefined,
+    run:gated?undefined:(s=>startJob(s,id))}});
   list.sort((a,b)=>(lockReason(s,a)?1:0)-(lockReason(s,b)?1:0));
   list.push(s.job?{t:'อยู่ที่เดิมต่อไป',eff:{joy:1},o:'ที่เดิมก็ไม่ได้แย่ขนาดนั้น'}:{t:'พักก่อน ยังไม่หางาน',eff:{joy:4,money:-20000},o:'คุณให้เวลาตัวเองได้หายใจ'});
   return list;
@@ -1153,13 +1230,13 @@ def('life',{id:'ordain',age:[20,30],cond:s=>s.g==='m'&&s.rel==='พุทธ',ta
  {t:'บวช 7 วันพอ',eff:{joy:2},tr:{fam:1},run:s=>{s.flags.ordained=1},o:'ได้บุญ ไม่ขาดงาน'},
  {t:'ไม่บวช',tr:{fam:-1},o:'คุณขอทำบุญด้วยวิธีอื่น'}]});
 def('life',{id:'midlife',age:[40,52],tag:'ไลฟ์สไตล์',scene:'city',title:'จู่ๆ ก็รู้สึกว่าชีวิตจืดชืด',choices:[
- {t:'ซื้อบิ๊กไบค์',cost:550000,loan:.07,eff:{joy:9},tr:{fun:2,risk:2},chance:.1,win:{eff:{hp:-30,joy:-10},o:'ล้มหนักในโค้งแรก... ขาหักไปหลายเดือน'},lose:{o:'ลมปะทะหน้าทำให้รู้สึกอายุยี่สิบอีกครั้ง'}},
+ {t:'ซื้อบิ๊กไบค์',cost:550000,loan:.07,eff:{joy:9},tr:{fun:2,risk:2},chance:.1,win:{eff:{hp:-30,joy:-10},run:s=>'ล้มหนักในโค้งแรก... ขาหักไปหลายเดือน'+injure(s,.3,'อุบัติเหตุบิ๊กไบค์')},lose:{o:'ลมปะทะหน้าทำให้รู้สึกอายุยี่สิบอีกครั้ง'}},
  {t:'ทิ้งงานไปตามความฝัน',eff:{joy:8},tr:{adv:3,cre:2},run:s=>{quitJob(s)},o:'คุณเริ่มต้นใหม่ในวัยที่คนอื่นเลิกฝันแล้ว'},
  {t:'เข้าคอร์สปฏิบัติธรรม',eff:{joy:6,hp:2},tr:{kind:1},o:'ความว่างเปล่ากลายเป็นความสงบ'}]});
 def('life',{id:'accident',rep:1,cd:15,age:[18,80],w:s=>s.job==='rider'?1.6:.5,tag:'ไม่คาดฝัน',scene:'hospital',banner:'🚑 อุบัติเหตุ!',imp:1,short:'อุบัติเหตุ',title:'รถมอเตอร์ไซค์ตัดหน้า คุณบาดเจ็บ',choices:[
- {t:'โรงพยาบาลรัฐตามสิทธิ์',eff:{hp:-10,joy:-3},o:'รอคิวนานหน่อย แต่หมอเก่งมาก'},
- {t:'โรงพยาบาลเอกชน',cost:150000,med:1,loan:.12,eff:{hp:-4},o:'ห้องพักวิวสวย ฟื้นตัวเร็ว'},
- {t:'ไม่ไปหมอ ทายาหม่องเอา',eff:{hp:-18},tr:{frugal:1,risk:1},o:'แผลหายช้ามาก และทิ้งรอยไว้'}]});
+ {t:'โรงพยาบาลรัฐตามสิทธิ์',eff:{hp:-10,joy:-3},run:s=>'รอคิวนานหน่อย แต่หมอเก่งมาก'+injure(s,.05,'อุบัติเหตุบนถนน')},
+ {t:'โรงพยาบาลเอกชน',cost:150000,med:1,loan:.12,eff:{hp:-4},run:s=>'ห้องพักวิวสวย ฟื้นตัวเร็ว'+injure(s,.03,'อุบัติเหตุบนถนน')},
+ {t:'ไม่ไปหมอ ทายาหม่องเอา',eff:{hp:-18},tr:{frugal:1,risk:1},run:s=>'แผลหายช้ามาก และทิ้งรอยไว้'+injure(s,.12,'อุบัติเหตุที่ไม่ได้รักษา')}]});
 def('life',{id:'volunteer',age:[18,85],tag:'สังคม',scene:'temple',title:'มูลนิธิต้องการอาสาสมัครช่วยงานทุกเสาร์',choices:[
  {t:'เข้าร่วมเป็นประจำ',eff:{joy:5,soc:4},tr:{kind:3},o:'รอยยิ้มของเด็กๆ คุ้มกว่าวันหยุดไหนๆ'},
  {t:'บริจาคเงินแทน',cost:20000,tr:{kind:2},eff:{joy:2},o:'ได้ใบอนุโมทนาบัตรไว้ลดหย่อนภาษีด้วย'},
@@ -1285,6 +1362,7 @@ const ARCH=[
  {id:'gambler',e:'🎲',n:'นักเสี่ยงดวงตัวยง',d:'ทุกการตัดสินใจคือการทอยลูกเต๋า บางครั้งได้หกทั้งสองลูก บางครั้งได้แต่บทเรียน',sc:m=>m.tr.risk>=9?44+m.tr.risk*4:0},
  {id:'grinder',e:'🥲',n:'มนุษย์งานผู้ลืมยิ้ม',d:'คุณทำงานหนักจนมีทุกอย่าง ยกเว้นเวลาที่จะได้ใช้มัน',sc:m=>m.avgJoy<45&&m.nw>3e6?72:0},
  {id:'stable',e:'🧾',n:'มนุษย์เงินเดือนผู้มั่นคง',d:'คุณเลือกทางที่ปลอดภัย และมันพาคุณถึงเส้นชัยอย่างสบายใจ ไม่หวือหวา แต่ไม่เคยล้ม',sc:m=>['office','civil','teacher','nurse','police','engineer','tech','factory','army'].includes(m.mainJob)&&m.mainYrs>=22?46:0},
+ {id:'pathmaker',e:'🧭',n:'ผู้สร้างทางของตัวเอง',d:'โลกไม่ได้ถูกออกแบบมาให้คุณใช้ชีวิตง่ายๆ แต่คุณหาทางของตัวเองจนเจอ และทำให้ทางนั้นกว้างขึ้นสำหรับคนที่ตามมา',sc:m=>m.dis&&(m.avgJoy>=55||m.flags.advocate||m.flags.paraMedal)?83:0},
  {id:'ordinary',e:'🌱',n:'คนธรรมดาที่โลกต้องการ',d:'คุณคือคนส่วนใหญ่ที่ทำให้โลกหมุนไปได้ ไม่มีใครเขียนหนังสือถึงคุณ แต่ทุกอย่างพังถ้าไม่มีคนแบบคุณ',sc:m=>40}
 ];
 function metrics(s){
@@ -1297,7 +1375,7 @@ function metrics(s){
   const wealthSc=clamp(Math.log10(Math.max(1,nw+1))/8*100,0,100);
   const goalOk=s.goal?!!GOALS[s.goal].ok(s):false;
   const score=Math.round(avgJoy*.42+clamp(s.age/95*100,0,100)*.24+wealthSc*.16+(s.partner||s.widowed?6:0)+Math.min(s.kids.length,2)*3+(goalOk?8:0));
-  const m={age:s.age,nw,debt:s.debt,avgJoy,cls:s.cls,fund:CLASSES[s.cls].fund,tr:new Proxy(s.tr,{get:(t,k)=>t[k]||0}),flags:s.flags,peakIq,mainJob,mainYrs,kids:s.kids.length,score,goalOk};
+  const m={dis:!!s.dis,age:s.age,nw,debt:s.debt,avgJoy,cls:s.cls,fund:CLASSES[s.cls].fund,tr:new Proxy(s.tr,{get:(t,k)=>t[k]||0}),flags:s.flags,peakIq,mainJob,mainYrs,kids:s.kids.length,score,goalOk};
   let best=ARCH[ARCH.length-1],bs=0;for(const a of ARCH){const v=a.sc(m);if(v>bs){bs=v;best=a}}
   m.arch=best;return m;
 }
@@ -1319,6 +1397,9 @@ function badges(s){
   if(s.sendHome)B.push(['💌','ส่งเงินเลี้ยงพ่อแม่']);
   if(Object.keys(s.conds).length===0&&s.age>=70)B.push(['💪','ไม่มีโรคประจำตัวจนแก่']);
   if(f.boss)B.push(['👔','เคยเป็นเจ้าของกิจการ']);
+  if(f.paraMedal)B.push(['🥇',`เหรียญ${f.paraMedal}พาราลิมปิก`]);
+  if(f.advocate)B.push(['🙏','แกนนำสิทธิคนพิการ']);
+  if(s.dis)B.push(['💪',s.dis.born?'ใช้ชีวิตกับ'+DIS[s.dis.t].n+'มาตั้งแต่เกิด':'ปรับตัวหลังพิการได้สำเร็จ']);
   return B;
 }
 
@@ -1393,10 +1474,12 @@ function person(x,gy,o){
   const blink=Math.floor(tt*1.1+x*.37)%7===0;const mood=o.joy==null?50:o.joy;
   const st=o.walk?Math.floor(tt*8)%2:0;
   const S=kid?{h:16,head:6,body:5,leg:4}:{h:23,head:7,body:8,leg:4};
-  const t=gy-S.h+b+(old?1:0),hx=x+(old?1:0);
-  if(o.skirt){R(x-4,t+S.head+S.body,9,S.leg-1,pa);R(x-3,gy-2,2,1,sk);R(x+1,gy-2,2,1,sk)}
+  const t=gy-S.h+b+(old?1:0)+(o.wc?5:0),hx=x+(old?1:0);
+  if(o.wc){const W='#3a3a4c',L='#8a8aa0';R(x-6,gy-10,10,1,W);R(x-6,gy-1,10,1,W);R(x-7,gy-9,1,8,W);R(x+3,gy-9,1,8,W);R(x-2,gy-6,2,2,L);R(x-5,t+S.head-1,1,S.body+3,W);R(x-5,t+S.head+S.body,10,2,L);R(x+6,gy-3,2,2,W);R(x+5,t+S.head+S.body+1,1,4,W);
+    R(x-3,t+S.head+S.body,8,2,pa);R(x+4,t+S.head+S.body+1,2,3,pa);R(x+4,t+S.head+S.body+4,3,1,'#1a1a1a')}
+  else if(o.skirt){R(x-4,t+S.head+S.body,9,S.leg-1,pa);R(x-3,gy-2,2,1,sk);R(x+1,gy-2,2,1,sk)}
   else{R(x-3,t+S.head+S.body,3,S.leg-(st?1:0),pa);R(x+1,t+S.head+S.body,3,S.leg-(st?0:1),pa)}
-  R(x-3,gy-1,3,1,'#1a1a1a');R(x+1,gy-1,3,1,'#1a1a1a');
+  if(!o.wc){R(x-3,gy-1,3,1,'#1a1a1a');R(x+1,gy-1,3,1,'#1a1a1a')}
   const bw=kid?7:9,bx=x-(kid?3:4);
   R(bx,t+S.head,bw,S.body,sh);R(bx+bw-2,t+S.head,2,S.body,shD);R(bx,t+S.head,bw,1,shade(sh,.15));
   R(bx-1,t+S.head+1,1,S.body-2,sh);R(bx+bw,t+S.head+1,1,S.body-2,shD);R(bx-1,t+S.head+S.body-1,1,1,sk);R(bx+bw,t+S.head+S.body-1,1,1,sk);
@@ -1422,7 +1505,10 @@ function person(x,gy,o){
   if(mood>62){R(hx-1,ey+2,2,1,'#8a3a2a')}else if(mood<32){R(hx-1,ey+2,2,1,'#5a3030');R(hx-2,ey+3,1,1,'#5a3030')}
   if(o.glasses){R(hx-3,ey,3,1,'#333');R(hx,ey,1,1,'#333');R(hx+1,ey,2,1,'#333')}
   if(o.hat){R(hx-5,hy-2,11,2,o.hat);R(hx-3,hy-4,7,2,o.hat)}
-  if(old)R(x+7,t+10,1,13,'#7a5530');
+  if(o.dark){R(hx-3,ey,7,1,'#15151c');R(hx-3,ey-1,7,1,'#2a2a36')}
+  if(o.aid){R(hx+3,hy+2,1,2,'#ffd166')}
+  if(o.cane){R(x+7,t+8,1,gy-t-8,'#f4f4f4');R(x+7,gy-3,1,2,'#e24b4b')}
+  else if(old&&!o.wc)R(x+7,t+10,1,13,'#7a5530');
 }
 function pet(x,gy,kind,t){if(SPR[kind]){spr(kind,x-5,gy-(kind==='dog'?8:7),{flip:Math.floor(t/3)%2===1});return}if(kind==='dog'){R(x-4,gy-5,8,4,'#c98a4a');R(x+3,gy-8,4,4,'#c98a4a');R(x+6,gy-6,1,1,'#222');R(x+3,gy-9,1,2,'#8a5a2a');const w=Math.floor(t*6)%2;R(x-6,gy-7+w,2,2,'#c98a4a');R(x-3,gy-1,1,1,'#7a4a2a');R(x+2,gy-1,1,1,'#7a4a2a')}
   else{R(x-3,gy-4,7,3,'#f0a04a');R(x+3,gy-7,4,4,'#f0a04a');R(x+3,gy-8,1,1,'#f0a04a');R(x+6,gy-8,1,1,'#f0a04a');R(x+4,gy-6,1,1,'#222');const w=Math.sin(t*3)*2;R(x-5,gy-7+w,1,4,'#f0a04a')}}
@@ -1649,7 +1735,13 @@ const SCENES={
 };
 const OUTDOOR=new Set(['home','school','uni','city','market','hospital','farm','park','beach','temple','wedding','factory','army']);
 const FAMSCENE=new Set(['home','park','wedding','beach','temple','cafe','airport','hospital','funeral','birth']);
-function outfit(s){
+function outfit(s){const o=outfit0(s);if(s.dis&&s.age>=3){if(s.dis.t==='mob')o.wc=1;else if(s.dis.t==='vis'){o.cane=1;o.dark=1;o.glasses=false}else if(s.dis.t==='hear')o.aid=1}return o}
+function outfit0(s){
+  if(s.job==='monk')return {shirt:'#e8892b',pants:'#d87a20',skirt:true,hair:'bald'};
+  if(['chef','barber','massage','massageB'].includes(s.job)&&!s.studying)return {shirt:s.job==='chef'?'#f6f6f6':'#5a8ad0',pants:'#2a2a3a'};
+  if(['pilot','cabin'].includes(s.job))return {shirt:'#f4f4f8',pants:'#1f2a4a',tie:'#ffd166',hat:s.job==='pilot'?'#1f2a4a':null};
+  if(['guard','firefighter'].includes(s.job))return {shirt:s.job==='guard'?'#3a4a6a':'#e0a030',pants:'#2a2a3a',hat:s.job==='firefighter'?'#e24b4b':null};
+  if(['para','esport'].includes(s.job))return {shirt:'#e24b4b',pants:'#2a3a8a'};
   if(s.age<3)return {};
   if(s.studying&&s.age<=18)return {shirt:'#fdfdfd',pants:s.age<13||s.g==='f'?'#26407a':'#1d2b55',skirt:s.g==='f'};
   if(s.studying)return {shirt:'#fdfdfd',pants:'#1a1a22',skirt:s.g==='f'};
@@ -1742,7 +1834,7 @@ const STAT_UI=[['hp','heart','สุขภาพ'],['joy','smile','ความ�
 const TAG_IC={'ตัดสินใจหลัก':'compass','วัยเด็ก':'ball','วัยเตาะแตะ':'bottle','วัยรุ่น':'phones','มหาวิทยาลัย':'cap','การงาน':'case','ความรัก':['heart',{r:'#ff9fbe'}],'ครอบครัว':'house','การเงิน':'coin','สุขภาพ':'cross','ข่าวใหญ่':'news','สังคม':'people','ไลฟ์สไตล์':'star','สิ่งยั่วใจ':'devil','ดวง':'clover','วัยเกษียณ':'sun','ไม่คาดฝัน':'warn','ศรัทธา':'lotus','แรกเกิด':'bottle','ทางแยกบังคับ':'bolt','ความสำเร็จ':'medal','ที่อยู่อาศัย':'house','การศึกษา':'book','ชีวิตประจำวัน':'cup','หน้าที่':'helmet','ความสูญเสีย':'candle','ความฝัน':'target'};
 const TAG_TONE={'ทางแยกบังคับ':'var(--bad)','ไม่คาดฝัน':'var(--bad)','ความสูญเสีย':'var(--dim)','ความสำเร็จ':'var(--good)','สิ่งยั่วใจ':'var(--bad)'};
 const tagIc=(tag,o={})=>{const v=TAG_IC[tag]||'star';return Array.isArray(v)?ic(v[0],Object.assign({pal:v[1]},o)):ic(v,o)};
-const ARCH_IC={tycoon:['gem'],selfmade:['medal'],heir:['star',{y:'#ffe08a'}],centenarian:['hourglass'],shortbright:['bolt'],tragic:['rain'],debtking:['coin',{y:'#ff6b85',o:'#a83232'}],grey:['devil',{r:'#e0a030'}],saint:['lotus'],adventurer:['compass'],family:['house'],scholar:['book'],artist:['palette'],party:['star',{y:'#ff9fbe'}],gambler:['dice'],grinder:['case'],stable:['chart'],ordinary:['clover']};
+const ARCH_IC={pathmaker:['compass',{b:'#53e0ae'}],tycoon:['gem'],selfmade:['medal'],heir:['star',{y:'#ffe08a'}],centenarian:['hourglass'],shortbright:['bolt'],tragic:['rain'],debtking:['coin',{y:'#ff6b85',o:'#a83232'}],grey:['devil',{r:'#e0a030'}],saint:['lotus'],adventurer:['compass'],family:['house'],scholar:['book'],artist:['palette'],party:['star',{y:'#ff9fbe'}],gambler:['dice'],grinder:['case'],stable:['chart'],ordinary:['clover']};
 const archIc=(a,o={})=>{const v=ARCH_IC[a.id]||['clover'];return ic(v[0],Object.assign({pal:v[1]},o))};
 const GOAL_IC={rich:'coin',home:'house',family:'people',travel:'plane',long:'hourglass',free:'sun',boss:'case',kind:'lotus'};
 const BADGE_IC={'🧘':'lotus','🎟':'clover','🥇':'medal','✈️':'plane','🪖':'helmet','🙏':'lotus','🏖':'sun','📉':'chart','🏠':'house','👨‍👩‍👧‍👦':'people','🎂':'hourglass','💔':'heart','🎓':'cap','💌':'heart','💪':'fist','👔':'case'};
@@ -1804,7 +1896,7 @@ function renderHUD(){
     b.onclick=()=>openTut(1);st.appendChild(b);PREV[k]=s[k]}
   const nw=netWorth(s);$('gNW').textContent=baht(nw);$('gNW').className='money'+(nw<0?' neg':'');
   const C=Object.keys(s.conds);
-  $('gMood').innerHTML=`<div><b class="mitr" style="font-family:var(--f-d);font-weight:500;color:var(--ink)">ตอนนี้คุณ${moodTxt(s.joy)}</b></div><div>ร่างกาย: ${hpTxt(s.hp)}${C.length?` · ${C.join(', ')}`:''}</div><div>นิสัย: ${topTraits(s)}</div>`;
+  $('gMood').innerHTML=`<div><b class="mitr" style="font-family:var(--f-d);font-weight:500;color:var(--ink)">ตอนนี้คุณ${moodTxt(s.joy)}</b></div><div>ร่างกาย: ${hpTxt(s.hp)}${s.dis?` · ${DIS[s.dis.t].who}`:''}${C.length?` · ${C.join(', ')}`:''}</div><div>นิสัย: ${topTraits(s)}</div>`;
   const g=s.goal?GOALS[s.goal]:null;$('gGoal').className='goalLine'+(s.flags.goalDone?' ok':'');
   $('gGoal').innerHTML=g?`${ic('target')} ความฝัน: ${g.n}${s.flags.goalDone?' · สำเร็จแล้ว':''}`:`${ic('target')} ยังไม่ได้ตั้งความฝัน (ตั้งตอนอายุ 16)`;
   renderTabs();
@@ -1837,7 +1929,7 @@ function renderTabs(){
     h=f.join('');
   }else{
     const C=Object.keys(s.conds);
-    h=`<div class="fm"><span>สุขภาพโดยรวม</span><span class="r">${Math.round(s.hp)}/100 · ${hpTxt(s.hp)}</span></div>
+    h=`${s.dis?`<div class="fm"><span>ความพิการ</span><span class="r"><span class="tagx ok">${DIS[s.dis.t].n}${s.dis.born?' (ตั้งแต่เกิด)':` (ตั้งแต่อายุ ${s.dis.age})`}</span><br>บัตรคนพิการ · เบี้ย ฿1,000/เดือน</span></div>`:''}<div class="fm"><span>สุขภาพโดยรวม</span><span class="r">${Math.round(s.hp)}/100 · ${hpTxt(s.hp)}</span></div>
       <div class="fm"><span>โรคประจำตัว</span><span class="r">${C.length?C.map(n=>`<span class="tagx">${n}${s.conds[n]<=CONDS[n].sev[1]+.01?' (คุมได้)':''}</span>`).join(''):'<span class="tagx ok">ไม่มี</span>'}</span></div>
       <div class="fm"><span>ประกันสุขภาพ</span><span class="r">${s.insur?'<span class="tagx ok">มี · จ่ายเอง 20%</span>':'ไม่มี · ใช้สิทธิ์รัฐ'}</span></div>
       <div class="fm"><span>นิสัยเสี่ยง</span><span class="r">${[s.flags.smoke&&'สูบบุหรี่',s.flags.drink&&'ดื่มหนัก',(s.tr.fun||0)>=4&&'ปาร์ตี้บ่อย'].filter(Boolean).map(x=>`<span class="tagx">${x}</span>`).join('')||'<span class="tagx ok">ไม่มี</span>'}</span></div>
@@ -1901,6 +1993,7 @@ function birthHTML(s){
   <div class="small" style="margin-top:12px">ฐานะครอบครัว (โอกาสของเด็กที่เกิดใน${s.prov[0]}) · รายได้บ้าน ${baht(CLASSES[s.cls].inc)}/เดือน</div>
   <div class="classBars">${bars}</div>
   <div class="fund">${ic('coin',{cls:'lg'})}<div><div class="v">฿${fmt(s.money)}</div><div class="small">เงินที่ครอบครัวเตรียมไว้ให้คุณตลอดวัยเรียน</div></div></div>
+  ${s.dis?`<div class="fund" style="border-color:var(--line2)">${ic('heart',{cls:'lg',pal:{r:'#c38bff'}})}<div><div style="font-family:var(--f-d)">เกิดมาพร้อม${DIS[s.dis.t].n}</div><div class="small">ได้บัตรคนพิการ เบี้ยความพิการ ฿1,000/เดือน ยกเว้นเกณฑ์ทหาร และมีโควตาจ้างงานคนพิการ</div></div></div>`:''}
   <p class="desc">มีเพียง <b style="color:var(--warn)">1 ใน ${fmt(oddsN)}</b> คนที่เกิดมาแบบเดียวกับคุณ (จังหวัด + ฐานะ + เพศ)</p>
   <div class="choices"><button class="ch" data-i="0"><span class="n">1</span><span><div class="t">เริ่มต้นชีวิต</div><div class="d">ทุกการเลือกมีผลต่อเนื่อง บางอย่างย้อนกลับมาหาคุณในอีกหลายสิบปี</div></span><span></span></button></div>`;
 }
@@ -2001,7 +2094,7 @@ $('btnColl').onclick=()=>{if(!CUR_PROFILE){showLogin();return}const coll=store.g
    ========================================================= */
 function pct(arr,v){if(!arr.length)return 0;let c=0;for(const x of arr)if(x<v)c++;else if(x===v)c+=.5;return Math.round(c/arr.length*100)}
 function median(a){if(!a.length)return 0;const b=[...a].sort((x,y)=>x-y);return b[Math.floor(b.length/2)]}
-const EPI={tycoon:'สร้างอาณาจักรจากความกล้า',selfmade:'เริ่มจากศูนย์ ไปถึงฝัน',heir:'ใช้ชีวิตเต็มที่ทุกบาททุกสตางค์',centenarian:'อยู่ดูโลกจนเกือบร้อยปี',shortbright:'สั้นแต่สว่างจ้า',tragic:'สู้จนลมหายใจสุดท้าย',debtking:'ใช้ชีวิตล่วงหน้าเสมอ',grey:'รู้ทุกทางลัดในเมืองนี้',saint:'ใจดีกับทุกคนที่ผ่านเข้ามา',adventurer:'ไม่เคยเดินทางเดิมซ้ำ',family:'บ้านคือทุกอย่าง',scholar:'ความรู้คือมรดก',artist:'ทิ้งสีสันไว้ให้โลก',party:'ปาร์ตี้ยังไม่เลิก แค่ไปต่อที่อื่น',gambler:'ทอยลูกเต๋าจนวันสุดท้าย',grinder:'ทำงานหนักเพื่อทุกคน',stable:'มั่นคงจนวันสุดท้าย',ordinary:'คนธรรมดาที่ไม่ธรรมดาสำหรับใครบางคน'};
+const EPI={pathmaker:'สร้างทางที่คนอื่นเดินตามได้',tycoon:'สร้างอาณาจักรจากความกล้า',selfmade:'เริ่มจากศูนย์ ไปถึงฝัน',heir:'ใช้ชีวิตเต็มที่ทุกบาททุกสตางค์',centenarian:'อยู่ดูโลกจนเกือบร้อยปี',shortbright:'สั้นแต่สว่างจ้า',tragic:'สู้จนลมหายใจสุดท้าย',debtking:'ใช้ชีวิตล่วงหน้าเสมอ',grey:'รู้ทุกทางลัดในเมืองนี้',saint:'ใจดีกับทุกคนที่ผ่านเข้ามา',adventurer:'ไม่เคยเดินทางเดิมซ้ำ',family:'บ้านคือทุกอย่าง',scholar:'ความรู้คือมรดก',artist:'ทิ้งสีสันไว้ให้โลก',party:'ปาร์ตี้ยังไม่เลิก แค่ไปต่อที่อื่น',gambler:'ทอยลูกเต๋าจนวันสุดท้าย',grinder:'ทำงานหนักเพื่อทุกคน',stable:'มั่นคงจนวันสุดท้าย',ordinary:'คนธรรมดาที่ไม่ธรรมดาสำหรับใครบางคน'};
 function topTraits(s){const arr=Object.entries(s.tr).filter(([k,v])=>v>=2&&TRAITN[k]).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k])=>TRAITN[k]);if((s.tr.honest||0)<=-3)arr.unshift('ชอบทางลัด');return arr.slice(0,3).join(' · ')||'ยังไม่ชัด'}
 function obit(s,m){
   const job=m.mainJob?`ประกอบอาชีพ${JOBS[m.mainJob].n}เป็นเวลา ${m.mainYrs} ปี`:'ไม่เคยมีงานประจำ';

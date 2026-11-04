@@ -511,6 +511,8 @@ const JOBS={
  massageB:{n:'หมอนวด (ศูนย์ฝึกอาชีพคนตาบอด)',min:9000,max:35000,stat:'soc',vol:.2,yrs:8,hpY:-.2,joyY:.4,scene:'cafe',d:'ฝึกฟรีที่ศูนย์ฝึกอาชีพ มีลูกค้าประจำ',only:['vis']},
  signT:{n:'ครูสอนภาษามือ',min:15000,max:45000,stat:'soc',yrs:20,gov:.5,hpY:-.2,joyY:.6,scene:'school',d:'สอนภาษามือให้เด็กหูหนวกและครอบครัว',only:['hear']},
  para:{n:'นักกีฬาพาราลิมปิก',min:12000,max:150000,stat:'hp',vol:.6,yrs:8,hpY:.4,joyY:.8,scene:'park',d:'ทีมชาติไทยมีชื่อเสียงระดับโลก เงินอัดฉีดเมื่อได้เหรียญ',only:['mob','vis','hear','aut'],req:s=>s.flags.paraPicked?null:'ต้องผ่านการคัดตัวทีมชาติก่อน'},
+ beggar:{n:'ขอทาน',min:1500,max:9000,stat:'soc',vol:.5,yrs:3,hpY:-1.6,joyY:-1.3,scene:'market',d:'ทางสุดท้ายเมื่อไม่เหลืออะไร ผิดกฎหมาย เสี่ยงถูกจับเข้าสถานคุ้มครอง',age:15},
+ busker:{n:'นักดนตรีเปิดหมวก (ขึ้นทะเบียน)',min:3000,max:30000,stat:'cre',vol:.6,yrs:6,hpY:-.4,joyY:.4,cost:3000,scene:'market',d:'ขึ้นทะเบียนแสดงความสามารถถูกกฎหมาย เล่นตามตลาดและถนนคนเดิน',req:s=>(s.tr.cre||0)>=1||s.dis?null:'ต้องมีความสามารถด้านดนตรีหรือศิลปะ'},
  soldier:{n:'ทหารเกณฑ์',min:10500,max:11000,stat:'hp',yrs:2,hpY:1,joyY:-1,scene:'army',hidden:1},
  army:{n:'ทหารอาชีพ',min:15000,max:70000,stat:'hp',yrs:28,gov:1,hpY:-.2,joyY:0,scene:'army',hidden:1}
 };
@@ -965,6 +967,14 @@ def('fixed',{id:'disAfter',tag:'ความสูญเสีย',scene:'hospit
  {t:'เข้าศูนย์ฟื้นฟูสมรรถภาพ',eff:{hp:6,joy:4,soc:2},tr:{health:1},o:'นักกายภาพสอนให้คุณใช้ชีวิตได้คล่องขึ้นทุกสัปดาห์'},
  {t:'ปรับบ้านให้เข้าถึงได้',cost:120000,loan:.08,eff:{joy:6},tr:{fam:1},o:'ทางลาด ห้องน้ำกว้าง และราวจับ ทำให้บ้านกลับมาเป็นของคุณอีกครั้ง'},
  {t:'ขังตัวเองอยู่ในห้อง',eff:{joy:-8,soc:-4},o:'หลายเดือนผ่านไปก่อนที่คุณจะยอมออกไปข้างนอกอีกครั้ง'}]});
+def('life',{id:'beggarRaid',rep:1,cd:3,age:[15,95],cond:s=>s.job==='beggar',w:4,tag:'ทางแยกบังคับ',scene:'market',imp:1,short:'เจ้าหน้าที่กวาดล้างขอทาน',banner:'⚡ เจ้าหน้าที่ พม. ลงพื้นที่',title:'เจ้าหน้าที่มาตรวจจับผู้ขอทานในตลาด',text:'ตาม พ.ร.บ.ควบคุมการขอทาน คนไทยที่ขอทานจะถูกส่งเข้าสถานคุ้มครองและฝึกอาชีพ',choices:[
+ {t:'ยอมเข้าสถานคุ้มครองและฝึกอาชีพ',eff:{hp:8,joy:-4,soc:2},run:s=>{quitJob(s);s.flags.shelter=1;log(s,'เข้าสถานคุ้มครองและฝึกอาชีพ',1);return startJob(s,'massage')+' · ได้ที่พัก อาหาร และฝึกนวดแผนไทยจนมีงานทำ'}},
+ {t:'วิ่งหนี',eff:{hp:-4,joy:-3},tr:{risk:1},chance:.5,win:{o:'หนีรอดไปได้ แต่ต้องย้ายที่ขอทานไปเรื่อยๆ'},lose:{eff:{joy:-6},run:s=>{quitJob(s);s.flags.shelter=1;return 'ถูกจับได้ ถูกส่งเข้าสถานคุ้มครอง แล้วกลับออกมาหางานใหม่'}}},
+ {t:'ขอขึ้นทะเบียนเป็นนักดนตรีเปิดหมวกแทน',req:s=>(s.tr.cre||0)<1&&!s.dis?'ต้องมีความสามารถด้านดนตรีหรือศิลปะ':null,eff:{joy:5},tr:{cre:1},run:s=>{quitJob(s);return startJob(s,'busker')+' · เจ้าหน้าที่ช่วยทำบัตรให้ เล่นได้ถูกกฎหมาย'}}]});
+def('life',{id:'beggarHelp',rep:1,cd:4,age:[15,95],cond:s=>s.job==='beggar',w:2,tag:'สังคม',scene:'temple',title:'มูลนิธิช่วยเหลือคนไร้บ้านเข้ามาคุยด้วย',choices:[
+ {t:'รับความช่วยเหลือ ไปอยู่บ้านพักชั่วคราว',eff:{hp:6,joy:4},run:s=>{quitJob(s);q(s,s.age,'career');return 'ได้ที่นอนและอาหารครบสามมื้อ เจ้าหน้าที่ช่วยหางานให้'}},
+ {t:'ขอแค่ข้าวกับยา',eff:{hp:4},o:'ได้ข้าวกล่องและยาสามัญ อย่างน้อยคืนนี้ก็อิ่ม'},
+ {t:'ปฏิเสธ ไม่อยากรับความช่วยเหลือ',eff:{joy:-2},o:'ศักดิ์ศรีบางครั้งก็หนักกว่าความหิว'}]});
 function graduate(s){s.edu='ป.ตรี';s.studying=false;if(s.flags.draftDefer&&!s.flags.drafted&&!s.flags.rd)q(s,s.age,'draft');q(s,s.age,'career')}
 def('fixed',{id:'grad',tag:'ความสำเร็จ',scene:'uni',imp:1,short:'รับปริญญา',title:'วันรับปริญญา 🎓',text:s=>`คุณจบ${MAJORS[s.major]||''} จาก${s.uni||'มหาวิทยาลัย'}${s.debt>0?` · หนี้ กยศ./เงินกู้ค้างอยู่ ฿${fmt(s.debt)}`:''}`,choices:[
  {t:'ถ่ายรูปกับครอบครัว',eff:{joy:6},tr:{fam:2},run:s=>{graduate(s)},o:'รูปนี้ถูกใส่กรอบแขวนกลางบ้านไปอีกหลายสิบปี'},
@@ -1024,7 +1034,7 @@ function jobReq(s,id){
 function careerChoices(s){
   const ids=Object.keys(JOBS).filter(id=>!JOBS[id].hidden&&(id!=='labor'||!s.job));
   const list=ids.map(id=>{const J=JOBS[id];const hire=s.dis&&J.f&&!J.only;const pc=s=>(J.exam?examP(s.iq,J.exam):1)*(hire?.62:1);const gated=J.exam||hire;
-    return {t:J.n,_id:id,bw:J.only?6:J.major&&J.major===s.major?8:(J.need==='deg'||J.exam)&&['ป.ตรี','ป.โท'].includes(s.edu)?2.5:id==='army'||id==='firefighter'?.4:1,
+    return {t:J.n,_id:id,bw:id==='beggar'?.06:J.only?6:J.major&&J.major===s.major?8:(J.need==='deg'||J.exam)&&['ป.ตรี','ป.โท'].includes(s.edu)?2.5:id==='army'||id==='firefighter'?.4:1,
     d:s=>`฿${fk(J.min)}–${fk(J.max)}/เดือน · ${J.d}${J.exam?` · สอบผ่าน ${Math.round(examP(s.iq,J.exam)*100)}%`:''}${hire?` · สัมภาษณ์ผ่าน ~${Math.round(pc(s)*100)}% (มีโควตาจ้างงานคนพิการ)`:''}${J.f?' · มีประกันสังคม':''}${J.gov?' · บำนาญ':''}`,
     cost:J.cost||0,loan:J.loan,req:s=>jobReq(s,id),imp:1,
     chance:gated?pc:undefined,
@@ -1737,6 +1747,8 @@ const OUTDOOR=new Set(['home','school','uni','city','market','hospital','farm','
 const FAMSCENE=new Set(['home','park','wedding','beach','temple','cafe','airport','hospital','funeral','birth']);
 function outfit(s){const o=outfit0(s);if(s.dis&&s.age>=3){if(s.dis.t==='mob')o.wc=1;else if(s.dis.t==='vis'){o.cane=1;o.dark=1;o.glasses=false}else if(s.dis.t==='hear')o.aid=1}return o}
 function outfit0(s){
+  if(s.job==='beggar')return {shirt:'#7a6a5a',pants:'#4a4038',item:'tray'};
+  if(s.job==='busker')return {shirt:'#c38bff',pants:'#2a2a3a',item:'book'};
   if(s.job==='monk')return {shirt:'#e8892b',pants:'#d87a20',skirt:true,hair:'bald'};
   if(['chef','barber','massage','massageB'].includes(s.job)&&!s.studying)return {shirt:s.job==='chef'?'#f6f6f6':'#5a8ad0',pants:'#2a2a3a'};
   if(['pilot','cabin'].includes(s.job))return {shirt:'#f4f4f8',pants:'#1f2a4a',tie:'#ffd166',hat:s.job==='pilot'?'#1f2a4a':null};

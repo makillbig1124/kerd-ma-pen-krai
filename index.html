@@ -23,7 +23,7 @@ body.st-child{--stage:#173f4f} body.st-teen{--stage:#3b1f5c} body.st-adult{--sta
 button{font:inherit;color:inherit;cursor:pointer}
 h1,h2,h3,.mitr{font-family:Mitr,Sarabun,sans-serif;font-weight:500}
 .px{font-family:Silkscreen,monospace;letter-spacing:.5px}
-.hidden{display:none!important}
+.hidden,[hidden]{display:none!important}
 .wrap{max-width:1200px;margin:0 auto;padding:16px}
 .small{font-size:12.5px;color:var(--dim)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -224,6 +224,7 @@ dialog h3{margin:0 0 10px}
     <div class="form">
       <div><label for="inName">ชื่อเล่น (เว้นว่างไว้ให้สุ่ม)</label><input id="inName" maxlength="14" placeholder="เช่น โอ๊ต, มิ้นท์, บอส"></div>
       <div><label for="inSeed">รหัสชาติกำเนิด (ใส่รหัสของเพื่อนเพื่อเกิดแบบเดียวกัน)</label><input id="inSeed" inputmode="numeric" maxlength="9" placeholder="เว้นว่างไว้ = สุ่มใหม่"></div>
+      <button class="big alt" id="btnResume" style="background:var(--mint);box-shadow:0 5px 0 #2a8a68" hidden></button>
       <button class="big" id="btnStart">🎲 สุ่มเกิด!</button>
       <div class="row" style="justify-content:center"><button class="ghost" id="btnColl">🗂 คอลเลกชันประเภทคน</button></div>
       <div class="small" style="text-align:center">กดเลข <span class="kbd">1</span>–<span class="kbd">9</span> เพื่อเลือกตัวเลือกได้</div>
@@ -257,7 +258,7 @@ dialog h3{margin:0 0 10px}
       <div class="timeline" id="gTl"></div>
       <div class="row" style="justify-content:space-between;margin-top:8px">
         <div class="row"><button class="ghost" id="btnSound">🔊 เสียง</button><button class="ghost" id="btnLog">📜 บันทึกชีวิต</button></div>
-        <span class="small" id="gSeed"></span>
+        <span class="small"><span id="gSeed"></span> · 💾 บันทึกอัตโนมัติ · <a href="#" id="btnHome" style="color:var(--mute)">กลับหน้าแรก</a></span>
       </div>
     </div>
     <div class="gSide">
@@ -1428,9 +1429,21 @@ let S=null,NODE=null,LAST=null,PREV={};
 function show(id){for(const x of ['title','game','summary'])$(x).classList.toggle('hidden',x!==id);window.scrollTo({top:0})}
 function stageOf(a){return a<13?['child','วัยเด็ก']:a<18?['teen','วัยรุ่น']:a<60?['adult','วัยทำงาน']:['elder','วัยเกษียณ']}
 function startLife(seed,name){
-  S=newLife(seed,{name});PREV={};LAST=null;NODE=nextNode(S);
+  S=newLife(seed,{name});S._picks=[];PREV={};LAST=null;NODE=nextNode(S);
   Scene.canvas=$('scene');Scene.ctx=Scene.canvas.getContext('2d');
-  show('game');render();jingle(true);
+  saveGame();show('game');render();jingle(true);
+}
+const SAVE_KEY='blk_save_v1';
+function saveGame(){if(S&&!S.dead)store.set(SAVE_KEY,{seed:S.seed,name:S.name,picks:S._picks,age:S.age})}
+function clearSave(){try{localStorage.removeItem(SAVE_KEY)}catch(e){}}
+function resumeLife(sv){
+  try{
+    S=newLife(sv.seed,{name:sv.name});S._picks=[];PREV={};LAST=null;NODE=nextNode(S);
+    for(const i of sv.picks){const c=val(NODE.e.choices,S)[i];if(!c)throw 0;S._picks.push(i);const txt=choose(S,NODE,c);const nn=nextNode(S);if(!nn)throw 0;LAST={txt,skip:nn.skip,feed:[...S.feed]};NODE=nn}
+    if(S.age!==sv.age)throw 0;
+  }catch(e){clearSave();goTitle();return false}
+  Scene.canvas=$('scene');Scene.ctx=Scene.canvas.getContext('2d');
+  show('game');render();jingle(true);return true;
 }
 function pickTod(s,sn){if(['news','funeral','birth','bedroom','cafe','office','airport'].includes(sn))return hash(s.age*13+s.log.length*7)<.3?'night':'day';const h=hash(s.age*13+s.log.length*7);if(sn==='city'||sn==='market')return h<.4?'night':h<.6?'sunset':'day';return h<.62?'day':h<.8?'sunset':h<.92?'night':'dawn'}
 function render(){
@@ -1515,16 +1528,18 @@ function pickChoice(i){
   const e=NODE.e;const chs=val(e.choices,S);const c=chs[i];if(!c||lockReason(S,c)||(c.cond&&!c.cond(S)))return;
   beep(660,.05);
   const before=S.joy+S.hp;
+  S._picks.push(i);
   const txt=choose(S,NODE,c);
   if(e.id!=='birth')setTimeout(()=>jingle(S.joy+S.hp>=before),60);
   const nn=nextNode(S);
-  if(!nn){finish(txt);return}
-  LAST={txt,skip:nn.skip,feed:[...S.feed]};NODE=nn;render();
+  if(!nn){clearSave();finish(txt);return}
+  LAST={txt,skip:nn.skip,feed:[...S.feed]};NODE=nn;saveGame();render();
   if(innerWidth<880)$('card').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 document.addEventListener('keydown',ev=>{if($('game').classList.contains('hidden')||dlg.open)return;const n=parseInt(ev.key,10);if(n>=1&&n<=9)pickChoice(n-1)});
 $('btnSound').onclick=()=>{soundOn=!soundOn;store.set('blk_sound',soundOn);$('btnSound').textContent=soundOn?'🔊 เสียง':'🔇 ปิดเสียง'};
 $('btnSound').textContent=soundOn?'🔊 เสียง':'🔇 ปิดเสียง';
+$('btnHome').onclick=ev=>{ev.preventDefault();saveGame();goTitle()};
 $('btnLog').onclick=()=>{$('dlgBody').innerHTML=`<h3>📜 บันทึกชีวิตของ ${S.name}</h3><div class="moments">${S.log.map(l=>`<div class="mo"><span class="a">อายุ ${l.age}</span><span>${l.imp?'<b>':''}${l.t}${l.imp?'</b>':''}</span></div>`).join('')}</div>`;dlg.showModal()};
 
 /* =========================================================
@@ -1667,6 +1682,9 @@ function titleLoop(){
 }
 function goTitle(){
   document.body.className='';show('title');
+  const sv=store.get(SAVE_KEY,null),rb=$('btnResume');
+  if(sv&&sv.picks){rb.hidden=false;rb.textContent=`▶ เล่นต่อ: ${sv.name} (อายุ ${sv.age} ปี)`;rb.onclick=()=>{beep();resumeLife(sv)};$('btnStart').textContent='🎲 เริ่มชีวิตใหม่ (ชีวิตที่ค้างไว้จะหายไป)'}
+  else{rb.hidden=true;$('btnStart').textContent='🎲 สุ่มเกิด!'}
   const past=store.get('blk_past',[]);
   $('pastLives').innerHTML=past.length?`<div class="small" style="margin-bottom:6px">ชาติที่ผ่านมาของคุณ</div>`+past.map(p=>{const a=ARCH.find(x=>x.id===p.arch)||ARCH[ARCH.length-1];return `<div class="pl"><span>${a.e} <b>${p.name}</b> · ${a.n}</span><span class="small">อายุ ${p.age} · ฿${fk(p.nw)} · #${p.seed}</span></div>`}).join(''):'';
 }

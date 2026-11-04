@@ -514,6 +514,8 @@ const JOBS={
  para:{n:'นักกีฬาพาราลิมปิก',min:12000,max:150000,stat:'hp',vol:.6,yrs:8,hpY:.4,joyY:.8,scene:'park',d:'ทีมชาติไทยมีชื่อเสียงระดับโลก เงินอัดฉีดเมื่อได้เหรียญ',only:['mob','vis','hear','aut'],req:s=>s.flags.paraPicked?null:'ต้องผ่านการคัดตัวทีมชาติก่อน'},
  beggar:{n:'ขอทาน',min:1500,max:9000,stat:'soc',vol:.5,yrs:3,hpY:-1.6,joyY:-1.3,scene:'market',d:'ทางสุดท้ายเมื่อไม่เหลืออะไร ผิดกฎหมาย เสี่ยงถูกจับเข้าสถานคุ้มครอง',age:15},
  busker:{n:'นักดนตรีเปิดหมวก (ขึ้นทะเบียน)',min:3000,max:30000,stat:'cre',vol:.6,yrs:6,hpY:-.4,joyY:.4,cost:3000,scene:'market',d:'ขึ้นทะเบียนแสดงความสามารถถูกกฎหมาย เล่นตามตลาดและถนนคนเดิน',req:s=>(s.tr.cre||0)>=1||s.dis?null:'ต้องมีความสามารถด้านดนตรีหรือศิลปะ'},
+ thief:{n:'หัวขโมย / มิจฉาชีพ',min:0,max:120000,stat:'soc',vol:1,yrs:6,hpY:-.6,joyY:-.4,scene:'city',hidden:1},
+ prisoner:{n:'ผู้ต้องขัง',min:0,max:1500,stat:'hp',yrs:5,hpY:-.8,joyY:-2.2,scene:'jail',hidden:1},
  soldier:{n:'ทหารเกณฑ์',min:10500,max:11000,stat:'hp',yrs:2,hpY:1,joyY:-1,scene:'army',hidden:1},
  army:{n:'ทหารอาชีพ',min:15000,max:70000,stat:'hp',yrs:28,gov:1,hpY:-.2,joyY:0,scene:'army',hidden:1}
 };
@@ -593,7 +595,7 @@ function newLife(seed,opts={}){
 }
 const QCOND={after18:s=>{if(s.studying)s.edu=s.track==='voc'?'ปวช.':'ม.6';return s.studying},
   draft:s=>{if(s.g!=='m'||s.flags.rd||s.flags.drafted||s.dis)return false;if(s.studying){s.flags.draftDefer=1;return false}return true},
-  retire:s=>s.job&&!s.retired,ath:s=>s.job==='athlete'};
+  retire:s=>s.job&&!s.retired&&s.job!=='prisoner'&&s.job!=='thief',ath:s=>s.job==='athlete'};
 function snap(s){const nw=netWorth(s);s.peakNW=Math.max(s.peakNW,nw);s.hist.push({age:s.age,nw,joy:s.joy,hp:s.hp})}
 
 function calcSalary(s){
@@ -641,6 +643,7 @@ function yearly(s){
   let sal=0;
   if(s.job){const J=JOBS[s.job];s.jobXP++;if(J.vol)s.jobLuck=clamp(s.jobLuck+gauss(r)*.06,0,1);
     const prev=s.salary;s.salary=calcSalary(s);
+    if(s.job==='thief'&&r()<.2&&!s.queue.some(x=>x.id==='busted'))q(s,s.age,'busted');
     if(s.job==='farmer'&&r()<.15){s.salary=Math.round(s.salary*.4);feed(s,'ฝนแล้ง ผลผลิตเสียหาย รายได้หายไปกว่าครึ่ง')}
     if(prev>0&&!J.vol&&s.salary>prev*1.1&&r()<.6)feed(s,`ได้ปรับเงินเดือนเป็น ฿${fmt(s.salary)}`);
     s.hp+=J.hpY*.5;s.joy+=J.joyY;
@@ -744,7 +747,7 @@ function poolPick(s,pool){
     if(s.used[e.id]&&!e.rep)return false;
     if(e.rep&&s.cool[e.id]!=null&&s.age-s.cool[e.id]<(e.cd||6))return false;
     if(e.age&&(s.age<e.age[0]||s.age>e.age[1]))return false;
-    if(e.cond&&!e.cond(s))return false;return true});
+    if(e.cond&&!e.cond(s))return false;if(e.adult&&!s.bot&&typeof ADULT_OK==='function'&&!ADULT_OK())return false;return true});
   s.seenN=s.seenN||{};
   const e=wpick(s.r,cands,e=>(val(e.w,s)||1)/(1+(s.seenN[e.id]||0)*1.5)*(!s.bot&&typeof SEEN_W==='function'?SEEN_W(e.id):1));
   if(e){s.used[e.id]=1;s.cool[e.id]=s.age;s.seenN[e.id]=(s.seenN[e.id]||0)+1;if(!s.bot&&typeof SEEN_MARK==='function')SEEN_MARK(e.id)}
@@ -778,6 +781,7 @@ function nextNode(s){
       if(s.partner&&!s.married&&s.age-s.partner.since>=1&&s.r()<.35&&s.age-(s.cool.marry??-99)>=3){s.cool.marry=s.age;return EV.marry}
       if(s.partner&&s.kids.length<3&&s.age>=24&&s.age<=43&&s.r()<(s.kids.length?.22:.4)&&s.age-(s.cool.baby??-99)>=2){s.cool.baby=s.age;return EV.baby}
       return null};
+    if(s.flags.inJail){e=poolPick(s,'jail')||EV.jailQuiet;return {e,skip:target-from}}
     e=lifeStage();
     if(!e&&!s.job&&!s.retired&&!s.studying&&s.age<58&&s.r()<.55)e=EV.career;
     else if(s.debt>Math.max(400000,(s.salary||5000)*12*3)&&!s.flags.debtEv&&s.r()<.6){e=EV.debtcrisis;s.flags.debtEv=1}
@@ -1021,6 +1025,7 @@ function jobReq(s,id){
   if(s.job===id)return 'ทำอาชีพนี้อยู่แล้ว';
   if(J.only&&!(s.dis&&J.only.includes(s.dis.t)))return 'สำหรับ'+(J.only.length>1?'คนพิการ':DIS[J.only[0]].who);
   if(J.block&&s.dis&&J.block.includes(s.dis.t))return 'ยังไม่รองรับ'+DIS[s.dis.t].who;
+  if(s.flags.record&&(J.gov||['lawyer','judge','pilot','cabin','banker','teacher','nurse','doctor','accountant','guard'].includes(id)))return 'มีประวัติอาชญากรรม';
   if(J.age&&s.age<J.age)return `อายุ ${J.age} ขึ้นไป`;
   if(J.req){const r=J.req(s);if(r)return r}
   if(J.need==='deg'&&!['ป.ตรี','ป.โท'].includes(s.edu))return 'ต้องจบปริญญาตรี';
@@ -1596,6 +1601,177 @@ FLAVOR.push(
  {t:'ต้องไปต่อบัตรผู้สูงอายุ ได้ส่วนลดรถไฟฟ้าครึ่งราคา',c:s=>s.age>=60,once:'elderCard'}
 );
 
+/* ---------- CRIME: stealing, arrest, prison ---------- */
+function goJail(s,yrs,why){
+  s.flags.inJail=1;s.flags.jailCount=(s.flags.jailCount||0)+1;s.flags.record=1;s.flags.prevJob=s.job;
+  if(s.job)quitJob(s);s.job='prisoner';s.jobXP=0;s.jobStart=s.age;s.salary=calcSalary(s);
+  log(s,`ติดคุก ${yrs} ปี ข้อหา${why}`,1);q(s,s.age+yrs,'jailEnd');
+  let t=` · ศาลตัดสินจำคุก ${yrs} ปี`;
+  if(s.partner&&s.r()<.45){const n=s.partner.name;s.partner=null;s.married=false;s.divorces++;log(s,`${n}ขอเลิกระหว่างติดคุก`,1);t+=` · ${n}ส่งจดหมายบอกเลิกมาในเดือนแรก`}
+  return t;
+}
+const crimeBw=.6;
+def('child',{id:'stealMom',age:[7,13],tag:'สิ่งยั่วใจ',scene:'home',title:'กระเป๋าตังค์แม่วางอยู่บนโต๊ะ มีแบงก์ห้าร้อยโผล่ออกมาหนึ่งใบ',text:'การ์ดเกมชุดใหม่ราคา ฿480 พอดีเป๊ะ เหมือนจักรวาลจัดให้',choices:[
+ {t:'หยิบมาหนึ่งใบ แม่ไม่รู้หรอก',bw:crimeBw,eff:{money:500,joy:4},tr:{honest:-3,risk:1},chance:.55,win:{eff:{joy:-8},run:s=>{s.flags.stoleKid=1;return 'แม่นับเงินทุกคืน... โดนไม้เรียวสามที แล้วโดนยึดการ์ดทั้งกล่อง'}},lose:{run:s=>{s.flags.stoleKid=1;return 'รอด! แต่ทุกครั้งที่แม่พูดว่า "เงินหายไปไหนนะ" หัวใจคุณหล่นไปที่ตาตุ่ม'}}},
+ {t:'ขอแม่ตรงๆ',chance:.4,win:{eff:{joy:6},tr:{honest:2},o:'แม่ให้ แถมบอกว่าภูมิใจที่ขอแทนการหยิบเอง'},lose:{eff:{joy:-2},tr:{honest:1},o:'"เดือนนี้เงินช็อต รอเดือนหน้านะลูก" ...ก็ยังดีกว่าโดนตี'}},
+ {t:'เก็บค่าขนมเอง 2 อาทิตย์',eff:{joy:2},tr:{frugal:2},o:'อดน้ำแดงไปสองอาทิตย์ แต่การ์ดใบนี้เป็นของคุณร้อยเปอร์เซ็นต์'}]});
+def('child',{id:'shoplift',age:[10,13],tag:'สิ่งยั่วใจ',scene:'market',title:'เพื่อนท้า "กล้าเอาขนมออกจากเซเว่นโดยไม่จ่ายไหม"',choices:[
+ {t:'รับคำท้า',bw:crimeBw,eff:{joy:3,soc:3},tr:{honest:-3,risk:2},chance:.45,win:{eff:{joy:-10,soc:-4},run:s=>{s.flags.stoleKid=1;return 'พนักงานจับได้คาประตู โทรเรียกผู้ปกครอง ภาพคุณติดอยู่ที่บอร์ด "ห้ามเข้าร้าน" ไปสามเดือน'}},lose:{run:s=>{s.flags.stoleKid=1;return 'รอดออกมาได้ เพื่อนยกให้เป็นตำนาน แต่คุณไม่กล้าเข้าร้านนั้นอีกเลย'}}},
+ {t:'"ไม่เอาอะ กล้องเต็มร้าน"',eff:{iq:1},tr:{honest:1},o:'เพื่อนเรียกคุณว่าไก่ แต่ไก่ตัวนี้ไม่มีประวัติ'},
+ {t:'ท้ากลับ "ซื้อแล้วกินโชว์ให้ดูดีกว่า"',cost:60,eff:{soc:2,joy:2},o:'ทั้งกลุ่มหัวเราะ เปลี่ยนเป็นแข่งกินมาม่าแห้งแทน'}]});
+def('teen',{id:'foundPhone',age:[13,17],tag:'สิ่งยั่วใจ',scene:'city',title:'มีคนลืมไอโฟนรุ่นล่าสุดไว้บนเบาะรถเมล์',text:'เครื่องไม่ล็อกด้วย และมีแจ้งเตือนว่า "แม่: ลูกอยู่ไหน"',choices:[
+ {t:'เก็บไว้ ขายร้านมือสองได้หลายหมื่น',bw:crimeBw,eff:{money:15000,joy:3},tr:{honest:-4,risk:1},chance:.35,win:{eff:{joy:-10},run:s=>{s.flags.record=1;s.flags.stoleKid=1;log(s,'ถูกจับเพราะขายมือถือที่เก็บได้',1);return 'เจ้าของเปิด Find My แจ้งตำรวจ ตามมาถึงหน้าบ้าน ได้ประวัติติดตัวตั้งแต่ ม.ปลาย'}},lose:{o:'ขายได้จริง... แต่คืนนั้นฝันถึงเสียง "แม่: ลูกอยู่ไหน" ทั้งคืน'}},
+ {t:'โทรหา "แม่" ในเครื่องเลย',eff:{joy:5,soc:3},tr:{honest:3,kind:2},o:'เจ้าของเลี้ยงบิงซูคุณหนึ่งถาด และให้ไอดีไลน์ไว้ "มีอะไรให้ช่วยบอกนะ"'},
+ {t:'ส่งให้คนขับรถเมล์',tr:{honest:2},o:'คนขับพยักหน้าแบบที่คุณไม่แน่ใจว่าเครื่องจะถึงเจ้าของไหม'}]});
+def('life',{id:'embezzle',rep:1,cd:12,age:[25,60],cond:s=>s.job&&JOBS[s.job].f&&!s.flags.inJail,tag:'สิ่งยั่วใจ',scene:'office',imp:1,short:'ยักยอกเงินบริษัท',title:'คุณเพิ่งรู้ว่าระบบเบิกเงินของบริษัทมีช่องโหว่',text:'แก้ตัวเลขนิดเดียว เงินห้าแสนก็โอนเข้าบัญชีคุณได้ ไม่มีใครตรวจมาสามปีแล้ว',choices:[
+ {t:'ยักยอก ฿500,000',bw:crimeBw,eff:{money:500000,joy:5},tr:{honest:-6,risk:3},chance:.4,win:{eff:{joy:-15,soc:-10},run:s=>{s.money-=500000;return 'ฝ่ายตรวจสอบจับได้ในไตรมาสถัดมา'+goJail(s,3,'ยักยอกทรัพย์')}},lose:{o:'เงินเข้าแล้ว... ทุกครั้งที่ HR เรียกประชุม คุณเหงื่อแตกจนเปียกเสื้อ'}},
+ {t:'แจ้งฝ่ายไอทีให้ปิดช่องโหว่',tr:{honest:3},eff:{soc:3},run:s=>{s.jobXP+=2;return 'ผู้บริหารชมกลางที่ประชุม ได้โบนัสพิเศษเล็กๆ และความไว้ใจก้อนใหญ่'}},
+ {t:'ทำเป็นไม่เห็น',eff:{joy:-1},o:'ปีต่อมาเพื่อนร่วมงานอีกคนเห็นช่องโหว่เดียวกัน... แล้วก็ติดคุก'}]});
+def('life',{id:'pickpocketOffer',age:[18,45],cond:s=>!s.flags.inJail&&s.money<60000&&!s.flags.crimeExp&&(!s.job||['labor','rider','store','maid','guard'].includes(s.job)),w:2.5,tag:'สิ่งยั่วใจ',scene:'market',title:'คนรู้จักชวนไป "ทำงาน" ที่ตลาดนัดตอนคนแน่นๆ',text:'"แค่เดินชนเบาๆ มือไวหน่อย คืนเดียวได้เป็นหมื่น"',choices:[
+ {t:'ลองไปด้วยสักคืน',bw:crimeBw,tr:{honest:-5,risk:3},chance:.3,win:{eff:{joy:-12},run:s=>{s.flags.crimeExp=1;return 'กล้องวงจรปิดจับภาพได้ชัดแจ๋ว ตำรวจรอคุณอยู่หน้าห้องเช่า'+goJail(s,1,'ลักทรัพย์')}},lose:{eff:{money:15000,joy:2},run:s=>{s.flags.crimeExp=1;return 'ได้เงินมาหมื่นห้า... และเบอร์โทรของ "พี่ใหญ่" ที่บอกว่ามีงานให้ทำอีกเยอะ'}}},
+ {t:'ไม่เอา ไปสมัครงานร้านสะดวกซื้อดีกว่า',tr:{honest:2},run:s=>startJob(s,'store')+' · เงินน้อยกว่าแต่นอนหลับสบาย'},
+ {t:'แจ้งตำรวจเรื่องแก๊งนี้',tr:{honest:3,adv:1},eff:{soc:-2},o:'ตำรวจรับเรื่อง ส่วนคนรู้จักคนนั้นลบเฟรนด์คุณทันที'}]});
+def('life',{id:'heist',rep:1,cd:3,age:[18,60],cond:s=>s.job==='thief',w:3,tag:'สิ่งยั่วใจ',scene:'city',imp:1,short:'งานใหญ่',title:'พี่ใหญ่ชวนทำ "งานใหญ่" งัดโกดังสินค้าแบรนด์เนม',choices:[
+ {t:'ลุย ส่วนแบ่งสามแสน',tr:{risk:3,honest:-3},chance:.45,win:{eff:{joy:-10},run:s=>'ยามกดปุ่มฉุกเฉินตั้งแต่นาทีแรก ตำรวจล้อมทั้งโกดัง'+goJail(s,4,'ปล้นทรัพย์')},lose:{eff:{money:300000,joy:6},o:'สำเร็จ! คุณนับแบงก์บนเตียงในโรงแรมม่านรูดจนเช้า'}},
+ {t:'ขอถอนตัว เลิกอาชีพนี้',eff:{joy:3},tr:{honest:2},run:s=>{quitJob(s);return 'พี่ใหญ่ขู่นิดหน่อย แต่ปล่อยคุณไป คุณเริ่มหางานสุจริต'}},
+ {t:'แอบแจ้งตำรวจล่วงหน้า',tr:{honest:3,risk:2},chance:.3,win:{eff:{hp:-15,joy:-6},o:'แก๊งรู้ว่าคุณเป็นคนแจ้ง... คุณโดนรุมจนต้องนอนโรงพยาบาล'},lose:{eff:{joy:5},run:s=>{quitJob(s);return 'ตำรวจรวบทั้งแก๊ง คุณได้รับการคุ้มครองพยาน และได้เริ่มชีวิตใหม่'}}}]});
+def('fixed',{id:'busted',tag:'ทางแยกบังคับ',scene:'city',imp:1,short:'ถูกจับ',banner:'🚓 ตำรวจมาถึงแล้ว',title:'ตำรวจบุกห้องพักตอนตีห้า "คุณถูกจับในข้อหาลักทรัพย์"',choices:[
+ {t:'รับสารภาพ ขอลดโทษ',eff:{joy:-8},run:s=>'ศาลลดโทษครึ่งหนึ่งเพราะรับสารภาพ'+goJail(s,1,'ลักทรัพย์')},
+ {t:'จ้างทนายสู้คดี',cost:150000,loan:.15,eff:{joy:-4},chance:.35,win:{eff:{joy:8},run:s=>{quitJob(s);return 'ทนายหาช่องโหว่ในพยานหลักฐานเจอ ศาลยกฟ้อง! คุณเลิกอาชีพนี้ทันที'}},lose:{eff:{joy:-10},run:s=>'แพ้คดี ไม่ได้ลดโทษเพราะไม่รับสารภาพ'+goJail(s,3,'ลักทรัพย์')}},
+ {t:'ประกันตัวแล้วหนี',cost:50000,loan:.2,tr:{risk:3},chance:.75,win:{eff:{joy:-15},run:s=>'ถูกจับได้ที่ด่านชายแดน โทษเพิ่มฐานหลบหนี'+goJail(s,5,'ลักทรัพย์และหลบหนีการประกันตัว')},lose:{eff:{joy:-6,soc:-8},run:s=>{quitJob(s);s.flags.fugitive=1;return 'หนีไปอยู่ต่างจังหวัด เปลี่ยนชื่อเล่น ตกใจทุกครั้งที่เห็นรถตำรวจ'}}}]});
+def('fixed',{id:'jailEnd',tag:'ความสำเร็จ',scene:'jail',imp:1,short:'พ้นโทษ',title:'วันพ้นโทษ ประตูเรือนจำเปิดออก',text:s=>`คุณอยู่ข้างในมา ${s.age-s.jobStart} ปี ข้างนอกมีมือถือรุ่นใหม่ที่คุณไม่เคยเห็น และประวัติอาชญากรรมที่ตามคุณไปทุกที่`,choices:[
+ {t:'กลับตัว หางานสุจริต',eff:{joy:6},tr:{honest:2},run:s=>{s.flags.inJail=0;quitJob(s);s.flags.reformed=1;q(s,s.age,'career');return 'คุณสัญญากับตัวเองว่าจะไม่กลับมาที่นี่อีก งานราชการบางอย่างสมัครไม่ได้แล้ว แต่ยังมีทางอื่นอีกมาก'}},
+ {t:'ใช้วิชาที่ฝึกในเรือนจำ (นวดแผนไทย)',eff:{joy:5},run:s=>{s.flags.inJail=0;quitJob(s);s.flags.reformed=1;return startJob(s,'massage')+' · โครงการฝึกอาชีพในเรือนจำช่วยให้คุณมีทางไปต่อ'}},
+ {t:'กลับไปหาแก๊งเดิม',bw:crimeBw,eff:{joy:2},tr:{honest:-3,risk:2},run:s=>{s.flags.inJail=0;quitJob(s);return startJob(s,'thief')+' · พี่ใหญ่มารอรับหน้าเรือนจำพร้อมรถตู้'}}]});
+def('jail',{id:'jailFight',rep:1,cd:2,tag:'ไม่คาดฝัน',scene:'jail',title:'ขาใหญ่ในแดนมาขอ "ค่าคุ้มครอง"',choices:[
+ {t:'จ่ายด้วยบุหรี่กับมาม่า',cost:3000,eff:{joy:-2},o:'อยู่รอดแบบไม่มีปัญหา แต่กระเป๋าเงินแห้ง'},
+ {t:'สู้กลับ',eff:{hp:-10,soc:4},tr:{adv:1,risk:1},o:'ตาเขียวไปหนึ่งข้าง แต่ไม่มีใครมายุ่งกับคุณอีก'},
+ {t:'ขอย้ายแดนกับผู้คุม',eff:{joy:-1},tr:{honest:1},o:'ได้ย้าย แต่ต้องตื่นตีห้าทำงานครัว'}]});
+def('jail',{id:'jailStudy',rep:1,cd:3,tag:'การศึกษา',scene:'jail',title:'เรือนจำเปิดหลักสูตรการศึกษานอกระบบและฝึกอาชีพ',choices:[
+ {t:'เรียน กศน. ให้จบ ม.6',eff:{iq:6,joy:3},run:s=>{if(['ไม่ได้เรียน','ประถม','ม.3'].includes(s.edu))s.edu='ม.6';return 'ได้วุฒิ ม.6 จากในเรือนจำ ครูอาสาบอกว่าคุณหัวไวมาก'}},
+ {t:'ฝึกทำอาหารในครัวกลาง',eff:{joy:3},tr:{cre:2},o:'ผัดกะเพราของคุณกลายเป็นเมนูขายดีของร้านค้าสวัสดิการ'},
+ {t:'นอนนับวันออก',eff:{joy:-3},o:'เพดานห้องขังมีรอยร้าวทั้งหมด 47 เส้น คุณนับครบทุกเส้น'}]});
+def('jail',{id:'jailVisit',rep:1,cd:3,tag:'ครอบครัว',scene:'jail',title:s=>s.parents.some(p=>p.alive)?'แม่นั่งรถมาเยี่ยมไกลห้าชั่วโมง':'เพื่อนเก่าคนหนึ่งมาเยี่ยม',choices:[
+ {t:'ขอโทษและสัญญาว่าจะกลับตัว',eff:{joy:6},tr:{fam:3,honest:1},o:'ผ่านกระจกกั้น คุณเห็นแม่ร้องไห้และยิ้มไปพร้อมกัน'},
+ {t:'ไม่อยากเจอใคร',eff:{joy:-5},o:'เขากลับไปพร้อมถุงขนมที่ฝากไว้กับผู้คุม'}]});
+def('fixed',{id:'jailQuiet',tag:'ชีวิตประจำวัน',scene:'jail',title:'อีกหนึ่งวันในเรือนจำ',nolog:1,choices:[{t:'ทำงานในโรงฝึกตามปกติ',eff:{joy:-1}},{t:'ออกกำลังกายที่ลานแดน',eff:{hp:2}}]});
+def('life',{id:'robbedHome',rep:1,cd:12,age:[22,90],cond:s=>!s.flags.inJail,tag:'ไม่คาดฝัน',scene:'home',title:'กลับบ้านมาเจอประตูถูกงัด ข้าวของกระจายเต็มห้อง',choices:[
+ {t:'แจ้งความและเช็กกล้องวงจรปิด',run:s=>{const l=Math.round(15000+s.r()*40000);s.money-=l;return s.r()<.35?`ตำรวจจับโจรได้จากกล้องบ้านตรงข้าม ได้ของคืนบางส่วน (เสียไป ฿${fmt(Math.round(l/3))})`:`ไม่ได้ของคืน เสียไป ฿${fmt(l)} แต่อย่างน้อยมีใบแจ้งความไว้เคลมประกัน`}},
+ {t:'ติดกล้องและกลอนดิจิทัลทั้งบ้าน',cost:18000,eff:{joy:-2},run:s=>{s.money-=25000;return 'เสียของไป ฿25,000 และค่าระบบรักษาความปลอดภัยอีกก้อน แต่หลับได้สนิทขึ้น'}},
+ {t:'โพสต์ประจานโจรลงกลุ่มหมู่บ้าน',eff:{soc:3},run:s=>{s.money-=30000;return 'ยอดแชร์สามพัน มีคนจำหน้าโจรได้... แต่เงินที่หายไปไม่กลับมา (฿30,000)'}}]});
+def('life',{id:'pickpocketed',rep:1,cd:10,age:[16,90],tag:'ไม่คาดฝัน',scene:'market',title:'เดินตลาดนัดเสร็จ กระเป๋าสตางค์หายไปจากกระเป๋ากางเกง',choices:[
+ {t:'ไปแจ้งความ อายัดบัตรทุกใบ',eff:{joy:-4},run:s=>{s.money-=5000;return 'เสียเงินสดห้าพัน และเวลาทั้งวันที่สถานีตำรวจกับธนาคาร'}},
+ {t:'ประกาศหาในกลุ่มเฟซบุ๊กตลาด',eff:{joy:-2},chance:.3,win:{eff:{joy:8},tr:{kind:0},o:'มีคนเก็บได้และนำมาคืน! เงินอยู่ครบทุกบาท ศรัทธาในมนุษย์กลับมา'},lose:{run:s=>{s.money-=5000;return 'ไม่มีใครเห็น... เสียไป ฿5,000'}}}]});
+
+/* ---------- spicy & chaotic life (mild 18+) ---------- */
+def('life',{id:'hangover',rep:1,cd:8,age:[20,50],adult:1,tag:'สังคม',scene:'bedroom',title:'ตื่นมาตอนเที่ยง หัวปวดแทบระเบิด จำอะไรเมื่อคืนไม่ได้เลย',text:'ในมือถือมีคลิปตัวเองร้องเพลงบนโต๊ะ 14 คลิป และแชตส่งหาหัวหน้าว่า "รักนะ"',choices:[
+ {t:'ส่งข้อความขอโทษหัวหน้าด่วน',eff:{joy:-3},chance:.5,win:{eff:{soc:3},o:'หัวหน้าตอบว่า "ไม่เป็นไร ผมก็เคย 555" ความสัมพันธ์ดีขึ้นแบบงงๆ'},lose:{eff:{soc:-3},o:'หัวหน้าอ่านแล้วไม่ตอบ วันจันทร์บรรยากาศในห้องประชุมเย็นยะเยือก'}},
+ {t:'ลบคลิปทุกคลิปแล้วแกล้งตาย',eff:{joy:-2,hp:-2},o:'ช้าไป เพื่อนโพสต์ลงสตอรี่แล้ว ยอดวิว 3.2K'},
+ {t:'สั่งข้าวต้มกุ๊ยมากิน แล้วสาบานว่าจะเลิกเหล้า',eff:{hp:2,joy:1},tr:{health:1},o:'คำสาบานอยู่ได้ถึงวันศุกร์หน้า'}]});
+def('life',{id:'swipeRight',rep:1,cd:6,age:[20,55],cond:s=>!s.partner&&s.job!=='monk',adult:1,w:1.5,tag:'ความรัก',scene:'bedroom',title:'แมตช์กับคนหน้าตาดีมากในแอปหาคู่',text:'คุยกันสามวัน เขาส่งมาว่า "คืนนี้ว่างไหม ไปต่อที่ห้องเรา"',choices:[
+ {t:'ไป ใจเต้นแรงตลอดทาง',tr:{adv:1,fun:1},chance:.6,win:{eff:{joy:9},run:s=>{if(s.r()<.35){const p=addPartner(s);return `คืนนั้น... ไฟดับไปทั้งคืน (คุณรู้ว่าหมายถึงอะไร) แล้วกลายเป็นว่าคุณกับ${p.name}ไปกินข้าวกันต่ออีกหลายเดือน`}return 'คืนนั้นน่าจดจำมาก เช้ามาต่างคนต่างแยกย้ายแบบผู้ใหญ่ ไม่มีดราม่า'}},lose:{eff:{joy:-6},o:'รูปในแอปใช้ฟิลเตอร์หนักมาก ตัวจริงอายุมากกว่า 15 ปี และพาคุณไปขายประกัน'}},
+ {t:'ขอนัดเจอร้านกาแฟก่อน',eff:{joy:3},tr:{health:1},chance:.5,win:{eff:{joy:6},run:s=>{const p=addPartner(s);return `${p.name}ตัวจริงน่ารักกว่ารูป คุยกันสามชั่วโมงจนร้านไล่ปิด`}},lose:{o:'นัดแล้วเท ไม่มาและไม่ตอบ แอปบอกว่า "ผู้ใช้นี้ไม่พร้อมใช้งาน"'}},
+ {t:'ปิดแอป ไปนอน',eff:{hp:1},o:'คุณกับหมอนข้างยังคงเป็นคู่ที่มั่นคงที่สุด'}]});
+def('life',{id:'exText',rep:1,cd:10,age:[20,60],adult:1,tag:'ความรัก',scene:'bedroom',title:'ตีสองสิบห้า แฟนเก่าทักมาว่า "หลับยัง"',text:s=>s.partner?`ข้างๆ คุณ ${s.partner.name}กำลังหลับปุ๋ย`:'คุณกำลังนอนดูซีรีส์คนเดียว',choices:[
+ {t:'ตอบ "ยัง ทำไมอะ" 😏',tr:{risk:2,honest:-1},chance:s=>s.partner?.5:.3,win:{eff:{joy:-10},run:s=>s.partner?divorce(s,`${s.partner.name}ตื่นมาเห็นแชตพอดี... เรื่องจบที่ศาลครอบครัว`):'คุยกันจนเช้า แล้วก็จำได้ว่าทำไมถึงเลิกกัน'},lose:{eff:{joy:3},o:'คุยกันเรื่องสมัยก่อนจนหัวเราะ แล้วต่างคนต่างไปนอน ไม่มีอะไรเกินเลย'}},
+ {t:'อ่านแล้วไม่ตอบ',eff:{joy:2},tr:{fam:1},o:'ความรู้สึกเหมือนชนะอะไรบางอย่างในชีวิต'},
+ {t:'บล็อกทิ้งแล้วหลับต่อ',eff:{hp:1},tr:{fam:1},o:'อดีตควรอยู่ในที่ของมัน คือในรายการบล็อก'}]});
+def('life',{id:'convenienceCondom',age:[18,35],adult:1,tag:'ชีวิตประจำวัน',scene:'market',title:'ไปซื้อถุงยางที่ร้านสะดวกซื้อตอนห้าทุ่ม แล้วเจอครูประจำชั้นสมัย ม.ต้น ยืนต่อคิว',choices:[
+ {t:'ยกมือไหว้ "สวัสดีครับ/ค่ะคุณครู"',eff:{soc:3,joy:2},o:'ครูมองของในมือ แล้วพูดว่า "ดีแล้ว ป้องกันไว้ก่อน" อายแต่ภูมิใจในครูมาก'},
+ {t:'แอบวางของไว้บนชั้นขนม',eff:{joy:-2},o:'ครูทักว่า "ลืมของไว้ตรงชั้นเยลลี่นะ" ...ขอแผ่นดินกลืนตอนนี้เลย'},
+ {t:'หยิบมาม่าทับไว้ แล้วจ่ายแบบนิ่งๆ',eff:{joy:1},tr:{health:1},o:'พนักงานสแกนแล้วพูดเสียงดังว่า "ถุงยาง กับมาม่าต้มยำนะคะ"'}]});
+def('life',{id:'drunkTattoo',age:[20,45],adult:1,tag:'ไลฟ์สไตล์',scene:'city',title:'เมาแล้วเดินเข้าร้านสักตอนตีหนึ่ง',choices:[
+ {t:'สักชื่อแฟนปัจจุบันตัวใหญ่ๆ',cost:3500,eff:{joy:4},tr:{fun:2,risk:1},run:s=>{s.flags.tattooName=s.partner?s.partner.name:'คนที่คุยอยู่';return `ชื่อ "${s.flags.tattooName}" ตัวโตบนแขนซ้าย... หวังว่าจะอยู่ด้วยกันนานพอกับหมึก`}},
+ {t:'สักรูปมังกรเต็มหลัง',cost:15000,eff:{joy:5,soc:2},tr:{fun:1,adv:1},o:'ตื่นมาเจ็บทั้งหลัง แต่ต้องยอมรับว่าเท่มาก'},
+ {t:'สติกลับมาทัน เดินออกจากร้าน',eff:{hp:1},o:'ช่างสักตะโกนตามว่า "พรุ่งนี้มาใหม่นะพี่!"'}]});
+def('life',{id:'sexyPage',age:[20,40],adult:1,cond:s=>!s.flags.inJail,tag:'การเงิน',scene:'bedroom',title:'เพื่อนบอกว่าหุ่นคุณดี ควรเปิดเพจขายรูปเซ็กซี่แบบเสียเงินดู',choices:[
+ {t:'เปิดเพจ เน้นสวยแบบมีศิลปะ',tr:{risk:2,adv:1},chance:.4,win:{eff:{money:180000,joy:4,soc:-2},o:'ยอดสมาชิกพุ่ง ได้เงินมาก้อนใหญ่ แต่ญาติคนหนึ่งดันกดติดตาม... มื้อรวมญาติปีนี้เงียบผิดปกติ'},lose:{eff:{joy:-6},o:'มีคนเอารูปไปปล่อยฟรีในกลุ่มลับ คุณต้องแจ้งความและเครียดอยู่หลายเดือน'}},
+ {t:'ไม่เอา ขายรูปอาหารแทน',eff:{joy:2,money:3000},tr:{cre:1},o:'รูปข้าวมันไก่ของคุณขายได้รูปละ 30 บาท สุจริตและอิ่ม'},
+ {t:'ไม่สนใจ',o:'ชีวิตเรียบง่ายต่อไป'}]});
+def('life',{id:'officeParty',rep:1,cd:8,age:[22,55],cond:s=>s.job&&JOBS[s.job].f,adult:1,tag:'สังคม',scene:'city',title:'ปาร์ตี้ปีใหม่บริษัท หัวหน้าใหญ่เมาขึ้นร้องเพลง "ขอใจเธอแลกเบอร์โทร"',choices:[
+ {t:'ขึ้นไปเต้นแบ็กอัปให้',eff:{soc:6,joy:5},tr:{fun:2},run:s=>{s.jobXP+=1;return 'หัวหน้าจำหน้าคุณได้ ปีหน้าโบนัสคุณดูอบอุ่นเป็นพิเศษ'}},
+ {t:'อัดคลิปเก็บไว้ต่อรองขึ้นเงินเดือน',tr:{honest:-2,risk:1},chance:.5,win:{eff:{joy:-4,soc:-5},o:'หัวหน้ารู้ทัน... คุณถูกย้ายไปสาขาที่ไกลที่สุด'},lose:{eff:{joy:3},o:'เก็บไว้ในโฟลเดอร์ลับ เผื่อวันหนึ่ง'}},
+ {t:'แอบกลับบ้านก่อน',eff:{hp:2},o:'พรุ่งนี้กลุ่มไลน์บริษัทแตกเป็น 300 ข้อความ คุณพลาดทุกอย่าง'}]});
+def('life',{id:'ghostHouse',age:[22,70],tag:'ไม่คาดฝัน',scene:'home',title:'บ้านเช่าใหม่ราคาถูกผิดปกติ ตีสามมีเสียงเคาะประตูทุกคืน',text:'เพื่อนบ้านกระซิบว่า "ห้องนั้น...เคยมีคนผูกคอ"',choices:[
+ {t:'นิมนต์พระมาทำบุญบ้าน',cost:5000,eff:{joy:4},tr:{kind:1},o:'เสียงเคาะหยุดไป... หรือจริงๆ เป็นแค่ท่อน้ำ ใครจะรู้'},
+ {t:'ไลฟ์สดล่าท้าผี',eff:{soc:5},tr:{adv:2,fun:1},chance:.35,win:{eff:{joy:-6,hp:-3},o:'กล้องจับภาพเงาดำได้ คุณย้ายออกคืนนั้นทันที (ยอดวิวทะลุล้าน)'},lose:{eff:{joy:4,money:8000},o:'ไม่เจออะไรเลย แต่ยอดโดเนทจากคนดูก็พอค่าเช่าเดือนนี้'}},
+ {t:'ย้ายออกทันที',cost:10000,eff:{joy:2},o:'เสียค่ามัดจำ แต่ได้นอนหลับ'}]});
+def('life',{id:'gfCheckPhone',rep:1,cd:8,age:[18,50],cond:s=>!!s.partner,tag:'ความรัก',scene:'home',title:s=>`${s.partner.name}ขอดูมือถือ "ทำไมช่วงนี้คว่ำจอตลอด"`,choices:[
+ {t:'ยื่นให้ดูเลย ไม่มีอะไรต้องซ่อน',eff:{joy:2},tr:{honest:2,fam:1},chance:s=>(s.tr.honest||0)<-2?.5:.08,win:{run:s=>divorce(s,`${s.partner.name}เจอแชตที่คุณลืมลบ... มือถือลอยผ่านหน้าไปกระแทกผนัง`)},lose:{eff:{joy:4},o:'เจอแต่แชตกลุ่มแม่บ้านกับสติกเกอร์แมว ความสัมพันธ์แน่นขึ้น'}},
+ {t:'"ไม่ให้ดู มันเรื่องส่วนตัว"',eff:{joy:-4},tr:{adv:1},o:'สงครามเย็นเริ่มต้นขึ้น ทั้งบ้านได้ยินแต่เสียงช้อนกระทบจาน'},
+ {t:'ขอดูของอีกฝ่ายด้วย',eff:{joy:-1,soc:1},o:'ทั้งคู่เปิดมือถือพร้อมกัน แล้วพบว่าอีกฝ่ายแอบซื้อของออนไลน์ไปเดือนละหมื่น'}]});
+def('life',{id:'lineFamily',rep:1,cd:7,age:[25,85],tag:'ครอบครัว',scene:'home',title:'ป้าแชร์ข่าว "ดื่มน้ำมะนาวโซดารักษามะเร็ง" ในกลุ่มไลน์ครอบครัว',choices:[
+ {t:'ส่งลิงก์แก้ข่าวปลอมพร้อมแหล่งอ้างอิง',eff:{soc:-2,iq:2},tr:{honest:1},o:'ป้าตอบด้วยสติกเกอร์ดอกไม้ "สวัสดีวันพฤหัส" แล้วแชร์ข่าวใหม่อีกสามข่าว'},
+ {t:'กดไลก์ไปก่อน รักษาสันติภาพ',eff:{joy:1},tr:{fam:1},o:'ครอบครัวสงบสุขอีกหนึ่งวัน'},
+ {t:'กดออกจากกลุ่ม',eff:{joy:3,soc:-4},o:'สิบนาทีต่อมาแม่โทรมา "ออกจากกลุ่มทำไมลูก ป้าน้อยใจนะ"'}]});
+def('life',{id:'liveFail',age:[18,60],tag:'ไม่คาดฝัน',scene:'bedroom',title:'ประชุมออนไลน์ คุณคิดว่าปิดกล้องแล้ว... แต่ยังไม่ได้ปิด',text:'ทุกคนในห้องประชุมเห็นคุณใส่แค่กางเกงในลายการ์ตูน เต้นตามเพลงลูกทุ่ง',choices:[
+ {t:'เต้นต่อให้จบเพลงแบบมืออาชีพ',eff:{soc:6,joy:3},tr:{fun:2,adv:1},o:'ทั้งที่ประชุมปรบมือ ได้ฉายา "เจ้าแม่/เจ้าพ่อลูกทุ่ง" ประจำบริษัท'},
+ {t:'ปิดกล้องแล้วแกล้งเน็ตหลุด',eff:{joy:-3},o:'"เน็ตหลุด" ไปสองวัน แต่ภาพนั้นถูกแคปไว้ในกลุ่มลับของแผนก'},
+ {t:'ลาออกทันที',run:s=>{if(s.job)quitJob(s);s.joy=clamp(s.joy+2,0,100);return 'อับอายเกินจะสู้หน้าใครได้ เดินออกจากชีวิตเดิมพร้อมศักดิ์ศรีที่เหลืออยู่'}}]});
+def('life',{id:'hotNeighbor',age:[20,50],cond:s=>!s.partner,adult:1,tag:'ความรัก',scene:'home',title:'ห้องข้างๆ ย้ายมาใหม่ หน้าตาดีระดับดารา มาเคาะประตูขอยืมไขควง',choices:[
+ {t:'"ให้ช่วยประกอบเฟอร์นิเจอร์ไหม"',tr:{adv:1},chance:s=>clamp(.25+s.soc/200,0,.7),win:{eff:{joy:10},run:s=>{const p=addPartner(s);return `ประกอบตู้เสร็จตอนเที่ยงคืน... ส่วนเรื่องหลังจากนั้น ขอเก็บไว้เป็นความลับระหว่างคุณกับ${p.name}`}},lose:{eff:{joy:-3},o:'ประกอบตู้เสร็จ เขาขอบคุณ แล้วแฟนเขาก็เดินออกมาจากห้องน้ำ'}},
+ {t:'ให้ยืมไขควงแบบนิ่งๆ',eff:{joy:1},o:'เขาคืนไขควงพร้อมขนมเค้กหนึ่งชิ้น หัวใจคุณเต้นแรงกว่าเค้กเยอะ'},
+ {t:'แกล้งทำเป็นไม่อยู่บ้าน',eff:{joy:-2},o:'ได้ยินเขาไปขอยืมห้องตรงข้ามแทน... ห้องตรงข้ามโชคดีจัง'}]});
+def('life',{id:'betNaked',age:[18,40],adult:1,tag:'สังคม',scene:'city',banner:'⚽ คู่บิ๊กแมตช์',title:'ทายผลบอลแพ้เพื่อน ข้อตกลงคือ "วิ่งรอบหมู่บ้านใส่แค่กางเกงใน"',choices:[
+ {t:'ลูกผู้ชาย/ผู้หญิง พูดแล้วต้องทำ',eff:{joy:5,soc:5,hp:1},tr:{fun:2,adv:1},chance:.3,win:{eff:{soc:-4},o:'ป้าข้างบ้านถ่ายคลิปลงกลุ่มหมู่บ้าน คุณกลายเป็นมีมประจำซอยไปทั้งปี'},lose:{o:'วิ่งครบรอบตอนตีห้า มีแต่หมาวิ่งตามและเห่ายินดี'}},
+ {t:'ขอจ่ายค่าปรับเลี้ยงหมูกระทะแทน',cost:2500,eff:{soc:3,joy:2},o:'ทุกคนพอใจ และหมูกระทะก็อร่อยกว่าความอับอาย'},
+ {t:'บล็อกเพื่อนทุกคน',eff:{soc:-6},o:'เพื่อนตั้งกลุ่มใหม่ชื่อ "คนที่ไม่กล้าวิ่ง"'}]});
+def('life',{id:'mlmCrush',age:[22,55],tag:'สิ่งยั่วใจ',scene:'cafe',title:'คนที่คุณแอบชอบนัดเจอครั้งแรก... แล้วเปิดสไลด์นำเสนอแผนธุรกิจ',choices:[
+ {t:'ฟังจนจบเพราะเขาน่ารัก',cost:12000,eff:{joy:-3},o:'คุณกลับบ้านพร้อมกล่องอาหารเสริมสามกล่อง และหัวใจที่แตกสลาย'},
+ {t:'"ขอบคุณนะ แต่เรามาเดตไม่ใช่มาลงทุน"',eff:{joy:2,soc:1},tr:{adv:1},o:'เขาหัวเราะแล้วปิดโน้ตบุ๊ก บอกว่า "คนแรกที่กล้าพูดตรงๆ" ...แต่ก็ยังไม่ได้คบกันอยู่ดี'},
+ {t:'ชวนเขาร่วมทุนขายตรงของคุณแทน',tr:{fun:1},eff:{joy:4},o:'ต่างฝ่ายต่างพยายามปิดการขายจนร้านกาแฟปิด สุดท้ายกลายเป็นเพื่อนสายธุรกิจ'}]});
+def('life',{id:'grabUncle',age:[18,70],tag:'ชีวิตประจำวัน',scene:'city',title:'พี่วินมอเตอร์ไซค์เล่าว่าเคยเป็นนักร้องดังยุค 90 ระหว่างพาซิ่งฝ่ารถติด',choices:[
+ {t:'ขอให้ร้องเพลงให้ฟัง',eff:{joy:5},o:'พี่วินร้องเพลงฮิตยุค 90 สุดเสียงกลางสาทร เสียงดีจนคุณขนลุก ให้ทิปไปร้อยนึง'},
+ {t:'ขอให้ขับช้าลงหน่อย',eff:{hp:1},o:'"ช้าก็ไม่ทันประชุมนะน้อง" ...แล้วพี่ก็เร่งเครื่อง'},
+ {t:'ถ่ายคลิปลงติ๊กต็อก',eff:{soc:4},tr:{cre:1},chance:.3,win:{eff:{joy:6},o:'คลิปไวรัล ค่ายเพลงติดต่อพี่วินกลับไปทำอัลบั้มใหม่'},lose:{o:'ได้ 200 ไลก์ แต่พี่วินขอให้แท็กด้วย'}}]});
+def('life',{id:'momMatchmaker',rep:1,cd:6,age:[27,40],cond:s=>!s.partner&&s.parents.some(p=>p.alive),tag:'ครอบครัว',scene:'home',title:'แม่ถามทุกครั้งที่กลับบ้าน "เมื่อไหร่จะมีแฟน แม่อยากอุ้มหลาน"',text:'วันนี้แม่ชวนลูกสาว/ลูกชายของเพื่อนมาทานข้าวด้วย "บังเอิญ"',choices:[
+ {t:'ลองคุยดูสักตั้ง',chance:.35,win:{eff:{joy:8},run:s=>{const p=addPartner(s);return `${p.name}ก็โดนแม่ตัวเองบังคับมาเหมือนกัน คุณสองคนหัวเราะใส่กันจนกลายเป็นคบกันจริง`}},lose:{eff:{joy:-2},o:'เขาคุยแต่เรื่องคริปโตตลอดสามชั่วโมง'}},
+ {t:'"แม่ หนู/ผมมีความสุขแบบนี้"',eff:{joy:3},tr:{adv:1},o:'แม่ถอนหายใจยาว แล้วตักแกงให้อีกทัพพี'},
+ {t:'จ้างเพื่อนมาแกล้งเป็นแฟน',cost:3000,eff:{joy:2},tr:{honest:-2},o:'แม่ปลื้มมาก แต่ตอนนี้แม่แอดเฟรนด์เพื่อนคุณและคุยกันทุกวัน'}]});
+FLAVOR.push(
+ {t:'ตื่นสายเพราะนาฬิกาปลุกดังแต่มือปิดเองโดยอัตโนมัติ',c:s=>s.age>16},
+ {t:'ส่งสติกเกอร์ผิดกลุ่ม ส่งรูปหัวใจไปกลุ่มบริษัท',c:s=>s.age>22&&!!s.job,run:s=>s.soc-=1},
+ {t:'มีคนในกลุ่มไลน์รุ่นทักมาว่า "จำเราได้ไหม" ...แล้วขายคอร์สเทรดหุ้น',c:s=>s.age>25},
+ {t:'ไปกินบุฟเฟต์ปิ้งย่าง จ่ายไป 599 กินไปเหมือน 2,000',c:s=>s.age>15,run:s=>s.joy+=2},
+ {t:'โดนแม่ค้าส้มตำถามว่า "พริกกี่เม็ด" ตอบ 10 แล้วเสียใจทั้งคืน',c:s=>s.age>14,run:s=>s.hp-=1},
+ {t:'ซื้อของในไลฟ์สดตอนตีหนึ่งไป 12 ชิ้น ไม่รู้ว่าซื้ออะไรบ้าง',c:s=>s.age>18,run:s=>s.money-=4000},
+ {t:'ไปออกกำลังกายครั้งแรกในรอบปี ปวดขาเดินลงบันไดไม่ได้สามวัน',c:s=>s.age>25},
+ {t:'ร้องคาราโอเกะเพลงอกหักแล้วร้องไห้จริงกลางห้อง',c:s=>s.age>18,run:s=>s.joy+=1},
+ {t:'มีคนในโซเชียลเข้ามาเม้นด่าว่า "ไม่มีใครถาม" ทั้งที่โพสต์รูปแมว',c:s=>s.age>15},
+ {t:'สั่งชาบูมากินคนเดียว ได้ถาดใหญ่เท่าโต๊ะ',c:s=>s.age>18&&!s.partner,run:s=>s.joy+=2}
+);
+/* ---------- being stolen from ---------- */
+def('child',{id:'extort',age:[9,14],tag:'ไม่คาดฝัน',scene:'school',title:'รุ่นพี่ตัวใหญ่ดักหลังห้องน้ำ "เอาค่าขนมมาให้หมด"',choices:[
+ {t:'ยอมให้ไป',run:s=>{s.money-=300;s.joy=clamp(s.joy-5,0,100);return 'เสียไปสามร้อย และต้องอดข้าวกลางวันทั้งอาทิตย์'}},
+ {t:'วิ่งไปฟ้องครู',tr:{honest:1,adv:1},chance:.7,win:{eff:{joy:4},o:'ครูจับได้คาหนังคาเขา รุ่นพี่โดนพักการเรียน และคืนเงินให้ทุกคน'},lose:{eff:{joy:-4,hp:-3},o:'รุ่นพี่รู้ว่าคุณฟ้อง ดักตบหลังเลิกเรียน'}},
+ {t:'ชวนเพื่อนรวมตัวกันไม่ยอม',eff:{soc:4},tr:{adv:2,kind:1},o:'พอเห็นเด็กสิบคนยืนเรียงกัน รุ่นพี่ก็เดินหนีไปเอง'}]});
+def('uni',{id:'roommateThief',tag:'ไม่คาดฝัน',scene:'bedroom',title:'เงินในลิ้นชักหายไปเรื่อยๆ ครั้งละห้าร้อย พันนึง',text:'ห้องนี้มีแค่คุณกับรูมเมท',choices:[
+ {t:'ติดกล้องจิ๋วแอบดู',cost:900,tr:{adv:1},chance:.8,win:{eff:{joy:-3},run:s=>{s.money+=6000;return 'กล้องจับได้คาหนังคาเขา รูมเมทยอมคืนเงินหกพันแล้วย้ายออกทันที'}},lose:{o:'กล้องไม่เห็นอะไร... สรุปคุณลืมว่าเอาเงินไปซื้อชานมเอง'}},
+ {t:'ถามตรงๆ',eff:{soc:-2},chance:.5,win:{eff:{joy:2},o:'รูมเมทร้องไห้ยอมรับว่าที่บ้านลำบาก คุณยกหนี้ให้แล้วช่วยหางานพาร์ทไทม์ให้เขา'},lose:{eff:{joy:-4},o:'"กล่าวหากันได้ไง!" ห้องเงียบไปทั้งเทอม และเงินก็ยังหายต่อ'}},
+ {t:'ย้ายเงินไปไว้ในบัญชีแทน',tr:{frugal:1},o:'เงินไม่หายอีก แต่ความไว้ใจหายไปแล้ว'}]});
+def('life',{id:'snatch',rep:1,cd:10,age:[16,90],tag:'ไม่คาดฝัน',scene:'city',banner:'🏍 วิ่งราว!',title:'มอเตอร์ไซค์ซิ่งมากระชากกระเป๋าคุณตอนเดินริมถนน',choices:[
+ {t:'ปล่อยกระเป๋า เอาชีวิตไว้ก่อน',run:s=>{const l=Math.round(4000+s.r()*12000);s.money-=l;s.joy=clamp(s.joy-5,0,100);return `เสียเงินสดกับมือถือไปรวม ฿${fmt(l)} แต่ไม่เจ็บตัว`}},
+ {t:'ยื้อกระเป๋าไว้สุดแรง',tr:{risk:2},chance:.45,win:{eff:{hp:-15,joy:-6},run:s=>'ถูกลากไปกับพื้นห้าเมตร แขนถลอกยับ'+injure(s,.05,'การถูกวิ่งราวกระชากกระเป๋า')},lose:{eff:{joy:6,soc:3},o:'โจรเสียหลักล้ม ชาวบ้านรุมจับส่งตำรวจ คุณได้กระเป๋าคืนพร้อมคลิปไวรัล'}},
+ {t:'ตะโกน "ขโมย!" ให้คนช่วย',eff:{soc:2},chance:.4,win:{eff:{joy:5},o:'วินมอเตอร์ไซค์สามคันซิ่งตามไปจนจับได้ ได้ของคืนครบ'},lose:{run:s=>{s.money-=8000;return 'ไม่มีใครตามทัน เสียไป ฿8,000'}}}]});
+def('life',{id:'romanceScam',age:[22,80],cond:s=>!s.partner,w:1.2,adult:1,tag:'ความรัก',scene:'bedroom',title:'คุยกับหนุ่ม/สาวต่างชาติหน้าตาดีมากในแอปมาสามเดือน',text:'"ที่รัก ผมส่งกล่องของขวัญมูลค่าสองล้านไปให้ แต่ติดภาษีที่ศุลกากร ช่วยโอน ฿80,000 ก่อนได้ไหม"',choices:[
+ {t:'โอนไปก่อน เขารักเราจริง',tr:{risk:2},run:s=>{const a=Math.min(Math.max(0,s.money),80000);s.money-=a;s.joy=clamp(s.joy-14,0,100);log(s,'โดนแก๊งโรแมนซ์สแกมหลอกเอาเงิน',1);return `โอนไป ฿${fmt(a)}... แล้วบัญชีเขาก็หายไปจากโลก รูปโปรไฟล์คือนายแบบชาวยุโรปที่ไม่รู้ตัวเลย`}},
+ {t:'ขอวิดีโอคอลก่อน',eff:{iq:2},o:'"กล้องเสียที่รัก" ...ครั้งที่ 47 คุณกดบล็อกแล้วแจ้งเพจเตือนภัย'},
+ {t:'เล่นตามน้ำ แกล้งหลอกกลับ',eff:{joy:6,soc:2},tr:{fun:1,adv:1},o:'คุณส่งสลิปปลอมไปสิบครั้ง ถ่วงเวลาแก๊งได้สามอาทิตย์ แล้วโพสต์เล่าจนไวรัล'}]});
+def('life',{id:'staffTheft',rep:1,cd:8,age:[22,70],cond:s=>s.job==='biz'||s.side>0,tag:'การงาน',scene:'cafe',title:'ยอดเงินในลิ้นชักร้านขาดไปทุกวัน เดือนนี้หายไปเกือบสามหมื่น',choices:[
+ {t:'ติดกล้องวงจรปิดเพิ่ม',cost:12000,chance:.85,win:{run:s=>{s.money+=15000;return 'เจอว่าเป็นพนักงานที่ไว้ใจที่สุด เขาคืนเงินมาครึ่งหนึ่งแล้วลาออกไปแบบเงียบๆ'}},lose:{o:'กล้องไม่เห็นอะไร สรุปว่าทอนเงินผิดเอง'}},
+ {t:'เรียกประชุมพนักงานทั้งหมด',eff:{soc:-2},chance:.4,win:{o:'มีคนยอมรับและขอโอกาสแก้ตัว คุณให้เขาผ่อนคืนเงิน'},lose:{eff:{joy:-4},o:'ไม่มีใครยอมรับ บรรยากาศในร้านตึงเครียดไปทั้งเดือน'}},
+ {t:'ปล่อยไป ถือว่าทำบุญ',run:s=>{s.money-=30000;return 'เสียไปสามหมื่น และเดือนหน้าก็หายอีก'},tr:{kind:1}}]});
+def('elder',{id:'grandkidATM',age:[65,95],cond:s=>s.kids.length>0&&s.money>50000,tag:'ครอบครัว',scene:'home',title:'สมุดบัญชีบอกว่ามีคนกดเงินออกไปทีละหมื่น ทั้งที่คุณไม่ได้กด',text:'บัตร ATM อยู่ในลิ้นชักที่หลานคนหนึ่งรู้ที่ซ่อน',choices:[
+ {t:'คุยกับหลานตรงๆ',tr:{fam:1},chance:.6,win:{eff:{joy:-3},run:s=>{s.money-=20000;return 'หลานร้องไห้สารภาพว่าติดพนันออนไลน์ คุณพาเข้าบำบัด เสียไปสองหมื่นแต่ได้หลานคืนมา'}},lose:{eff:{joy:-8},run:s=>{s.money-=40000;return 'หลานปฏิเสธและโกรธใหญ่โต เงินหายไปสี่หมื่น ครอบครัวแตกเป็นสองฝ่าย'}}},
+ {t:'อายัดบัตรเงียบๆ แล้วเปลี่ยนรหัส',eff:{joy:-2},tr:{frugal:1},run:s=>{s.money-=20000;return 'เงินหยุดหาย แต่คุณไม่เคยรู้แน่ว่าเป็นใคร (เสียไป ฿20,000)'}},
+ {t:'แจ้งความ',tr:{honest:2},eff:{joy:-6},run:s=>{s.money-=10000;return 'ตำรวจเช็กกล้องตู้ ATM... เป็นหลานจริงๆ คุณถอนแจ้งความ แต่ความไว้ใจไม่กลับมา'}}]});
+FLAVOR.push(
+ {t:'มีคนขโมยรองเท้าหน้าบ้านไปข้างเดียว',c:s=>s.age>8},
+ {t:'จักรยานที่จอดหน้าร้านหายไปทั้งคัน เหลือแค่กุญแจล็อก',c:s=>s.age>10&&s.age<40,run:s=>s.money-=3000},
+ {t:'โดนแอบชาร์จแบตไฟฟ้าจากปลั๊กหน้าบ้าน ค่าไฟพุ่ง',c:s=>s.age>25&&s.home>0,run:s=>s.money-=1500},
+ {t:'พัสดุหน้าบ้านหายไป กล้องเห็นแค่มือปริศนา',c:s=>s.age>18,run:s=>s.money-=1200}
+);
+
 /* =========================================================
    ARCHETYPES / BADGES
    ========================================================= */
@@ -1618,12 +1794,14 @@ const ARCH=[
  {id:'grinder',e:'🥲',n:'มนุษย์งานผู้ลืมยิ้ม',d:'คุณทำงานหนักจนมีทุกอย่าง ยกเว้นเวลาที่จะได้ใช้มัน',sc:m=>m.avgJoy<45&&m.nw>3e6?72:0},
  {id:'stable',e:'🧾',n:'มนุษย์เงินเดือนผู้มั่นคง',d:'คุณเลือกทางที่ปลอดภัย และมันพาคุณถึงเส้นชัยอย่างสบายใจ ไม่หวือหวา แต่ไม่เคยล้ม',sc:m=>['office','civil','teacher','nurse','police','engineer','tech','factory','army'].includes(m.mainJob)&&m.mainYrs>=22?46:0},
  {id:'pathmaker',e:'🧭',n:'ผู้สร้างทางของตัวเอง',d:'โลกไม่ได้ถูกออกแบบมาให้คุณใช้ชีวิตง่ายๆ แต่คุณหาทางของตัวเองจนเจอ และทำให้ทางนั้นกว้างขึ้นสำหรับคนที่ตามมา',sc:m=>m.dis&&(m.avgJoy>=55||m.flags.advocate||m.flags.paraMedal)?83:0},
+ {id:'convict',e:'🔒',n:'ขาประจำเรือนจำ',d:'กฎหมายกับคุณไม่เคยลงรอยกัน คุณเข้าออกเรือนจำบ่อยจนผู้คุมจำชื่อเล่นได้',sc:m=>(m.flags.jailCount||0)>=2||m.mainJob==='thief'?86:0},
+ {id:'secondChance',e:'🌅',n:'คนที่ได้โอกาสครั้งที่สอง',d:'คุณเคยพลาดจนต้องชดใช้ แต่เลือกเดินออกมาอีกทาง และพิสูจน์ว่าคนเราเปลี่ยนได้',sc:m=>m.flags.reformed&&(m.flags.jailCount||0)===1?80:0},
  {id:'ordinary',e:'🌱',n:'คนธรรมดาที่โลกต้องการ',d:'คุณคือคนส่วนใหญ่ที่ทำให้โลกหมุนไปได้ ไม่มีใครเขียนหนังสือถึงคุณ แต่ทุกอย่างพังถ้าไม่มีคนแบบคุณ',sc:m=>40}
 ];
 function metrics(s){
   const peakIq=s.iq;
   const jobs=[...s.jobs];if(s.job)jobs.push({id:s.job,from:s.jobStart,to:s.age});
-  const yrs={};for(const j of jobs)if(j.id!=='soldier')yrs[j.id]=(yrs[j.id]||0)+(j.to-j.from);
+  const yrs={};for(const j of jobs)if(j.id!=='soldier'&&j.id!=='prisoner')yrs[j.id]=(yrs[j.id]||0)+(j.to-j.from);
   let mainJob=null,mainYrs=0;for(const k in yrs)if(yrs[k]>mainYrs){mainJob=k;mainYrs=yrs[k]}
   let nw=netWorth(s);if(s.flags.donate)nw*=.5;
   const avgJoy=s.joyN?s.joySum/s.joyN:s.joy;
@@ -1652,6 +1830,9 @@ function badges(s){
   if(s.sendHome)B.push(['💌','ส่งเงินเลี้ยงพ่อแม่']);
   if(Object.keys(s.conds).length===0&&s.age>=70)B.push(['💪','ไม่มีโรคประจำตัวจนแก่']);
   if(f.boss)B.push(['👔','เคยเป็นเจ้าของกิจการ']);
+  if(f.jailCount)B.push(['📉','เคยติดคุก '+f.jailCount+' ครั้ง']);
+  if(f.fugitive)B.push(['🎲','หนีคดีได้ตลอดชีวิต']);
+  if(f.tattooName)B.push(['💔','มีรอยสักชื่อ '+f.tattooName]);
   if(f.paraMedal)B.push(['🥇',`เหรียญ${f.paraMedal}พาราลิมปิก`]);
   if(f.advocate)B.push(['🙏','แกนนำสิทธิคนพิการ']);
   if(s.dis)B.push(['💪',s.dis.born?'ใช้ชีวิตกับ'+DIS[s.dis.t].n+'มาตั้งแต่เกิด':'ปรับตัวหลังพิการได้สำเร็จ']);
@@ -1982,6 +2163,10 @@ const SCENES={
     R(20,48,60,32,'#6b7a3a');R(18,44,64,4,'#5a6a2a');R(40,60,14,20,'#3a4a1a');R(110,52,50,28,'#8a8a6a');roof(106,40,58,12,'#5a5a4a');for(let i=0;i<3;i++)R(116+i*14,58,8,8,'#c8d0a8');
     R(176,24,2,64,'#ccc');const fw=Math.sin(t*3)>0?1:0;R(178,24+fw,14,3,'#e34b4b');R(178,27+fw,14,2,'#fff');R(178,29+fw,14,3,'#2e4aa3');R(178,32+fw,14,2,'#fff');R(178,34+fw,14,3,'#e34b4b');
     for(let i=0;i<3;i++)person(110+i*10,100,{age:22,g:'m',skin:SKINS[i+1],hair:'short',shirt:'#5a6a3a',pants:'#4a5a2a',hat:'#4a5a2a',t,joy:45,bob:Math.floor(t*2+i)%2?-1:0})},
+  jail(t,s){R(0,0,SW,SH,'#4a4a56');R(0,0,SW,6,'#3a3a46');R(0,80,SW,28,'#5a5a66');for(let x=0;x<SW;x+=16)R(x,80,1,28,'#4c4c58');for(let y=10;y<80;y+=10)for(let x=(y%20?0:8);x<SW;x+=16)R(x,y,15,1,'#42424e');
+    R(20,14,30,20,'#2a2a36');R(22,16,26,16,T(s,'#6a9ac0','#c08a6a','#1a1a3a'));for(let i=0;i<6;i++)R(22+i*5,14,2,20,'#8a8a96');
+    R(130,58,50,4,'#6a5a4a');R(130,62,50,8,'#8a7a6a');R(132,70,3,10,'#4a3a2a');R(175,70,3,10,'#4a3a2a');R(130,54,14,4,'#d8d8e0');R(70,62,10,12,'#c8c8d0');R(72,60,6,3,'#c8c8d0');
+    cx.globalAlpha=.8;for(let i=0;i<12;i++)R(i*16+4,0,3,SH,'#2a2a30');cx.globalAlpha=1},
   grave(t,s){const ss={tod:'night'};sky(ss,t);hills(ss,74,'#1a2a2a',5,.03,0);ground('#2c3a2c',80,'#253225');R(0,90,SW,18,'#1f2a1f');
     R(82,44,28,40,'#9a98a8');R(86,40,20,6,'#9a98a8');R(88,36,16,6,'#9a98a8');R(106,40,4,44,'#7a7888');R(86,52,20,2,'#6e6c7c');R(86,58,20,2,'#6e6c7c');R(86,64,20,2,'#6e6c7c');
     for(let i=0;i<5;i++)R(70+i*12,82,3,3,['#ffd166','#ff8fb1','#ffffff','#ffd166','#ff8fb1'][i]);
@@ -1992,6 +2177,8 @@ const OUTDOOR=new Set(['home','school','uni','city','market','hospital','farm','
 const FAMSCENE=new Set(['home','park','wedding','beach','temple','cafe','airport','hospital','funeral','birth']);
 function outfit(s){const o=outfit0(s);if(s.dis&&s.age>=3){if(s.dis.t==='mob')o.wc=1;else if(s.dis.t==='vis'){o.cane=1;o.dark=1;o.glasses=false}else if(s.dis.t==='hear')o.aid=1}return o}
 function outfit0(s){
+  if(s.job==='prisoner')return {shirt:'#a0703a',pants:'#a0703a',hair:'short'};
+  if(s.job==='thief')return {shirt:'#2a2a32',pants:'#1a1a22',hat:'#2a2a32'};
   if(s.job==='beggar')return {shirt:'#7a6a5a',pants:'#4a4038',item:'tray'};
   if(s.job==='busker')return {shirt:'#c38bff',pants:'#2a2a3a',item:'book'};
   if(s.job==='monk')return {shirt:'#e8892b',pants:'#d87a20',skirt:true,hair:'bald'};
@@ -2092,7 +2279,7 @@ const STAT_UI=[['hp','heart','สุขภาพ'],['joy','smile','ความ�
 const TAG_IC={'ตัดสินใจหลัก':'compass','วัยเด็ก':'ball','วัยเตาะแตะ':'bottle','วัยรุ่น':'phones','มหาวิทยาลัย':'cap','การงาน':'case','ความรัก':['heart',{r:'#ff9fbe'}],'ครอบครัว':'house','การเงิน':'coin','สุขภาพ':'cross','ข่าวใหญ่':'news','สังคม':'people','ไลฟ์สไตล์':'star','สิ่งยั่วใจ':'devil','ดวง':'clover','วัยเกษียณ':'sun','ไม่คาดฝัน':'warn','ศรัทธา':'lotus','แรกเกิด':'bottle','ทางแยกบังคับ':'bolt','ความสำเร็จ':'medal','ที่อยู่อาศัย':'house','การศึกษา':'book','ชีวิตประจำวัน':'cup','หน้าที่':'helmet','ความสูญเสีย':'candle','ความฝัน':'target'};
 const TAG_TONE={'ทางแยกบังคับ':'var(--bad)','ไม่คาดฝัน':'var(--bad)','ความสูญเสีย':'var(--dim)','ความสำเร็จ':'var(--good)','สิ่งยั่วใจ':'var(--bad)'};
 const tagIc=(tag,o={})=>{const v=TAG_IC[tag]||'star';return Array.isArray(v)?ic(v[0],Object.assign({pal:v[1]},o)):ic(v,o)};
-const ARCH_IC={pathmaker:['compass',{b:'#53e0ae'}],tycoon:['gem'],selfmade:['medal'],heir:['star',{y:'#ffe08a'}],centenarian:['hourglass'],shortbright:['bolt'],tragic:['rain'],debtking:['coin',{y:'#ff6b85',o:'#a83232'}],grey:['devil',{r:'#e0a030'}],saint:['lotus'],adventurer:['compass'],family:['house'],scholar:['book'],artist:['palette'],party:['star',{y:'#ff9fbe'}],gambler:['dice'],grinder:['case'],stable:['chart'],ordinary:['clover']};
+const ARCH_IC={convict:['lock',{y:'#8a8a96'}],secondChance:['sun',{y:'#ffb070'}],pathmaker:['compass',{b:'#53e0ae'}],tycoon:['gem'],selfmade:['medal'],heir:['star',{y:'#ffe08a'}],centenarian:['hourglass'],shortbright:['bolt'],tragic:['rain'],debtking:['coin',{y:'#ff6b85',o:'#a83232'}],grey:['devil',{r:'#e0a030'}],saint:['lotus'],adventurer:['compass'],family:['house'],scholar:['book'],artist:['palette'],party:['star',{y:'#ff9fbe'}],gambler:['dice'],grinder:['case'],stable:['chart'],ordinary:['clover']};
 const archIc=(a,o={})=>{const v=ARCH_IC[a.id]||['clover'];return ic(v[0],Object.assign({pal:v[1]},o))};
 const GOAL_IC={rich:'coin',home:'house',family:'people',travel:'plane',long:'hourglass',free:'sun',boss:'case',kind:'lotus'};
 const BADGE_IC={'🧘':'lotus','🎟':'clover','🥇':'medal','✈️':'plane','🪖':'helmet','🙏':'lotus','🏖':'sun','📉':'chart','🏠':'house','👨‍👩‍👧‍👦':'people','🎂':'hourglass','💔':'heart','🎓':'cap','💌':'heart','💪':'fist','👔':'case'};
@@ -2100,8 +2287,9 @@ const BADGE_IC={'🧘':'lotus','🎟':'clover','🥇':'medal','✈️':'plane','
 /* =========================================================
    SETTINGS · SOUND · MUSIC
    ========================================================= */
-const SET=Object.assign({sfx:true,music:false,vol:.6,nums:false,motion:'auto'},store.get('blk_set',{}));
+const SET=Object.assign({sfx:true,music:false,vol:.6,nums:false,motion:'auto',adult:true},store.get('blk_set',{}));
 const saveSet=()=>store.set('blk_set',SET);
+function ADULT_OK(){return SET.adult!==false}
 const reduced=()=>SET.motion==='off'||(SET.motion==='auto'&&window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 let AC=null,MG=null;
 function ac(){try{if(!AC){AC=new (window.AudioContext||window.webkitAudioContext)();MG=AC.createGain();MG.gain.value=SET.vol;MG.connect(AC.destination)}if(AC.state==='suspended')AC.resume()}catch(e){}return AC}
@@ -2215,7 +2403,7 @@ function renderScene(){
   const s=S,e=NODE.e;let sn=val(e.scene,s)||'home';if(e.id==='quiet'&&s.job)sn=JOBS[s.job].scene;
   s.tod=pickTod(s,sn);s.rain=OUTDOOR.has(sn)&&hash(s.age*31+s.log.length)<.13;
   Scene.set(sn,s);if(reduced())Scene.px=Scene.target,Scene.fade=0;
-  const cap=({birth:'ห้องคลอด',home:'บ้าน',school:'โรงเรียน',uni:'มหาวิทยาลัย',office:'ที่ทำงาน',city:'ในเมือง',market:'ตลาด',hospital:'โรงพยาบาล',airport:'สนามบิน',farm:'ท้องนา',park:'สวนสาธารณะ',bedroom:'ห้องนอน',cafe:'ร้านกาแฟ',factory:'โรงงาน',temple:'วัด',wedding:'งานแต่ง',news:'ข่าวด่วน',beach:'ทะเล',funeral:'งานศพ',army:'ค่ายทหาร'})[sn]||'';
+  const cap=({birth:'ห้องคลอด',home:'บ้าน',school:'โรงเรียน',uni:'มหาวิทยาลัย',office:'ที่ทำงาน',city:'ในเมือง',market:'ตลาด',hospital:'โรงพยาบาล',airport:'สนามบิน',farm:'ท้องนา',park:'สวนสาธารณะ',bedroom:'ห้องนอน',jail:'เรือนจำ',cafe:'ร้านกาแฟ',factory:'โรงงาน',temple:'วัด',wedding:'งานแต่ง',news:'ข่าวด่วน',beach:'ทะเล',funeral:'งานศพ',army:'ค่ายทหาร'})[sn]||'';
   $('gCap').innerHTML=`${ic('pin')} ${cap}`;
   $('gTod').innerHTML=s.rain?`${ic('rain')} ฝนตก`:({day:`${ic('sun')} กลางวัน`,sunset:`${ic('sun',{pal:{y:'#ff9a5a',o:'#c85a3a'}})} เย็น`,night:`${ic('star',{pal:{y:'#e8e0ff'}})} กลางคืน`,dawn:`${ic('sun',{pal:{y:'#ffd6a8'}})} เช้าตรู่`})[s.tod];
   const who=[s.partner&&'คู่ชีวิต',s.kids.length&&`ลูก ${s.kids.length} คน`,s.pet&&(s.pet==='cat'?'แมว':'หมา')].filter(Boolean).join(' ');
@@ -2349,6 +2537,7 @@ function openSettings(){
    <label class="setRow"><span>เพลงประกอบ<small>ทำนองเบาๆ เปลี่ยนตามช่วงวัย</small></span><input type="checkbox" id="sMusic" ${SET.music?'checked':''}></label>
    <label class="setRow"><span>ระดับเสียง</span><input type="range" id="sVol" min="0" max="1" step="0.05" value="${SET.vol}"></label>
    <label class="setRow"><span>แสดงตัวเลขบนตัวเลือก<small>ปิดไว้จะเห็นแค่ลูกศร ▲▼ ทำให้ตัดสินใจด้วยความรู้สึก</small></span><input type="checkbox" id="sNums" ${SET.nums?'checked':''}></label>
+   <label class="setRow"><span>เนื้อหา 18+ (มุกทะลึ่ง แอปหาคู่)<small>ปิดไว้ถ้ามีเด็กเล่นด้วย</small></span><input type="checkbox" id="sAdult" ${SET.adult?'checked':''}></label>
    <label class="setRow"><span>การเคลื่อนไหว<small>ลดแอนิเมชันสำหรับคนที่เวียนหัวง่าย</small></span><select id="sMotion"><option value="auto">ตามเครื่อง</option><option value="on">เปิด</option><option value="off">ลดการเคลื่อนไหว</option></select></label>
    <label class="setRow"><span>ดูวิธีเล่นอีกครั้ง</span><button class="ghost" id="sTut" type="button">เปิด</button></label>`);
   $('sMotion').value=SET.motion;
@@ -2356,6 +2545,7 @@ function openSettings(){
   $('sMusic').onchange=e=>{SET.music=e.target.checked;saveSet();SET.music?Music.start():Music.stop()};
   $('sVol').oninput=e=>{SET.vol=+e.target.value;saveSet();if(MG)MG.gain.value=SET.vol};
   $('sNums').onchange=e=>{SET.nums=e.target.checked;saveSet();if(PHASE==='card'&&S&&!$('game').classList.contains('hidden'))renderCard()};
+  $('sAdult').onchange=e=>{SET.adult=e.target.checked;saveSet()};
   $('sMotion').onchange=e=>{SET.motion=e.target.value;saveSet();document.body.classList.toggle('rm',reduced())};
   $('sTut').onclick=()=>openTut(0);
 }
@@ -2372,7 +2562,7 @@ $('btnColl').onclick=()=>{if(!CUR_PROFILE){showLogin();return}const coll=store.g
    ========================================================= */
 function pct(arr,v){if(!arr.length)return 0;let c=0;for(const x of arr)if(x<v)c++;else if(x===v)c+=.5;return Math.round(c/arr.length*100)}
 function median(a){if(!a.length)return 0;const b=[...a].sort((x,y)=>x-y);return b[Math.floor(b.length/2)]}
-const EPI={pathmaker:'สร้างทางที่คนอื่นเดินตามได้',tycoon:'สร้างอาณาจักรจากความกล้า',selfmade:'เริ่มจากศูนย์ ไปถึงฝัน',heir:'ใช้ชีวิตเต็มที่ทุกบาททุกสตางค์',centenarian:'อยู่ดูโลกจนเกือบร้อยปี',shortbright:'สั้นแต่สว่างจ้า',tragic:'สู้จนลมหายใจสุดท้าย',debtking:'ใช้ชีวิตล่วงหน้าเสมอ',grey:'รู้ทุกทางลัดในเมืองนี้',saint:'ใจดีกับทุกคนที่ผ่านเข้ามา',adventurer:'ไม่เคยเดินทางเดิมซ้ำ',family:'บ้านคือทุกอย่าง',scholar:'ความรู้คือมรดก',artist:'ทิ้งสีสันไว้ให้โลก',party:'ปาร์ตี้ยังไม่เลิก แค่ไปต่อที่อื่น',gambler:'ทอยลูกเต๋าจนวันสุดท้าย',grinder:'ทำงานหนักเพื่อทุกคน',stable:'มั่นคงจนวันสุดท้าย',ordinary:'คนธรรมดาที่ไม่ธรรมดาสำหรับใครบางคน'};
+const EPI={convict:'จับได้ก็ติด ปล่อยออกมาก็ทำใหม่',secondChance:'ล้มแล้วลุก และไม่ล้มที่เดิม',pathmaker:'สร้างทางที่คนอื่นเดินตามได้',tycoon:'สร้างอาณาจักรจากความกล้า',selfmade:'เริ่มจากศูนย์ ไปถึงฝัน',heir:'ใช้ชีวิตเต็มที่ทุกบาททุกสตางค์',centenarian:'อยู่ดูโลกจนเกือบร้อยปี',shortbright:'สั้นแต่สว่างจ้า',tragic:'สู้จนลมหายใจสุดท้าย',debtking:'ใช้ชีวิตล่วงหน้าเสมอ',grey:'รู้ทุกทางลัดในเมืองนี้',saint:'ใจดีกับทุกคนที่ผ่านเข้ามา',adventurer:'ไม่เคยเดินทางเดิมซ้ำ',family:'บ้านคือทุกอย่าง',scholar:'ความรู้คือมรดก',artist:'ทิ้งสีสันไว้ให้โลก',party:'ปาร์ตี้ยังไม่เลิก แค่ไปต่อที่อื่น',gambler:'ทอยลูกเต๋าจนวันสุดท้าย',grinder:'ทำงานหนักเพื่อทุกคน',stable:'มั่นคงจนวันสุดท้าย',ordinary:'คนธรรมดาที่ไม่ธรรมดาสำหรับใครบางคน'};
 function topTraits(s){const arr=Object.entries(s.tr).filter(([k,v])=>v>=2&&TRAITN[k]).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k])=>TRAITN[k]);if((s.tr.honest||0)<=-3)arr.unshift('ชอบทางลัด');return arr.slice(0,3).join(' · ')||'ยังไม่ชัด'}
 function obit(s,m){
   const job=m.mainJob?`ประกอบอาชีพ${JOBS[m.mainJob].n}เป็นเวลา ${m.mainYrs} ปี`:'ไม่เคยมีงานประจำ';
@@ -2489,11 +2679,11 @@ function profData(id,k,d){try{const v=localStorage.getItem(`p_${id}_${k}`);retur
 function randLook(){const r=Math.random,g=r()<.5?'f':'m';return {g,skin:SKINS[Math.floor(r()*SKINS.length)],hair:HAIRS[g][Math.floor(r()*4)],hairCol:HAIRC[Math.floor(r()*HAIRC.length)],shirt:['#ff7b5c','#5a8ad0','#53e0ae','#c38bff','#ffd166','#e06b6b'][Math.floor(r()*6)]}}
 function drawLook(cv,L,bg){const prev=cx;cx=cv.getContext('2d');cx.imageSmoothingEnabled=false;R(0,0,20,18,bg||'#2a3270');R(0,14,20,4,'#00000033');person(10,29,{age:26,g:L.g,skin:L.skin,hair:L.hair,hairCol:L.hairCol,shirt:L.shirt,pants:'#2c3e66',joy:70});cx=prev}
 function allProfiles(){const loc=profGet().list.filter(p=>!PLAYERS.some(x=>x.id===p.id));return [...PLAYERS.map(p=>Object.assign({},p,{shared:true})),...loc]}
-function applyProfile(id){CUR_PROFILE=id;Object.assign(SET,{sfx:true,music:false,vol:.6,nums:false,motion:'auto'},store.get('blk_set',{}));if(MG)MG.gain.value=SET.vol;TAB=store.get('blk_tab','money')}
+function applyProfile(id){CUR_PROFILE=id;Object.assign(SET,{sfx:true,music:false,vol:.6,nums:false,motion:'auto',adult:true},store.get('blk_set',{}));if(MG)MG.gain.value=SET.vol;TAB=store.get('blk_tab','money')}
 function migrateOld(id){try{if(localStorage.getItem('blk_migrated'))return;let any=false;for(const k of OLD_KEYS){const v=localStorage.getItem(k);if(v!=null&&localStorage.getItem(`p_${id}_${k}`)==null){localStorage.setItem(`p_${id}_${k}`,v);any=true}}if(any){for(const k of OLD_KEYS)localStorage.removeItem(k);localStorage.setItem('blk_migrated','1')}}catch(e){}}
 function loginAs(id){migrateOld(id);const P=profGet();P.cur=id;profSet(P);applyProfile(id);sfx.good();goTitle()}
 function logout(toLogin){Music.stop();if(CUR_PROFILE==='guest')wipeGuest();const P=profGet();P.cur=null;profSet(P);CUR_PROFILE=null;applyProfileDefaults();toLogin?showLogin():goTitle()}
-function applyProfileDefaults(){Object.assign(SET,{sfx:true,music:false,vol:.6,nums:false,motion:'auto'},store.get('blk_set',{}))}
+function applyProfileDefaults(){Object.assign(SET,{sfx:true,music:false,vol:.6,nums:false,motion:'auto',adult:true},store.get('blk_set',{}))}
 const ADMIN={salt:'bb2135ba832822e4d87efa0112f8f3dc',hash:'5d13b461a360661e8538f981f4e3161a5d39f114f9355047096c13d4eae90990',iter:150000};
 let ADMIN_OK=(()=>{try{return sessionStorage.getItem('blk_admin')==='1'}catch(e){return false}})();
 function setAdmin(v){ADMIN_OK=v;try{v?sessionStorage.setItem('blk_admin','1'):sessionStorage.removeItem('blk_admin')}catch(e){}}

@@ -210,6 +210,39 @@ dialog{background:var(--panel);color:var(--ink);border:2px solid var(--line2);bo
 dialog::backdrop{background:#000b}
 dialog h3{margin:0 0 10px}
 .kbd{font-family:Silkscreen;font-size:10px;border:1px solid var(--line2);padding:0 4px;border-radius:3px;color:var(--dim)}
+
+/* ---------- full-screen layout ---------- */
+.meP .me{display:flex;gap:12px;align-items:center}
+.me canvas{width:84px;height:76px;flex:none;image-rendering:pixelated;border-radius:12px;border:2px solid var(--line2);background:#000}
+.me .mitr{font-size:16px}
+.me .small{color:var(--mute);margin-top:2px;line-height:1.45}
+.story{display:grid;gap:0}
+.story .mo{grid-template-columns:52px 1fr;font-size:13px}
+.storyP{max-height:260px;overflow:auto}
+@media (max-width:1023px){.storyP{display:none}}
+.storyP h4,.panelS h4{position:sticky;top:-12px;background:var(--panel);padding:2px 0 6px;margin:0 0 4px;z-index:1}
+@media (min-width:1024px){
+  #game.wrap{max-width:none;height:100vh;height:100dvh;display:flex;flex-direction:column;gap:12px;padding-block:12px;overflow:hidden}
+  #game .grid{flex:1;min-height:0;margin-top:0;grid-template-columns:clamp(260px,21vw,320px) minmax(0,1fr) clamp(360px,30vw,480px);grid-template-areas:'side scene card';grid-template-rows:minmax(0,1fr);gap:12px;align-items:stretch}
+  #game .gSide,#game .gCard{min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+  #game .gSide .panelS:first-child{margin-top:0}
+  #game .gScene{display:flex;flex-direction:column;min-height:0}
+  #game .gScene .frame{flex:none;max-height:calc(100dvh - 300px);aspect-ratio:16/9;width:100%}
+  #game .gScene .frame canvas{height:100%;width:100%;object-fit:contain;aspect-ratio:auto}
+  #game .storyP{flex:1;min-height:90px;max-height:none}
+  #game .card{min-height:100%}
+  #game .assets{grid-template-columns:1fr 1fr}
+  #game .flow{grid-template-columns:1fr}
+  #game .flow .asset{display:flex;justify-content:space-between;align-items:center}
+  #title.wrap{max-width:none;padding-block:28px}
+  .titleBox{max-width:1320px;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(360px,1fr);grid-template-areas:'hero hero' 'frame form' 'feat past';gap:22px 40px;text-align:left;align-items:start}
+  .tHero{grid-area:hero;text-align:center}
+  .tFrame{grid-area:frame}
+  .titleBox .form{grid-area:form;margin:0;max-width:none;align-self:center}
+  .titleBox .features{grid-area:feat;margin:0}
+  .titleBox .pastLives{grid-area:past;margin:0}
+  #summary.wrap{max-width:1320px}
+}
 </style>
 </head>
 <body>
@@ -217,10 +250,10 @@ dialog h3{margin:0 0 10px}
 <!-- ===================== TITLE ===================== -->
 <section id="title" class="wrap">
   <div class="titleBox">
-    <div class="small px">THAI · LIFE · SIMULATOR</div>
+    <div class="tHero"><div class="small px">THAI · LIFE · SIMULATOR</div>
     <div class="logo">เกิดมาเป็นใคร?</div>
-    <p class="tag">คุณคือ 1 ใน 65.9 ล้านคน — เกิดที่ไหน ฐานะแบบไหน คุณเลือกไม่ได้<br>แต่ทางที่เดินต่อจากนั้น คุณเลือกเองทั้งหมด</p>
-    <div class="frame"><canvas id="titleCanvas" width="192" height="108"></canvas></div>
+    <p class="tag">คุณคือ 1 ใน 65.9 ล้านคน — เกิดที่ไหน ฐานะแบบไหน คุณเลือกไม่ได้<br>แต่ทางที่เดินต่อจากนั้น คุณเลือกเองทั้งหมด</p></div>
+    <div class="frame tFrame"><canvas id="titleCanvas" width="192" height="108"></canvas></div>
     <div class="form">
       <div><label for="inName">ชื่อเล่น (เว้นว่างไว้ให้สุ่ม)</label><input id="inName" maxlength="14" placeholder="เช่น โอ๊ต, มิ้นท์, บอส"></div>
       <div><label for="inSeed">รหัสชาติกำเนิด (ใส่รหัสของเพื่อนเพื่อเกิดแบบเดียวกัน)</label><input id="inSeed" inputmode="numeric" maxlength="9" placeholder="เว้นว่างไว้ = สุ่มใหม่"></div>
@@ -260,8 +293,10 @@ dialog h3{margin:0 0 10px}
         <div class="row"><button class="ghost" id="btnSound">🔊 เสียง</button><button class="ghost" id="btnLog">📜 บันทึกชีวิต</button></div>
         <span class="small"><span id="gSeed"></span> · 💾 บันทึกอัตโนมัติ · <a href="#" id="btnHome" style="color:var(--mute)">กลับหน้าแรก</a></span>
       </div>
+      <div class="panelS storyP"><h4>📖 เรื่องราวที่ผ่านมา</h4><div id="gStory" class="story"></div></div>
     </div>
     <div class="gSide">
+      <div class="panelS meP"><div class="me"><canvas id="gAvatar" width="20" height="18" aria-label="รูปตัวละคร"></canvas><div><div class="mitr" id="gMeName"></div><div class="small" id="gMood"></div><div class="small" id="gTraits"></div></div></div></div>
       <div class="panelS"><h4>💰 ทรัพย์สิน</h4><div class="assets" id="gAssets"></div><div class="flow" id="gFlow"></div></div>
       <div class="panelS"><h4>👨‍👩‍👧 ครอบครัว & สุขภาพ</h4><div class="fam" id="gFam"></div></div>
     </div>
@@ -1232,7 +1267,7 @@ function sky(s,t){
   else{glow(162,14,18,'#fff7c8',.2);R(156,8,12,12,'#ffe36e');R(154,11,16,6,'#ffe36e');R(159,6,6,16,'#ffe36e');R(158,10,4,3,'#fff4b0')}
   const cc=tod==='night'?'#2b2763':tod==='sunset'?'#f2a08a':tod==='dawn'?'#f8dccd':'#ffffff';
   cloud((t*3)%260-50,14,cc);cloud((t*1.8+140)%260-50,26,cc);if(tod==='day')cloud((t*2.4+60)%260-50,8,cc);
-  if(tod==='day'||tod==='dawn')for(let i=0;i<3;i++){const bx=(t*12+i*30)%300-40,by=20+i*5+Math.sin(t*3+i)*2;const w=Math.floor(t*6+i)%2;R(bx,by,1,1,'#334');R(bx+1,by+1-w,1,1,'#334');R(bx+2,by,1,1,'#334');R(bx-1,by-1+w,1,1,'#334')}
+  if(tod==='day'||tod==='dawn')for(let i=0;i<3;i++){const bx=(t*12+i*30)%300-40,by=20+i*5+Math.sin(t*3+i)*2;spr(Math.floor(t*5+i)%2?'bird1':'bird2',bx,by)}
 }
 function glow(x,y,r,c,a){cx.globalAlpha=a;cx.fillStyle=c;for(let k=0;k<3;k++){cx.beginPath();cx.arc(x,y,r*(1-k*.28),0,Math.PI*2);cx.fill()}cx.globalAlpha=1}
 function cloud(x,y,c){R(x,y,24,5,c);R(x+4,y-3,13,4,c);R(x+14,y-1,8,3,c);A(.5,()=>R(x+2,y+5,20,2,shade(c,-.12)))}
@@ -1266,16 +1301,21 @@ function person(x,gy,o){
   R(bx,t+S.head,bw,S.body,sh);R(bx+bw-2,t+S.head,2,S.body,shD);R(bx,t+S.head,bw,1,shade(sh,.15));
   R(bx-1,t+S.head+1,1,S.body-2,sh);R(bx+bw,t+S.head+1,1,S.body-2,shD);R(bx-1,t+S.head+S.body-1,1,1,sk);R(bx+bw,t+S.head+S.body-1,1,1,sk);
   if(o.tie)R(x,t+S.head+1,1,S.body-3,o.tie);
+  if(o.coat){R(bx,t+S.head,2,S.body+2,'#f8f8f8');R(bx+bw-2,t+S.head,2,S.body+2,'#e4e4ec')}
+  if(o.item==='book'){R(bx+bw,t+S.head+3,3,4,'#e24b4b');R(bx+bw,t+S.head+3,3,1,'#fff')}
+  else if(o.item==='case'){R(x+6,gy-7,5,6,'#3a6ed8');R(x+7,gy-8,3,1,'#222');R(x+6,gy-1,1,1,'#222');R(x+10,gy-1,1,1,'#222')}
+  else if(o.item==='phone'){R(bx+bw,t+S.head+2,2,3,'#222');R(bx+bw,t+S.head+2,2,1,'#6bd3ff')}
+  else if(o.item==='tray'){R(bx-3,t+S.head+3,4,1,'#ccc');R(bx-2,t+S.head+1,2,2,'#fff')}
   const hy=t;R(hx-3,hy,7,S.head,sk);R(hx+3,hy+1,1,S.head-2,shade(sk,-.12));
   const st2=o.hair||'short';
-  R(hx-3,hy-1,7,2,hc);
+  if(st2!=='bald')R(hx-3,hy-1,7,2,hc);else R(hx-3,hy,7,1,shade(sk,.12));
   if(st2==='short'){R(hx-3,hy+1,1,2,hc)}
   else if(st2==='spiky'){for(let i=-3;i<=3;i+=2)R(hx+i,hy-2,1,1,hc);R(hx-3,hy+1,1,1,hc)}
   else if(st2==='side'){R(hx-3,hy+1,4,1,hc)}
   else if(st2==='long'){R(hx-4,hy,1,S.head+3,hc);R(hx+4,hy,1,S.head+3,hc);R(hx-3,hy+1,2,1,hc)}
   else if(st2==='pony'){R(hx+4,hy+1,2,5,hc);R(hx-3,hy+1,1,1,hc)}
   else if(st2==='bob'){R(hx-4,hy,1,S.head-1,hc);R(hx+4,hy,1,S.head-1,hc);R(hx-3,hy+1,7,1,hc)}
-  R(hx-1,hy-1,2,1,shade(hc,.25));
+  if(st2!=='bald')R(hx-1,hy-1,2,1,shade(hc,.25));
   const ey=hy+(kid?3:4);
   if(!blink){R(hx-2,ey,1,1,'#1d1d26');R(hx+1,ey,1,1,'#1d1d26')}else{R(hx-2,ey,1,1,shade(sk,-.3));R(hx+1,ey,1,1,shade(sk,-.3))}
   A(.35,()=>{R(hx-3,ey+1,1,1,'#ff8a8a');R(hx+3,ey+1,1,1,'#ff8a8a')});
@@ -1284,9 +1324,142 @@ function person(x,gy,o){
   if(o.hat){R(hx-5,hy-2,11,2,o.hat);R(hx-3,hy-4,7,2,o.hat)}
   if(old)R(x+7,t+10,1,13,'#7a5530');
 }
-function pet(x,gy,kind,t){if(kind==='dog'){R(x-4,gy-5,8,4,'#c98a4a');R(x+3,gy-8,4,4,'#c98a4a');R(x+6,gy-6,1,1,'#222');R(x+3,gy-9,1,2,'#8a5a2a');const w=Math.floor(t*6)%2;R(x-6,gy-7+w,2,2,'#c98a4a');R(x-3,gy-1,1,1,'#7a4a2a');R(x+2,gy-1,1,1,'#7a4a2a')}
+function pet(x,gy,kind,t){if(SPR[kind]){spr(kind,x-5,gy-(kind==='dog'?8:7),{flip:Math.floor(t/3)%2===1});return}if(kind==='dog'){R(x-4,gy-5,8,4,'#c98a4a');R(x+3,gy-8,4,4,'#c98a4a');R(x+6,gy-6,1,1,'#222');R(x+3,gy-9,1,2,'#8a5a2a');const w=Math.floor(t*6)%2;R(x-6,gy-7+w,2,2,'#c98a4a');R(x-3,gy-1,1,1,'#7a4a2a');R(x+2,gy-1,1,1,'#7a4a2a')}
   else{R(x-3,gy-4,7,3,'#f0a04a');R(x+3,gy-7,4,4,'#f0a04a');R(x+3,gy-8,1,1,'#f0a04a');R(x+6,gy-8,1,1,'#f0a04a');R(x+4,gy-6,1,1,'#222');const w=Math.sin(t*3)*2;R(x-5,gy-7+w,1,4,'#f0a04a')}}
 function npc(s,t,i,y,sp){const x=((t*Math.abs(sp)+hash(i)*300)%(SW+40))-20;person(sp>0?x:SW-x,y,{age:hash(i+1)<.2?9:30+hash(i+2)*40,g:hash(i+3)<.5?'m':'f',skin:SKINS[Math.floor(hash(i+4)*5)],hair:hash(i+3)<.5?'short':'long',shirt:['#e06b6b','#6bb0e0','#e0c46b','#8fd38f','#c08fe0'][i%5],pants:'#3a3a52',walk:1,t,joy:55})}
+/* ---------- sprite sheets (pixel maps) ---------- */
+const SPR={};
+function defSpr(n,pal,rows){const w=Math.max(...rows.map(r=>r.length));const runs=[];rows.forEach((row,j)=>{let i=0;while(i<w){const ch=row[i]||'.';if(ch==='.'){i++;continue}let k=i;while(k<w&&(row[k]||'.')===ch)k++;runs.push([i,j,k-i,ch]);i=k}});SPR[n]={pal,runs,w,h:rows.length}}
+function spr(n,x,y,o){const S=SPR[n];if(!S)return;const pal=o&&o.pal?Object.assign({},S.pal,o.pal):S.pal;const fl=o&&o.flip;for(const [i,j,l,ch] of S.runs){const c=pal[ch];if(c)R(fl?x+S.w-i-l:x+i,y+j,l,1,c)}}
+defSpr('car',{b:'#3b7dd8',d:'#2a5aa0',w:'#bfe6ff',k:'#1a1a1a',g:'#9a9a9a',l:'#ffe08a',r:'#e24b4b'},[
+ '.......bbbbbbbbbb.........',
+ '......bwwwwbbwwwwwb.......',
+ '.....bwwwwwbbwwwwwwb......',
+ '..bbbbbbbbbbbbbbbbbbbbbb..',
+ '.bbbbbbbbbbbbbbbbbbbbbbbbl',
+ 'rbddddddddddddddddddddddbl',
+ '.bbbkkkbbbbbbbbbbbbkkkbbb.',
+ '...kkgkk..........kkgkk...',
+ '....kkk............kkk....']);
+defSpr('moto',{r:'#e24b4b',d:'#a83232',k:'#1a1a1a',g:'#9a9a9a',s:'#3a3a3a',l:'#ffe08a'},[
+ '..........kk....',
+ '...sss....kr....',
+ '..rrrrrrrrrrl...',
+ '.rrrrrrrrrrrr...',
+ '..dddgggddd.....',
+ '.kkk.....kkk....',
+ 'kkgkk...kkgkk...',
+ '.kkk.....kkk....']);
+defSpr('tuktuk',{u:'#2e4aa3',v:'#1f3478',y:'#ffd166',o:'#e0a030',k:'#1a1a1a',g:'#9a9a9a',w:'#bfe6ff',l:'#fff2b0',r:'#e24b4b'},[
+ '...uuuuuuuuuuuuuuuu...',
+ '..uuuuuuuuuuuuuuuuuu..',
+ '..vvvvvvvvvvvvvvvvvv..',
+ '..y..........y....ww..',
+ '..y..........y....ww..',
+ '..y..........y.....w..',
+ '.yyyyyyyyyyyyyyyyyyyyl',
+ 'ryyyyyyyyyyyyyyyyyyyyy',
+ '.ooooooooooooooooooooo',
+ '..kkk...........kkk...',
+ '.kkgkk.........kkgkk..',
+ '..kkk...........kkk...']);
+defSpr('buffalo',{g:'#4a4a56',d:'#363640',h:'#e8e0c8',k:'#1a1a1a',p:'#d8a0a0'},[
+ '...............h...h..',
+ '...............hh.hh..',
+ '...gggggggggggg..gggg.',
+ '..ggggggggggggggggkgg.',
+ '.gggggggggggggggggggg.',
+ 'd.gggggggggggggg.ggpp.',
+ 'd.gggggggggggggg......',
+ '..dd..dd...dd..dd.....',
+ '..dd..dd...dd..dd.....',
+ '..kk..kk...kk..kk.....']);
+defSpr('chick',{w:'#fafafa',r:'#e24b4b',k:'#1a1a1a',o:'#f0a030',y:'#e0b040'},[
+ '..rr...',
+ '.wwww..',
+ 'wwwkwo.',
+ 'wwwww..',
+ '.www...',
+ '..y.y..']);
+defSpr('dog',{b:'#c98a4a',d:'#8a5a2a',k:'#1a1a1a'},[
+ '........dd.',
+ '........bbb',
+ 'd......bbkbk',
+ '.d.....bbbb',
+ '..bbbbbbbb.',
+ '..bbbbbbb..',
+ '..b.b..b.b.',
+ '..d.d..d.d.']);
+defSpr('cat',{o:'#f0a04a',d:'#c07a30',k:'#1a1a1a'},[
+ '......o.o',
+ '......ooo',
+ 'o.....oko',
+ 'o.....ooo',
+ '.ooooooo.',
+ '.oodood..',
+ '.o.o.o.o.']);
+defSpr('shrine',{g:'#f2c94c',r:'#c0392b',w:'#fafaf2',d:'#c8c0b0',f:'#ff8fb1',y:'#ffd166'},[
+ '.....g.....',
+ '....ggg....',
+ '...rrrrr...',
+ '..rrrrrrr..',
+ '.rrrrrrrrr.',
+ '..wwwwwww..',
+ '..wdwgwdw..',
+ '..wwwwwww..',
+ '.fgggggggy.',
+ '.....w.....',
+ '.....w.....',
+ '.....d.....',
+ '...ddddd...']);
+defSpr('cart',{r:'#e24b4b',w:'#ffffff',l:'#7a5530',b:'#5a8ad0',d:'#3a6ab0',g:'#7bd389',y:'#ffd166',o:'#ff9f43',k:'#1a1a1a',m:'#9a9a9a'},[
+ '...rrwwrrwwrrwwrr...',
+ '..rrwwrrwwrrwwrrww..',
+ '.........ll.........',
+ '.........ll.........',
+ '..bbbbbbbbbbbbbbbb..',
+ '..bwwwwwwwwwwwwwwb..',
+ '..bwgwywowgwywoww b.',
+ '..dddddddddddddddd..',
+ '..d..............d..',
+ '.kkk............kkk.',
+ '.kmk............kmk.',
+ '.kkk............kkk.']);
+defSpr('balloon',{a:'#ff8fb1',b:'#fff',s:'#ddd'},['.aa.','aaaa','aaba','.aa.','..s.','.s..','..s.']);
+defSpr('umbrella',{r:'#ff7b5c',w:'#fff',p:'#ddd'},['....rrwwrr....','..rrwwrrwwrr..','.rwwrrwwrrwwr.','rrrrrrrrrrrrrr','.......p......','.......p......','.......p......','.......p......','.......p......']);
+defSpr('crab',{r:'#e2573b',k:'#1a1a1a'},['r.k.k.r','.rrrrr.','r.r.r.r']);
+defSpr('bird1',{k:'#2a2a3a'},['k...k','.k.k.','..k..']);
+defSpr('bird2',{k:'#2a2a3a'},['.....','kk.kk','..k..']);
+defSpr('pot',{g:'#3fae5a',d:'#2a8a44',f:'#ff6b8b',p:'#b0603a'},['.f.g.f.','gdgggdg','.ggdgg.','.ppppp.','..ppp..']);
+const carPal=s=>{const c=['#9a9a9a','#b8b8c0','#3b7dd8','#e8e8ee','#2a2a32','#d63b3b'][s.cls]||'#3b7dd8';return {b:c,d:shade(c,-.3)}};
+const P=(x,gy,t,o)=>person(x,gy,Object.assign({t,joy:60,hairCol:'#2b1a12',pants:'#3a3a52'},o));
+const EXTRAS={
+  home(t,s){if(s.cls>=1&&s.cls<=4)spr('shrine',22,66);spr('pot',150,82);
+    if(s.cls<=1){spr('chick',30+Math.sin(t*.7)*12,84,{flip:Math.cos(t*.7)<0});spr('chick',172+Math.sin(t*.5+2)*6,86,{flip:Math.cos(t*.5+2)<0})}
+    if(s.car&&s.cls<5)spr('car',126,82,{pal:carPal(s)});else if(s.age>=16&&s.cls<=3)spr('moto',134,85)},
+  city(t,s){spr('cart',54,68);spr('tuktuk',((t*18)%320)-40,84);spr('moto',SW-((t*40+80)%300)+20,92,{flip:true});
+    P(64,82,t,{age:50,g:'f',skin:SKINS[2],hair:'bob',shirt:'#f0a830',item:'tray'})},
+  market(t,s){for(let k=0;k<4;k++){const x=6+k*47;if(k===1)continue;P(x+20,74,t,{age:32+k*9,g:k%2?'m':'f',skin:SKINS[(k+1)%5],hair:k%2?'short':'bob',shirt:['#f4f4f8','#e06b6b','#8fd38f','#6bb0e0'][k]});
+      R(x,66,40,6,'#8a6a4a');for(let i=0;i<6;i++)R(x+3+i*6,62,4,4,['#ff6b6b','#ffd166','#7bd389','#ff9f43'][(i+k)%4])}
+    spr('dog',150,90,{flip:true})},
+  school(t,s){P(150,92,t,{age:45,g:'f',skin:SKINS[1],hair:'bob',shirt:'#f4f4f8',pants:'#2a2f45',skirt:true,item:'book',glasses:true});
+    P(34+Math.sin(t*2)*8,96,t,{age:8,g:'m',skin:SKINS[2],shirt:'#fdfdfd',pants:'#26407a',walk:1});P(52+Math.cos(t*2)*8,96,t,{age:9,g:'f',skin:SKINS[0],hair:'pony',shirt:'#fdfdfd',pants:'#26407a',skirt:true,walk:1})},
+  uni(t,s){P(150,94,t,{age:20,g:'f',skin:SKINS[1],hair:'long',shirt:'#fdfdfd',pants:'#1a1a22',skirt:true,item:'book'});P(30,95,t,{age:21,g:'m',skin:SKINS[3],hair:'spiky',shirt:'#fdfdfd',pants:'#1a1a22',item:'phone'})},
+  hospital(t,s){P(60,88,t,{age:42,g:'m',skin:SKINS[1],hair:'side',shirt:'#9fd0ee',pants:'#3a4a6a',coat:1,glasses:true});P(126,88,t,{age:28,g:'f',skin:SKINS[2],hair:'bob',shirt:'#f8f8f8',pants:'#f8f8f8',skirt:true})},
+  office(t,s){for(const k of [0,2]){const x=14+k*62;P(x+42,77,t,{age:30+k*6,g:k?'f':'m',skin:SKINS[k+1],hair:k?'long':'short',shirt:'#f4f4f8',pants:'#2a2f45',tie:k?null:'#e24b4b'});R(x,70,48,4,'#8a6a4a');R(x,73,48,1,'#6b5038');R(x+2,74,2,14,'#6b5038');R(x+44,74,2,14,'#6b5038')}},
+  temple(t,s){P(64,94,t,{age:60,g:'m',skin:SKINS[2],hair:'bald',shirt:'#e8892b',pants:'#d87a20',skirt:true,joy:70});P(128,94,t,{age:28,g:'m',skin:SKINS[3],hair:'bald',shirt:'#e8892b',pants:'#d87a20',skirt:true,joy:70});spr('dog',150,86,{flip:true});spr('pot',36,78);spr('pot',150,78)},
+  farm(t,s){const bx=10+((t*4)%150);spr('buffalo',bx,58,{flip:false});spr('chick',120+Math.sin(t)*8,90);spr('chick',134+Math.sin(t*1.3)*6,92,{flip:true});
+    P(176,98,t,{age:55,g:'m',skin:SKINS[3],shirt:'#6b8fb5',pants:'#3a3a3a',hat:'#e2c275'})},
+  park(t,s){const wx=((t*10)%260)-30;P(wx,100,t,{age:60,g:'f',skin:SKINS[1],hair:'bob',shirt:'#c08fe0',walk:1,glasses:true});spr('dog',wx+8,93,{flip:false});spr('pot',90,79)},
+  beach(t,s){spr('umbrella',30,64);P(30,96,t,{age:30,g:'f',skin:SKINS[1],hair:'long',shirt:'#ff8fb1',pants:'#ffd166'});spr('crab',150+Math.sin(t)*10,96);P(170,94,t,{age:40,g:'m',skin:SKINS[0],hair:'side',shirt:'#53e0ae',pants:'#2c3e66',glasses:true})},
+  cafe(t,s){P(128,70,t,{age:24,g:'f',skin:SKINS[1],hair:'pony',shirt:'#6b4426',pants:'#3a2a1a'});R(100,52,86,4,'#5a3a20');R(100,56,86,24,'#7a4a2a');R(150,36,20,16,'#9aa2ad');R(154,40,12,8,'#5a626d');R(110,60,8,6,'#fff');R(118,61,2,3,'#fff')},
+  wedding(t,s){for(const [x,i] of [[24,0],[40,1],[150,2],[166,3]])P(x,92,t,{age:30+i*8,g:i%2?'f':'m',skin:SKINS[i+1],hair:i%2?'long':'short',shirt:['#5a8ad0','#ff8fb1','#2a2f45','#ffd166'][i],pants:'#2a2a3a',joy:75});
+    spr('balloon',62,20+Math.sin(t*2)*2);spr('balloon',126,18+Math.cos(t*2)*2,{pal:{a:'#ffd166'}})},
+  funeral(t,s){for(const [x,i] of [[30,0],[44,1],[150,2],[164,3]])P(x,100,t,{age:40+i*10,g:i%2?'f':'m',skin:SKINS[i],hair:i%2?'bob':'short',shirt:'#22222a',pants:'#22222a',joy:25})},
+  airport(t,s){const x=((t*14)%260)-30;P(x,100,t,{age:35,g:'m',skin:SKINS[2],shirt:'#e0a030',walk:1,item:'case'});P(SW-x*0.7,98,t,{age:26,g:'f',skin:SKINS[0],hair:'long',shirt:'#53e0ae',walk:1,item:'case'})},
+  factory(t,s){P(((t*8)%240)-20,100,t,{age:34,g:'m',skin:SKINS[3],shirt:'#3b6ea8',pants:'#2a3a5a',hat:'#ffd166',walk:1})},
+  bedroom(t,s){if(s.pet==='cat')spr('cat',90,49);else if(s.pet==='dog')spr('dog',86,48)},
+};
 const SCENES={
   birth(t,s){R(0,0,SW,SH,'#dceff5');R(0,70,SW,38,'#b9d4dd');for(let x=0;x<SW;x+=12)R(x,70,1,38,'#a8c4cd');R(0,68,SW,2,'#9fb9c2');
     R(20,14,40,30,'#8ec5e0');R(22,16,36,26,T(s,'#bfe6f7','#f6b98e','#1d1a4c'));R(39,16,2,26,'#8ec5e0');R(22,28,36,2,'#8ec5e0');A(.3,()=>R(22,16,10,26,'#fff'));
@@ -1397,7 +1570,7 @@ function outfit(s){
 const Scene={canvas:null,name:'home',s:null,px:-20,target:90,t:0,fade:0,
   set(name,s){if(name!==this.name){this.px=-12;this.name=name;this.fade=1}this.s=s},
   frame(dt){if(!this.canvas)return;cx=this.ctx;this.t+=dt;const s=this.s;if(!s)return;
-    cx.imageSmoothingEnabled=false;(SCENES[this.name]||SCENES.home)(this.t,s);
+    cx.imageSmoothingEnabled=false;(SCENES[this.name]||SCENES.home)(this.t,s);if(EXTRAS[this.name])EXTRAS[this.name](this.t,s);
     const gy=SH-8;
     if(this.name==='birth'&&s.age===0){person(83,64,{age:0,skin:s.skin,hairCol:s.hairCol})}
     else if(this.name!=='grave'&&this.name!=='army'){
@@ -1460,6 +1633,13 @@ function render(){
     if(PREV[k]!=null&&Math.round(PREV[k])!==v){const f=document.createElement('span');f.className='float';const dv=v-Math.round(PREV[k]);f.textContent=(dv>0?'+':'')+dv;f.style.color=dv>0?'var(--mint)':'var(--rose)';d.appendChild(f)}
     st.appendChild(d);PREV[k]=s[k]}
   $('gMoney').textContent='฿'+fk(s.money);
+  $('gMeName').textContent=`${s.name} · ${s.g==='f'?'หญิง':'ชาย'} อายุ ${s.age} ปี`;
+  const mood=s.joy>75?'มีความสุขมาก':s.joy>58?'ชีวิตกำลังดี':s.joy>40?'เรื่อยๆ':s.joy>22?'เหนื่อยใจ':'ทุกข์หนัก';
+  const hpT=s.hp>75?'แข็งแรงมาก':s.hp>55?'ปกติดี':s.hp>35?'เริ่มป่วยบ่อย':'ร่างกายทรุด';
+  $('gMood').textContent=`อารมณ์: ${mood} · ร่างกาย: ${hpT}`;
+  $('gTraits').textContent='นิสัย: '+topTraits(s);
+  const st2=s.log.filter(l=>l.imp).slice(-12).reverse();
+  $('gStory').innerHTML=st2.length?st2.map(l=>`<div class="mo"><span class="a">อายุ ${l.age}</span><span>${l.t}</span></div>`).join(''):'<div class="small">เรื่องราวชีวิตของคุณจะถูกบันทึกที่นี่</div>';
   const nw=netWorth(s);
   $('gAssets').innerHTML=[['เงินสด',s.money],['ลงทุน+กองทุน',s.inv.stock+s.inv.gold+s.inv.crypto+s.pvd],['บ้าน/อสังหา',s.home],['หนี้สิน',-s.debt]].map(([k,v])=>`<div class="asset"><div class="k">${k}</div><div class="v" style="color:${v<0?'var(--rose)':'var(--ink)'}">฿${fk(v)}</div></div>`).join('')+
     `<div class="asset" style="grid-column:1/-1;display:flex;justify-content:space-between;align-items:center"><div class="k">ทรัพย์สินสุทธิ</div><div class="v" style="color:var(--sun);font-size:15px">฿${fmt(nw)}</div></div>`;
@@ -1670,7 +1850,7 @@ function titleLoop(){
     const phase=Math.floor(titleT/2.6)%7;
     const P=[['birth',0,'day',2],['school',8,'day',2],['uni',19,'sunset',2],['office',30,'day',3],['wedding',33,'day',3],['home',45,'night',4],['park',76,'sunset',4]][phase];
     const f={g:'f',skin:SKINS[1],hair:'pony',hairCol:'#2b1a12',cls:P[3],age:P[1],tod:P[2],studying:phase>0&&phase<3,job:phase===3?'office':null,retired:phase===6,joy:70,iq:60,kids:[],partner:null};
-    SCENES[P[0]](titleT,f);
+    SCENES[P[0]](titleT,f);if(EXTRAS[P[0]])EXTRAS[P[0]](titleT,f);
     if(phase===0)person(83,64,{age:0,skin:f.skin});
     else{const gy=SH-8,x=92;
       if(phase>=4)person(x+13,gy,{age:f.age+2,g:'m',skin:SKINS[2],hair:'short',hairCol:'#20140e',shirt:'#5a8ad0',pants:'#3a3a52',t:titleT,joy:70});
@@ -1692,7 +1872,8 @@ $('btnStart').onclick=()=>{beep();const sv=$('inSeed').value.replace(/\D/g,'');c
 $('btnColl').onclick=()=>{const coll=store.get('blk_coll',{});$('dlgBody').innerHTML=`<h3>🗂 คอลเลกชันประเภทคน (${Object.keys(coll).length}/${ARCH.length})</h3><p class="small">เกิดใหม่หลายๆ ครั้ง แล้วลองเลือกทางที่ต่างออกไปเพื่อปลดล็อกทุกแบบ</p><div class="coll">${collHTML(coll,null)}</div>`;dlg.showModal()};
 ['inName','inSeed'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter')$('btnStart').click()}));
 let lastTs=0;
-function gameLoop(ts){const dt=Math.min(.05,(ts-lastTs)/1000||0);lastTs=ts;if(!$('game').classList.contains('hidden'))Scene.frame(dt);requestAnimationFrame(gameLoop)}
+function drawAvatar(t){const c=$('gAvatar');if(!c||!S)return;cx=c.getContext('2d');cx.imageSmoothingEnabled=false;R(0,0,20,18,{child:'#2a5a6a',teen:'#4a2a6a',adult:'#2a3270',elder:'#5a3a2a'}[stageOf(S.age)[0]]);R(0,14,20,4,'#00000033');person(10,29,Object.assign({age:Math.max(S.age,3),g:S.g,skin:S.skin,hair:S.hair,hairCol:S.hairCol,t,joy:S.joy},outfit(S)))}
+function gameLoop(ts){const dt=Math.min(.05,(ts-lastTs)/1000||0);lastTs=ts;if(!$('game').classList.contains('hidden')){Scene.frame(dt);drawAvatar(Scene.t)}requestAnimationFrame(gameLoop)}
 requestAnimationFrame(gameLoop);requestAnimationFrame(titleLoop);
 goTitle();
 const hs0=(location.hash.match(/seed=(\d+)/)||[])[1];if(hs0)$('inSeed').value=hs0;

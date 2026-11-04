@@ -260,6 +260,36 @@ dialog h3{font-size:var(--fs-lg);margin-bottom:var(--s3);display:flex;gap:var(--
 .actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s3);margin:var(--s5) 0 var(--s2)}
 @media (max-width:620px){.actions{grid-template-columns:1fr}}
 
+/* ---------- login ---------- */
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center}
+.loginBox{width:100%;max-width:820px;display:grid;gap:var(--s3);text-align:center;justify-items:center}
+.logo.sm{font-size:clamp(34px,6vw,54px);margin:0}
+.lgH{font-size:var(--fs-xl)}
+.profGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--s3);width:100%;margin-top:var(--s3)}
+.prof{position:relative;display:grid;justify-items:center;gap:6px;padding:var(--s3) var(--s2);text-align:center;transition:transform .08s,border-color .15s;width:100%}
+.prof:hover{border-color:var(--warn);transform:translateY(-2px)}
+.prof canvas{width:80px;height:72px;image-rendering:pixelated;border:2px solid var(--line2);border-radius:var(--r)}
+.prof .pn{font-family:var(--f-d);font-size:var(--fs-md);display:flex;gap:4px;align-items:center}
+.prof .ps{font-size:var(--fs-xs);color:var(--dim)}
+.prof .plus{width:80px;height:72px;display:grid;place-items:center;border:2px dashed var(--line2);border-radius:var(--r);font-family:var(--f-px);font-size:28px;color:var(--mute)}
+.profWrap{position:relative}
+.profDel{position:absolute;top:6px;right:6px;padding:2px 7px;font-size:var(--fs-xs);border-radius:var(--r);border:2px solid var(--line);background:var(--bg2);color:var(--dim);z-index:2}
+.profDel:hover{color:var(--bad);border-color:var(--bad)}
+.lgForm{width:100%;max-width:440px;padding:var(--s4);text-align:left;display:grid;gap:var(--s3)}
+.lgForm h3{font-size:var(--fs-lg);display:flex;gap:var(--s2);align-items:center}
+.lgForm label{font-size:var(--fs-sm);color:var(--mute);display:block;margin-bottom:var(--s1)}
+.lgForm input{width:100%;padding:10px 12px;border-radius:var(--r);border:2px solid var(--line);background:var(--bg2)}
+.lgForm input:focus{border-color:var(--warn);outline:none}
+.lgForm .pin{font-family:var(--f-px);letter-spacing:10px;font-size:22px;text-align:center}
+.lookRow{display:flex;gap:var(--s3);align-items:center}
+.lookRow canvas{width:60px;height:54px;image-rendering:pixelated;border:2px solid var(--line2);border-radius:var(--r)}
+.err{color:var(--bad);font-size:var(--fs-sm);min-height:1.2em}
+.lgBtns{display:flex;gap:var(--s2)}
+.lgBtns .big{flex:1}
+.profBar{display:flex;gap:var(--s2);align-items:center;justify-content:space-between;padding-bottom:var(--s3);border-bottom:1px dashed var(--line)}
+.profBar canvas{width:40px;height:36px;image-rendering:pixelated;border:2px solid var(--line2);border-radius:var(--r);flex:none}
+.profBar .pb{display:flex;gap:var(--s2);align-items:center;font-size:var(--fs-sm)}
+.profBar b{font-family:var(--f-d);font-weight:500}
 /* ---------- full-screen desktop ---------- */
 @media (min-width:1024px){
   #game.wrap{max-width:none;height:100vh;height:100dvh;display:flex;flex-direction:column;gap:var(--s3);padding-block:var(--s3);overflow:hidden}
@@ -292,7 +322,19 @@ body.rm *,body.rm *::before,body.rm *::after{animation:none!important;transition
 </head>
 <body>
 
-<section id="title" class="wrap">
+<section id="login" class="wrap hidden">
+  <div class="loginBox">
+    <div class="eyebrow">THAI · LIFE · SIMULATOR</div>
+    <div class="logo sm">เกิดมาเป็นใคร?</div>
+    <h1 class="lgH">ใครกำลังเล่น?</h1>
+    <p class="small" style="margin:0">แต่ละคนมีเซฟ คอลเลกชัน และชาติที่ผ่านมาเป็นของตัวเอง ไม่ปนกัน</p>
+    <div class="profGrid" id="profGrid"></div>
+    <div class="pnl lgForm" id="lgForm" hidden></div>
+    <p class="small" style="max-width:60ch">ข้อมูลผู้เล่นเก็บไว้ในเบราว์เซอร์ของเครื่องนี้เท่านั้น ไม่ได้ส่งไปที่ไหน PIN ใช้กันคนอื่นกดเล่นแทนเท่านั้น ไม่ใช่ระบบความปลอดภัย</p>
+  </div>
+</section>
+
+<section id="title" class="wrap hidden">
   <div class="titleBox">
     <div class="tHero">
       <div class="eyebrow">THAI · LIFE · SIMULATOR</div>
@@ -301,6 +343,7 @@ body.rm *,body.rm *::before,body.rm *::after{animation:none!important;transition
     </div>
     <div class="frame tFrame" id="titleFrame"><canvas id="titleCanvas" width="192" height="108" role="img" aria-label="ภาพตัวอย่างชีวิตตั้งแต่เกิดจนแก่"></canvas></div>
     <div class="form pnl">
+      <div class="profBar" id="profBar"></div>
       <div><label for="inName">ชื่อเล่น (เว้นว่างไว้ให้สุ่ม)</label><input id="inName" maxlength="14" placeholder="เช่น โอ๊ต, มิ้นท์, บอส" autocomplete="off"></div>
       <div><label for="inSeed">รหัสชาติกำเนิด (ใส่รหัสของเพื่อนเพื่อเกิดแบบเดียวกัน)</label><input id="inSeed" inputmode="numeric" maxlength="9" placeholder="เว้นว่าง = สุ่มใหม่" autocomplete="off"></div>
       <button class="big good" id="btnResume" hidden></button>
@@ -364,7 +407,9 @@ function wpick(r,arr,wf){const ws=arr.map(wf);const tot=ws.reduce((a,b)=>a+b,0);
 function pick(r,arr){return arr[Math.floor(r()*arr.length)]}
 function fmt(n){return Math.round(n).toLocaleString('th-TH')}
 function fk(n){const a=Math.abs(n),sg=n<0?'-':'';if(a>=1e9)return sg+(a/1e9).toFixed(1).replace(/\.0$/,'')+' พันล้าน';if(a>=1e6)return sg+(a/1e6).toFixed(a>=1e7?0:1).replace(/\.0$/,'')+' ล้าน';if(a>=1e5)return sg+(a/1e5).toFixed(1).replace(/\.0$/,'')+' แสน';return sg+Math.round(a).toLocaleString('th-TH')}
-const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let CUR_PROFILE=null;
+const nsk=k=>CUR_PROFILE?`p_${CUR_PROFILE}_${k}`:k;
+const store={get(k,d){try{const v=localStorage.getItem(nsk(k));return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(nsk(k),JSON.stringify(v))}catch(e){}}};
 
 /* =========================================================
    DATA
@@ -1673,6 +1718,7 @@ defIc('chart',['.......y.','.....b.y.','.g...b.y.','.g.g.b.y.','.g.g.b.y.','kkkk
 defIc('hourglass',['yyyyyyy','.wwwww.','..www..','...w...','..wyw..','.wyyyw.','yyyyyyy']);
 defIc('palette',['..nnnnn..','.nnrnnnn.','nnnnnnbnn','nynnnnnnn','nnnn..nnn','.nnnnnnn.'],{n:'#d8b07a'});
 defIc('pin',['.rrr.','rrwrr','rrrrr','.rrr.','..r..']);
+defIc('lock',['..sss..','.s...s.','.s...s.','yyyyyyy','yyykyyy','yyykyyy','yyyyyyy'],{y:'#ffd166',s:'#c0b8e0',k:'#5a3a10'});
 defIc('fist',['.ww..','wwww.','wwwww','wwwww','.www.']);
 const ic=(()=>{const cache={};return (n,o={})=>{const key=n+'|'+JSON.stringify(o.pal||{});let u=cache[key];
   if(!u){const S=SPR['i_'+n];if(!S)return '';const c=document.createElement('canvas');c.width=S.w;c.height=S.h;const prev=cx;cx=c.getContext('2d');spr('i_'+n,0,0,{pal:o.pal});cx=prev;u=cache[key]={url:c.toDataURL(),w:S.w,h:S.h,c}}
@@ -1713,7 +1759,7 @@ const Music={timer:null,i:0,start(){if(this.timer||!SET.music)return;ac();this.t
    ========================================================= */
 const $=id=>document.getElementById(id);
 let S=null,NODE=null,PREV={},PHASE='card',PENDING=null,LASTRES=null,TAB=store.get('blk_tab','money');
-function show(id){for(const x of ['title','game','summary'])$(x).classList.toggle('hidden',x!==id);window.scrollTo({top:0});document.body.classList.toggle('rm',reduced())}
+function show(id){for(const x of ['login','title','game','summary'])$(x).classList.toggle('hidden',x!==id);window.scrollTo({top:0});document.body.classList.toggle('rm',reduced())}
 function stageOf(a){return a<13?['child','วัยเด็ก']:a<18?['teen','วัยรุ่น']:a<60?['adult','วัยทำงาน']:['elder','วัยเกษียณ']}
 function fitPixel(cv,box){if(!cv||!box)return;const dpr=window.devicePixelRatio||1;const W=box.clientWidth-6,H=box.clientHeight-6;if(W<=0||H<=0)return;const k=Math.max(1,Math.floor(Math.min(W*dpr/cv.width,H*dpr/cv.height)));cv.style.width=(cv.width*k/dpr)+'px';cv.style.height=(cv.height*k/dpr)+'px'}
 const RO=new ResizeObserver(es=>{for(const e of es)fitPixel(e.target.querySelector('canvas'),e.target)});
@@ -1721,7 +1767,7 @@ function hydrateIcons(root=document){root.querySelectorAll('[data-ic]').forEach(
 
 const SAVE_KEY='blk_save_v1';
 function saveGame(){if(S&&!S.dead)store.set(SAVE_KEY,{seed:S.seed,name:S.name,picks:S._picks,age:S.age})}
-function clearSave(){try{localStorage.removeItem(SAVE_KEY)}catch(e){}}
+function clearSave(){try{localStorage.removeItem(nsk(SAVE_KEY))}catch(e){}}
 function enterGame(){Scene.canvas=$('scene');Scene.ctx=Scene.canvas.getContext('2d');PHASE='card';show('game');renderAll();Music.start();fitPixel($('scene'),$('sceneFrame'))}
 function startLife(seed,name){S=newLife(seed,{name});S._picks=[];PREV={};NODE=nextNode(S);saveGame();enterGame();sfx.good();if(!store.get('blk_tut',false))openTut(0)}
 function resumeLife(sv){
@@ -1956,7 +2002,7 @@ function obit(s,m){
 }
 function finish(){
   const s=S,m=metrics(s);Music.stop();sfx.end();
-  const coll=store.get('blk_coll',{});const isNew=!coll[m.arch.id];coll[m.arch.id]=(coll[m.arch.id]||0)+1;store.set('blk_coll',coll);
+  const coll=store.get('blk_coll',{});const isNew=!coll[m.arch.id];coll[m.arch.id]=(coll[m.arch.id]||0)+1;store.set('blk_coll',coll);store.set('blk_lives',store.get('blk_lives',0)+1);
   const past=store.get('blk_past',[]);past.unshift({name:s.name,age:s.age,arch:m.arch.id,nw:Math.round(m.nw),seed:s.seed,cls:s.cls});store.set('blk_past',past.slice(0,8));
   const B=badges(s),goal=s.goal?GOALS[s.goal]:null,rm=reduced();let d=0;const rv=()=>`class="rv" style="animation-delay:${rm?0:(d++)*.35}s"`;
   const famTxt=(s.married?'แต่งงาน':s.partner?'มีคู่ชีวิต':s.widowed?'หม้าย':'โสด')+(s.kids.length?` · ลูก ${s.kids.length}`:'');
@@ -2046,6 +2092,84 @@ function shareCard(s,m){
 }
 
 /* =========================================================
+   PLAYER PROFILES (local)
+   ========================================================= */
+const PROF_KEY='blk_profiles',OLD_KEYS=['blk_coll','blk_past','blk_save_v1','blk_tut','blk_set','blk_tab','blk_lives'];
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let PROFS_MEM=null;
+function profGet(){try{const v=JSON.parse(localStorage.getItem(PROF_KEY));if(v&&v.list)return v}catch(e){}return PROFS_MEM||{list:[],cur:null}}
+function profSet(p){PROFS_MEM=p;try{localStorage.setItem(PROF_KEY,JSON.stringify(p))}catch(e){}}
+function pinHash(p){let h=5381;for(const c of 'blk:'+p)h=((h<<5)+h+c.charCodeAt(0))|0;return (h>>>0).toString(36)}
+function profData(id,k,d){try{const v=localStorage.getItem(`p_${id}_${k}`);return v?JSON.parse(v):d}catch(e){return d}}
+function randLook(){const r=Math.random,g=r()<.5?'f':'m';return {g,skin:SKINS[Math.floor(r()*SKINS.length)],hair:HAIRS[g][Math.floor(r()*4)],hairCol:HAIRC[Math.floor(r()*HAIRC.length)],shirt:['#ff7b5c','#5a8ad0','#53e0ae','#c38bff','#ffd166','#e06b6b'][Math.floor(r()*6)]}}
+function drawLook(cv,L,bg){const prev=cx;cx=cv.getContext('2d');cx.imageSmoothingEnabled=false;R(0,0,20,18,bg||'#2a3270');R(0,14,20,4,'#00000033');person(10,29,{age:26,g:L.g,skin:L.skin,hair:L.hair,hairCol:L.hairCol,shirt:L.shirt,pants:'#2c3e66',joy:70});cx=prev}
+function applyProfile(id){CUR_PROFILE=id;Object.assign(SET,{sfx:true,music:false,vol:.6,nums:false,motion:'auto'},store.get('blk_set',{}));if(MG)MG.gain.value=SET.vol;TAB=store.get('blk_tab','money')}
+function loginAs(id){const P=profGet();P.cur=id;profSet(P);applyProfile(id);sfx.good();goTitle()}
+function logout(){Music.stop();const P=profGet();P.cur=null;profSet(P);CUR_PROFILE=null;showLogin()}
+function showLogin(){
+  show('login');document.body.className=reduced()?'rm':'';
+  const P=profGet(),g=$('profGrid');$('lgForm').hidden=true;
+  g.innerHTML=P.list.map(p=>{const lives=profData(p.id,'blk_lives',0),coll=Object.keys(profData(p.id,'blk_coll',{})).length,sv=profData(p.id,'blk_save_v1',null);
+    return `<div class="profWrap"><button class="prof pnl" data-id="${p.id}" aria-label="เล่นในชื่อ ${esc(p.name)}"><canvas width="20" height="18" data-look="${p.id}" aria-hidden="true"></canvas><span class="pn">${p.pin?ic('lock',{alt:'มี PIN'}):''}${esc(p.name)}</span><span class="ps">${lives?`เล่นไป ${lives} ชีวิต · ปลดล็อก ${coll}/${ARCH.length}`:'ยังไม่เคยเล่น'}${sv?' · มีชีวิตค้างอยู่':''}</span></button><button class="profDel" data-del="${p.id}" title="ลบผู้เล่น ${esc(p.name)}" aria-label="ลบผู้เล่น ${esc(p.name)}">ลบ</button></div>`}).join('')+
+    `<button class="prof pnl" id="profAdd"><span class="plus" aria-hidden="true">+</span><span class="pn">ผู้เล่นใหม่</span><span class="ps">สร้างโปรไฟล์ของคุณ</span></button>`;
+  for(const p of P.list){const cv=g.querySelector(`[data-look="${p.id}"]`);if(cv)drawLook(cv,p.look)}
+  g.querySelectorAll('.prof[data-id]').forEach(b=>b.onclick=()=>{const p=profGet().list.find(x=>x.id===b.dataset.id);if(!p)return;sfx.click();p.pin?askPin(p):loginAs(p.id)});
+  g.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{const p=profGet().list.find(x=>x.id===b.dataset.del);if(p)askDelete(p)});
+  $('profAdd').onclick=()=>{sfx.click();newProfileForm()};
+  if(!P.list.length)newProfileForm();
+}
+function newProfileForm(){
+  let look=randLook();const f=$('lgForm');f.hidden=false;
+  f.innerHTML=`<h3>${ic('people',{cls:'lg'})} สร้างผู้เล่นใหม่</h3>
+    <div class="lookRow"><canvas width="20" height="18" id="lkCv" aria-label="หน้าตาผู้เล่น" role="img"></canvas><button class="ghost" type="button" id="lkRnd">${ic('dice')} สุ่มหน้าตา</button></div>
+    <div><label for="pfName">ชื่อผู้เล่น</label><input id="pfName" maxlength="14" placeholder="เช่น บีม, แม่, ลูกคนเล็ก" autocomplete="nickname"></div>
+    <div><label for="pfPin">PIN 4 หลัก (ไม่บังคับ)</label><input id="pfPin" class="pin" inputmode="numeric" maxlength="4" placeholder="····" autocomplete="off"></div>
+    <div class="err" id="pfErr" role="alert"></div>
+    <div class="lgBtns">${profGet().list.length?'<button class="big sec" id="pfCancel" type="button">ยกเลิก</button>':''}<button class="big" id="pfOk" type="button">${ic('clover')} เริ่มเล่น</button></div>`;
+  const draw=()=>drawLook($('lkCv'),look);draw();
+  $('lkRnd').onclick=()=>{look=randLook();draw();sfx.tick()};
+  if($('pfCancel'))$('pfCancel').onclick=()=>{f.hidden=true};
+  $('pfPin').oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'')};
+  const ok=()=>{const name=$('pfName').value.trim(),pin=$('pfPin').value;
+    if(!name){$('pfErr').textContent='ใส่ชื่อผู้เล่นก่อนนะ';$('pfName').focus();return}
+    const P=profGet();if(P.list.some(x=>x.name===name)){$('pfErr').textContent='มีผู้เล่นชื่อนี้แล้ว ลองชื่ออื่น';return}
+    if(pin&&pin.length!==4){$('pfErr').textContent='PIN ต้องเป็นตัวเลข 4 หลัก หรือเว้นว่างไว้';return}
+    const id=Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36);
+    if(!P.list.length){try{for(const k of OLD_KEYS){const v=localStorage.getItem(k);if(v!=null){localStorage.setItem(`p_${id}_${k}`,v);localStorage.removeItem(k)}}}catch(e){}}
+    P.list.push({id,name,pin:pin?pinHash(pin):null,look,created:Date.now()});profSet(P);loginAs(id)};
+  $('pfOk').onclick=ok;['pfName','pfPin'].forEach(i=>$(i).addEventListener('keydown',e=>{if(e.key==='Enter')ok()}));
+  $('pfName').focus();
+}
+function askPin(p){
+  const f=$('lgForm');f.hidden=false;
+  f.innerHTML=`<h3>${ic('lock',{cls:'lg'})} ใส่ PIN ของ ${esc(p.name)}</h3>
+    <div><label for="pnIn">PIN 4 หลัก</label><input id="pnIn" class="pin" inputmode="numeric" maxlength="4" placeholder="····" autocomplete="off"></div>
+    <div class="err" id="pnErr" role="alert"></div>
+    <div class="lgBtns"><button class="big sec" id="pnCancel" type="button">ยกเลิก</button><button class="big" id="pnOk" type="button">เข้าเล่น</button></div>
+    <p class="small" style="margin:0">ลืม PIN? กด "ลบ" ที่โปรไฟล์นี้แล้วสร้างใหม่ (ข้อมูลของโปรไฟล์นี้จะหาย)</p>`;
+  const go=()=>{const v=$('pnIn').value;if(pinHash(v)===p.pin)loginAs(p.id);else{$('pnErr').textContent='PIN ไม่ถูก ลองอีกครั้ง';$('pnIn').value='';$('pnIn').focus();sfx.bad()}};
+  $('pnIn').oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'');if(e.target.value.length===4)go()};
+  $('pnOk').onclick=go;$('pnCancel').onclick=()=>{f.hidden=true};$('pnIn').focus();
+}
+function askDelete(p){
+  const f=$('lgForm');f.hidden=false;
+  f.innerHTML=`<h3>${ic('warn',{cls:'lg'})} ลบผู้เล่น ${esc(p.name)}?</h3>
+    <p style="margin:0;color:var(--mute)">ชีวิตที่ค้างอยู่ คอลเลกชัน ชาติที่ผ่านมา และการตั้งค่าของ ${esc(p.name)} จะหายทั้งหมด และกู้คืนไม่ได้</p>
+    ${p.pin?`<div><label for="dlPin">ใส่ PIN เพื่อยืนยัน (ถ้าลืม ให้พิมพ์คำว่า ลบ)</label><input id="dlPin" autocomplete="off"></div>`:''}
+    <div class="err" id="dlErr" role="alert"></div>
+    <div class="lgBtns"><button class="big sec" id="dlCancel" type="button">ยกเลิก</button><button class="big" id="dlOk" type="button" style="background:var(--bad);box-shadow:0 5px 0 #9a3348">ลบผู้เล่นนี้</button></div>`;
+  $('dlCancel').onclick=()=>{f.hidden=true};
+  $('dlOk').onclick=()=>{if(p.pin){const v=$('dlPin').value.trim();if(v!=='ลบ'&&pinHash(v)!==p.pin){$('dlErr').textContent='PIN ไม่ถูก';return}}
+    try{const pre=`p_${p.id}_`;Object.keys(localStorage).filter(k=>k.startsWith(pre)).forEach(k=>localStorage.removeItem(k))}catch(e){}
+    const P=profGet();P.list=P.list.filter(x=>x.id!==p.id);if(P.cur===p.id)P.cur=null;profSet(P);showLogin()};
+}
+function renderProfBar(){
+  const p=profGet().list.find(x=>x.id===CUR_PROFILE);if(!p){$('profBar').innerHTML='';return}
+  $('profBar').innerHTML=`<span class="pb"><canvas width="20" height="18" id="pbCv" aria-hidden="true"></canvas><span>เล่นในชื่อ<br><b>${esc(p.name)}</b></span></span><button class="ghost" id="btnSwitch" type="button">${ic('people')} เปลี่ยนผู้เล่น</button>`;
+  drawLook($('pbCv'),p.look);$('btnSwitch').onclick=()=>{sfx.click();logout()};
+}
+
+/* =========================================================
    TITLE
    ========================================================= */
 let titleT=0;
@@ -2066,10 +2190,12 @@ function titleLoop(){
   requestAnimationFrame(titleLoop);
 }
 function goTitle(){
+  if(!CUR_PROFILE){showLogin();return}
   Music.stop();document.body.className=reduced()?'rm':'';show('title');PHASE='card';
   const sv=store.get(SAVE_KEY,null),rb=$('btnResume');
   if(sv&&sv.picks){rb.hidden=false;rb.innerHTML=`${ic('clover')} เล่นต่อ: ${sv.name} (อายุ ${sv.age} ปี)`;rb.onclick=()=>{sfx.click();resumeLife(sv)};$('btnStart').innerHTML=`${ic('dice')} เริ่มชีวิตใหม่ (ชีวิตที่ค้างไว้จะหายไป)`;$('btnStart').className='big sec'}
   else{rb.hidden=true;$('btnStart').innerHTML=`${ic('dice')} สุ่มเกิด!`;$('btnStart').className='big'}
+  renderProfBar();
   const past=store.get('blk_past',[]);
   $('pastLives').innerHTML=past.length?`<h4 style="font-size:var(--fs-sm);color:var(--mute);margin-bottom:6px">ชาติที่ผ่านมาของคุณ</h4>`+past.map(p=>{const a=ARCH.find(x=>x.id===p.arch)||ARCH[ARCH.length-1];return `<div class="pl"><span>${archIc(a)} <b>${p.name}</b> · ${a.n}</span><span class="small num">อายุ ${p.age} · ${baht(p.nw)} · #${p.seed}</span></div>`}).join(''):'';
 }
@@ -2082,7 +2208,7 @@ let lastTs=0;
 function drawAvatar(t){const c=$('gAvatar');if(!c||!S)return;cx=c.getContext('2d');cx.imageSmoothingEnabled=false;R(0,0,20,18,{child:'#2a5a6a',teen:'#4a2a6a',adult:'#2a3270',elder:'#5a3a2a'}[stageOf(S.age)[0]]);R(0,14,20,4,'#00000033');person(10,29,Object.assign({age:Math.max(S.age,3),g:S.g,skin:S.skin,hair:S.hair,hairCol:S.hairCol,t,joy:S.joy},outfit(S)))}
 function gameLoop(ts){const dt=Math.min(.05,(ts-lastTs)/1000||0)*(reduced()?0.25:1);lastTs=ts;if(!$('game').classList.contains('hidden')&&Scene.s){Scene.frame(dt);drawAvatar(Scene.t)}requestAnimationFrame(gameLoop)}
 requestAnimationFrame(gameLoop);requestAnimationFrame(titleLoop);
-goTitle();
+{const P=profGet();if(P.cur&&P.list.some(x=>x.id===P.cur)){applyProfile(P.cur);goTitle()}else showLogin()}
 </script>
 </body>
 </html>

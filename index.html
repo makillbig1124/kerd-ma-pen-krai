@@ -73,6 +73,11 @@ h1,h2,h3,h4{font-family:var(--f-d);font-weight:500;margin:0;text-wrap:balance;li
 .feat b{color:var(--ink);font-family:var(--f-d);font-weight:500;font-size:var(--fs-sm)}
 .feat .pi{grid-row:span 2;height:22px;margin-top:2px}
 .pastLives{text-align:left}
+.moreOpt summary{cursor:pointer;font-size:var(--fs-sm);color:var(--mute);list-style:none}
+.moreOpt summary::-webkit-details-marker{display:none}
+.moreOpt summary::before{content:'+ '}
+.moreOpt[open] summary::before{content:'− '}
+.moreOpt[open] summary{margin-bottom:6px}
 .pl{display:flex;justify-content:space-between;gap:var(--s2);padding:6px 0;border-bottom:1px dashed var(--line);font-size:var(--fs-sm)}
 .kbd{font-family:var(--f-px);font-size:10px;border:1px solid var(--line2);padding:0 4px;border-radius:3px}
 
@@ -112,6 +117,8 @@ h1,h2,h3,h4{font-family:var(--f-d);font-weight:500;margin:0;text-wrap:balance;li
 .timeline .ticks{position:absolute;left:0;right:0;top:21px;display:flex;justify-content:space-between;font-family:var(--f-px);font-size:10px;color:var(--dim)}
 .toolbar{display:flex;flex-wrap:wrap;gap:var(--s2);align-items:center}
 .toolbar .sp{flex:1}
+.toolbar{flex-wrap:nowrap}
+.toolbar .ico{padding-inline:10px}
 .storyP{padding:var(--s3);min-height:0;overflow:auto}
 .story .mo,.moments .mo{display:grid;grid-template-columns:54px 1fr;gap:var(--s2);padding:5px 0;border-bottom:1px dashed var(--line);font-size:var(--fs-sm)}
 .mo .a{font-family:var(--f-d);font-size:var(--fs-xs);color:var(--warn);padding-top:1px;font-variant-numeric:tabular-nums}
@@ -307,8 +314,9 @@ dialog h3{font-size:var(--fs-lg);margin-bottom:var(--s3);display:flex;gap:var(--
   #game .gScene{grid-template-rows:auto auto auto minmax(0,1fr);min-height:0}
   #game .gScene .frame{max-height:calc(100dvh - 330px)}
   #game .card{min-height:100%}
+  #game .storyP{align-self:start;max-height:100%}
   #title.wrap{max-width:none}
-  .titleBox{max-width:1320px;grid-template-columns:minmax(0,1.4fr) minmax(360px,1fr);grid-template-areas:'hero hero' 'frame form' 'feat past';gap:var(--s5) 40px;text-align:left;align-items:start}
+  .titleBox{max-width:1320px;grid-template-columns:minmax(0,1.4fr) minmax(360px,1fr);grid-template-areas:'hero hero' 'frame form' 'past past';gap:var(--s5) 40px;text-align:left;align-items:start}
   .tHero{grid-area:hero;text-align:center}
   .tFrame{grid-area:frame}
   .titleBox .form{grid-area:form;align-self:center}
@@ -357,7 +365,7 @@ body.rm *,body.rm *::before,body.rm *::after{animation:none!important;transition
     <div class="form pnl">
       <div class="profBar" id="profBar"></div>
       <div><label for="inName">ชื่อเล่น (เว้นว่างไว้ให้สุ่ม)</label><input id="inName" maxlength="14" placeholder="เช่น โอ๊ต, มิ้นท์, บอส" autocomplete="off"></div>
-      <div><label for="inSeed">รหัสชาติกำเนิด (ใส่รหัสของเพื่อนเพื่อเกิดแบบเดียวกัน)</label><input id="inSeed" inputmode="numeric" maxlength="9" placeholder="เว้นว่าง = สุ่มใหม่" autocomplete="off"></div>
+      <details class="moreOpt"><summary>เกิดแบบเดียวกับเพื่อน (ใส่รหัส)</summary><label for="inSeed">รหัสชาติกำเนิดของเพื่อน</label><input id="inSeed" inputmode="numeric" maxlength="9" placeholder="เว้นว่าง = สุ่มใหม่" autocomplete="off"></details>
       <button class="big good" id="btnResume" hidden></button>
       <button class="big" id="btnStart" data-ic="dice">สุ่มเกิด!</button>
       <div class="row" style="justify-content:center">
@@ -365,9 +373,8 @@ body.rm *,body.rm *::before,body.rm *::after{animation:none!important;transition
         <button class="ghost" id="btnHelp0" data-ic="help">วิธีเล่น</button>
         <button class="ghost" id="btnSet0" data-ic="gear">ตั้งค่า</button>
       </div>
-      <div class="small" style="text-align:center">กดเลข <span class="kbd">1</span>–<span class="kbd">9</span> เพื่อเลือก · <span class="kbd">Enter</span> เพื่อไปต่อ</div>
     </div>
-    <div class="features" id="features"></div>
+    <div class="features" id="features" hidden></div>
     <div id="pastLives" class="pastLives"></div>
   </div>
 </section>
@@ -387,12 +394,11 @@ body.rm *,body.rm *::before,body.rm *::after{animation:none!important;transition
       <div class="timeline" id="gTl" aria-hidden="true"></div>
       <div class="toolbar">
         <button class="ghost" id="btnLog" data-ic="scroll">บันทึกชีวิต</button>
-        <button class="ghost" id="btnHelp" data-ic="help">วิธีเล่น</button>
-        <button class="ghost" id="btnSet" data-ic="gear">ตั้งค่า</button>
-        <button class="ghost fsBtn" id="btnFS" type="button">เต็มจอ</button>
         <span class="sp"></span>
-        <span class="small" id="gSeed"></span>
-        <button class="ghost" id="btnHome" data-ic="homeA">หน้าแรก</button>
+        <button class="ghost ico" id="btnHelp" data-ic="help" title="วิธีเล่น" aria-label="วิธีเล่น"></button>
+        <button class="ghost ico" id="btnSet" data-ic="gear" title="ตั้งค่า" aria-label="ตั้งค่า"></button>
+        <button class="ghost ico fsBtn" id="btnFS" type="button" title="เต็มจอ" aria-label="เต็มจอ"></button>
+        <button class="ghost ico" id="btnHome" data-ic="homeA" title="กลับหน้าแรก (เซฟไว้ให้แล้ว)" aria-label="หน้าแรก"></button>
       </div>
       <div class="pnl storyP"><h4 id="storyH">เรื่องราวที่ผ่านมา</h4><div id="gStory" class="story"></div></div>
     </div>
@@ -2339,7 +2345,7 @@ function SEEN_MARK(id){if(!SEEN)seenLoad();SEEN[id]=store.get('blk_lives',0);sto
 const fsOK=()=>!!(document.fullscreenEnabled||document.webkitFullscreenEnabled);
 const fsOn=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);
 function toggleFS(){try{if(fsOn())(document.exitFullscreen||document.webkitExitFullscreen).call(document);else{const el=document.documentElement;const p=(el.requestFullscreen||el.webkitRequestFullscreen).call(el);if(p&&p.catch)p.catch(()=>{})}}catch(e){}}
-function syncFS(){document.querySelectorAll('.fsBtn').forEach(b=>{b.hidden=!fsOK();b.innerHTML=fsOn()?`${ic('expand')} ออกจากเต็มจอ`:`${ic('expand')} เต็มจอ`;b.setAttribute('aria-pressed',fsOn())})}
+function syncFS(){document.querySelectorAll('.fsBtn').forEach(b=>{b.hidden=!fsOK();const t=fsOn()?'ออกจากเต็มจอ':'เต็มจอ';b.innerHTML=b.classList.contains('ico')?ic('expand'):`${ic('expand')} ${t}`;b.title=t;b.setAttribute('aria-label',t);b.setAttribute('aria-pressed',fsOn())})}
 document.addEventListener('fullscreenchange',syncFS);document.addEventListener('webkitfullscreenchange',syncFS);
 
 /* ---------- HUD ---------- */
@@ -2364,8 +2370,7 @@ function renderHUD(){
   renderTabs();
   const marks=s.log.filter(l=>l.imp).map(l=>`<span class="dot" style="left:${Math.min(l.age,100)}%"></span>`).join('');
   $('gTl').innerHTML=`<div class="track"></div><div class="fill" style="width:${Math.min(s.age,100)}%"></div>${marks}<svg class="me" style="left:${Math.min(s.age,100)}%" viewBox="0 0 7 10" shape-rendering="crispEdges"><rect x="1" y="0" width="5" height="1" fill="${s.hairCol}"/><rect x="1" y="1" width="5" height="3" fill="${s.skin}"/><rect x="1" y="4" width="5" height="3" fill="#ff7b5c"/><rect x="1" y="7" width="2" height="3" fill="#2c3e66"/><rect x="4" y="7" width="2" height="3" fill="#2c3e66"/></svg><div class="ticks"><span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span></div>`;
-  $('gSeed').textContent=`รหัสชาติกำเนิด #${s.seed} · บันทึกอัตโนมัติ`;
-  const st2=s.log.filter(l=>l.imp).slice(-14).reverse();
+  const st2=s.log.filter(l=>l.imp).slice(-6).reverse();
   $('storyH').innerHTML=`${ic('scroll')} เรื่องราวที่ผ่านมา`;
   $('gStory').innerHTML=st2.length?st2.map(l=>`<div class="mo"><span class="a">อายุ ${l.age}</span><span>${noEmo(l.t)}</span></div>`).join(''):'<div class="small">เรื่องราวชีวิตของคุณจะถูกบันทึกที่นี่</div>';
 }
@@ -2550,7 +2555,7 @@ function openSettings(){
   $('sTut').onclick=()=>openTut(0);
 }
 function collHTML(coll,cur){return ARCH.map(a=>coll[a.id]?`<div class="ci pnl ${a.id===cur?'now':''}">${archIc(a,{cls:'lg'})}<span>${a.n}</span><span class="small">× ${coll[a.id]}</span></div>`:`<div class="ci pnl lock">${ic('help',{cls:'lg'})}<span>???</span></div>`).join('')}
-$('btnLog').onclick=()=>openDlg(`<h3 id="dlgTitle">${ic('scroll',{cls:'lg'})} บันทึกชีวิตของ ${S.name}</h3><div class="moments pnl">${S.log.map(l=>`<div class="mo"><span class="a">อายุ ${l.age}</span><span>${l.imp?'<b>':''}${noEmo(l.t)}${l.imp?'</b>':''}</span></div>`).join('')}</div>`);
+$('btnLog').onclick=()=>openDlg(`<h3 id="dlgTitle">${ic('scroll',{cls:'lg'})} บันทึกชีวิตของ ${S.name}</h3><div class="small" style="margin:-4px 0 8px">รหัสชาติกำเนิด #${S.seed} · เกมบันทึกอัตโนมัติ</div><div class="moments pnl">${S.log.map(l=>`<div class="mo"><span class="a">อายุ ${l.age}</span><span>${l.imp?'<b>':''}${noEmo(l.t)}${l.imp?'</b>':''}</span></div>`).join('')}</div>`);
 $('btnHelp').onclick=$('btnHelp0').onclick=()=>openTut(0);
 $('btnSet').onclick=$('btnSet0').onclick=openSettings;
 $('btnHome').onclick=()=>{saveGame();goTitle()};
